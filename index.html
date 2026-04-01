@@ -1,0 +1,1438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Asking Vector</title>
+<style>
+:root{
+  --bg:#f4f6f9;--sidebar:#111827;--sidebar2:#1f2937;--s-text:#9ca3af;--s-active:#374151;
+  --accent:#2563eb;--accent-h:#1d4ed8;--surface:#fff;--border:#e5e7eb;
+  --text:#111827;--muted:#6b7280;--critical:#dc2626;--warn:#d97706;--ok:#16a34a;--info:#2563eb;
+  --step:#eff6ff;--step-b:#bfdbfe;--net-bg:#fef3c7;--net-b:#fde68a;
+  --r8:8px;--shadow:0 1px 3px rgba(0,0,0,.08);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--text);display:flex;height:100vh;overflow:hidden;font-size:14px}
+
+/* sidebar */
+.sidebar{width:256px;min-width:256px;background:var(--sidebar);display:flex;flex-direction:column;overflow-y:auto}
+.sb-logo{padding:18px 16px 14px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:10px}
+.sb-logo-mark{width:30px;height:30px;background:var(--accent);border-radius:7px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.sb-logo-mark svg{width:16px;height:16px;fill:white}
+.sb-logo-name{font-size:14px;font-weight:700;color:#fff}
+.sb-logo-sub{font-size:11px;color:var(--s-text);margin-top:1px}
+.sb-section{padding:14px 14px 6px;font-size:10px;font-weight:700;letter-spacing:.08em;color:rgba(255,255,255,.25);text-transform:uppercase}
+.sb-btn{width:calc(100% - 16px);margin:2px 8px;padding:9px 10px;background:transparent;border:none;border-radius:6px;cursor:pointer;text-align:left;color:var(--s-text);font-size:12.5px;transition:all .15s;display:flex;align-items:flex-start;gap:8px;line-height:1.4}
+.sb-btn:hover,.sb-btn.active{background:var(--s-active);color:#fff}
+.sb-btn .si{font-size:13px;flex-shrink:0;margin-top:1px}
+.sb-footer{margin-top:auto;padding:12px 14px;border-top:1px solid rgba(255,255,255,.06);font-size:11px;color:rgba(255,255,255,.2);line-height:1.6}
+.sb-divider{height:1px;background:rgba(255,255,255,.06);margin:4px 0}
+
+/* main */
+.main{flex:1;display:flex;flex-direction:column;min-width:0}
+.topbar{padding:14px 24px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.topbar-left{display:flex;align-items:center;gap:10px}
+.topbar-title{font-size:15px;font-weight:700}
+.topbar-badge{font-size:11px;background:#eff6ff;color:var(--accent);padding:3px 9px;border-radius:20px;font-weight:600;border:1px solid #bfdbfe}
+.topbar-status{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--ok)}
+.status-dot{width:6px;height:6px;background:var(--ok);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+
+/* messages */
+.messages{flex:1;overflow-y:auto;padding:20px 24px;display:flex;flex-direction:column;gap:16px}
+.messages::-webkit-scrollbar{width:5px}
+.messages::-webkit-scrollbar-thumb{background:#dde1e7;border-radius:3px}
+
+/* welcome */
+.welcome{margin:auto;max-width:560px;text-align:center;padding:20px}
+.wlc-icon{width:52px;height:52px;background:linear-gradient(135deg,#2563eb,#7c3aed);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 14px;font-size:24px}
+.wlc-title{font-size:22px;font-weight:700;margin-bottom:8px}
+.wlc-sub{color:var(--muted);font-size:13.5px;line-height:1.6;margin-bottom:22px}
+.wlc-chips{display:flex;flex-direction:column;gap:8px;text-align:left}
+.chip{padding:11px 14px;background:var(--surface);border:1px solid var(--border);border-radius:9px;font-size:13px;color:var(--muted);cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:10px}
+.chip:hover{border-color:var(--accent);color:var(--accent);background:#eff6ff}
+.chip .ch-icon{font-size:15px;flex-shrink:0}
+.chip .ch-arrow{margin-left:auto;opacity:.4;font-size:16px}
+
+/* messages */
+.msg{display:flex;flex-direction:column}
+.msg.user{align-items:flex-end}
+.msg.assistant{align-items:flex-start;max-width:800px;width:100%}
+.bubble{padding:11px 15px;border-radius:10px;font-size:13.5px;line-height:1.55;max-width:640px}
+.msg.user .bubble{background:var(--accent);color:#fff;border-bottom-right-radius:3px}
+.msg.assistant .bubble{background:var(--surface);border:1px solid var(--border);border-bottom-left-radius:3px;padding:0;max-width:100%;overflow:hidden}
+
+/* response header */
+.res-header{padding:10px 14px;background:var(--bg);border-bottom:1px solid var(--border);font-size:12px;color:var(--muted);display:flex;align-items:center;gap:7px}
+.res-body{padding:14px;display:flex;flex-direction:column;gap:12px}
+
+/* intent card */
+.intent-card{background:#f8faff;border:1px solid #dbeafe;border-radius:7px;overflow:hidden}
+.intent-header{padding:9px 13px;background:#eff6ff;border-bottom:1px solid #dbeafe;font-size:12px;font-weight:600;color:var(--accent);display:flex;align-items:center;gap:6px}
+.intent-body{padding:11px 13px;display:grid;grid-template-columns:130px 1fr;gap:4px 8px;font-size:12px}
+.intent-label{color:var(--muted);padding:3px 0}
+.intent-value{padding:3px 0;color:var(--text);font-weight:500}
+.intent-value .missing{color:var(--warn);font-weight:600}
+.intent-value .ok-tag{color:var(--ok)}
+
+/* clarification */
+.clarify-card{background:#fffbeb;border:1px solid #fde68a;border-radius:7px;overflow:hidden}
+.clarify-header{padding:9px 13px;background:#fef3c7;border-bottom:1px solid #fde68a;font-size:12px;font-weight:600;color:#92400e;display:flex;align-items:center;gap:6px}
+.clarify-body{padding:12px 13px;font-size:13px;color:var(--text);line-height:1.6}
+.clarify-examples{margin-top:8px;display:flex;flex-direction:column;gap:5px}
+.clarify-eg{font-size:12px;color:var(--muted);font-family:monospace;cursor:pointer;padding:4px 8px;background:white;border:1px solid var(--border);border-radius:5px;display:inline-block;transition:all .12s}
+.clarify-eg:hover{border-color:var(--accent);color:var(--accent)}
+
+/* overview card */
+.overview-card{background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:12px 14px}
+.ov-metrics{display:flex;gap:20px;flex-wrap:wrap;margin-bottom:10px}
+.ov-metric .lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px}
+.ov-metric .val{font-size:20px;font-weight:700}
+.val.red{color:var(--critical)}.val.grn{color:var(--ok)}.val.neu{color:var(--text)}
+.campaign-tbl{width:100%;border-collapse:collapse;font-size:12px;margin-top:6px}
+.campaign-tbl th{text-align:left;font-size:10.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);padding:5px 8px;border-bottom:1px solid var(--border)}
+.campaign-tbl td{padding:6px 8px;border-bottom:1px solid #f3f4f6;font-family:monospace;font-size:11px}
+.campaign-tbl tr:last-child td{border-bottom:none}
+.pct-r{color:var(--critical);font-weight:700}.pct-w{color:var(--warn);font-weight:700}.pct-g{color:var(--ok);font-weight:700}
+
+/* step cards */
+.step-card{border:1px solid var(--step-b);background:var(--step);border-radius:7px;overflow:hidden}
+.step-hd{padding:10px 14px;background:#dbeafe;border-bottom:1px solid var(--step-b);font-size:12.5px;font-weight:700;color:#1e40af;display:flex;align-items:center;gap:8px}
+.step-hd .step-num{background:#1e40af;color:#fff;font-size:11px;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.step-body{padding:12px 14px;display:flex;flex-direction:column;gap:8px}
+
+/* finding */
+.finding{display:flex;align-items:flex-start;gap:10px;padding:9px 11px;border-radius:6px}
+.finding.crit{background:#fef2f2;border:1px solid #fecaca}
+.finding.warn{background:#fffbeb;border:1px solid #fde68a}
+.finding.ok  {background:#f0fdf4;border:1px solid #bbf7d0}
+.finding.info{background:#eff6ff;border:1px solid #bfdbfe}
+.finding-icon{font-size:15px;flex-shrink:0;margin-top:1px}
+.finding-content{flex:1}
+.finding-title{font-weight:600;font-size:13px;margin-bottom:3px}
+.finding-detail{font-size:12px;color:var(--muted);line-height:1.5;margin-bottom:4px}
+.finding-rec{font-size:12px;color:#065f46;display:flex;gap:5px;align-items:flex-start;background:#f0fdf4;border:1px solid #d1fae5;border-radius:4px;padding:5px 8px;margin-top:4px}
+.finding-rec::before{content:"→";flex-shrink:0;font-weight:700}
+
+/* sub-metric rows */
+.metric-row{display:flex;align-items:center;gap:10px;font-size:12px;padding:4px 0;border-bottom:1px solid #f3f4f6}
+.metric-row:last-child{border-bottom:none}
+.mr-label{color:var(--muted);width:200px;flex-shrink:0}
+.mr-val{font-weight:700;font-family:monospace}
+.mr-bench{color:var(--muted);font-size:11px}
+.mr-badge{padding:2px 7px;border-radius:20px;font-size:10.5px;font-weight:700;flex-shrink:0}
+.badge-crit{background:#fef2f2;color:var(--critical);border:1px solid #fecaca}
+.badge-warn{background:#fffbeb;color:var(--warn);border:1px solid #fde68a}
+.badge-ok  {background:#f0fdf4;color:var(--ok);border:1px solid #bbf7d0}
+
+/* network incident card */
+.incident-card{background:#fff7ed;border:1px solid #fed7aa;border-radius:7px;overflow:hidden}
+.incident-hd{padding:10px 14px;background:#ffedd5;border-bottom:1px solid #fed7aa;font-size:12.5px;font-weight:700;color:#c2410c;display:flex;align-items:center;gap:8px}
+.incident-body{padding:12px 14px;display:flex;flex-direction:column;gap:6px;font-size:12.5px}
+.incident-row{display:flex;gap:8px;padding:3px 0;border-bottom:1px solid #fee0c5}
+.incident-row:last-child{border-bottom:none}
+.ir-label{color:var(--muted);width:160px;flex-shrink:0;font-size:12px}
+.ir-val{color:var(--text);line-height:1.5}
+.incident-no-action{margin-top:8px;padding:9px 12px;background:#fff0e6;border:1px solid #fed7aa;border-radius:6px;font-size:12px;color:#7c2d12;display:flex;gap:7px;align-items:flex-start}
+
+/* summary */
+.summary-card{background:#fffbeb;border:1px solid var(--net-b);border-radius:7px;overflow:hidden}
+.summary-hd{padding:10px 14px;background:var(--net-bg);border-bottom:1px solid var(--net-b);font-size:12.5px;font-weight:700;color:#92400e;display:flex;align-items:center;gap:8px}
+.summary-body{padding:12px 14px;display:flex;flex-direction:column;gap:6px;font-size:13px}
+.si{display:flex;align-items:flex-start;gap:8px;padding:3px 0}
+.si-icon{flex-shrink:0;margin-top:1px}
+
+/* attention feed */
+.att-item{border-radius:7px;overflow:hidden;border:1px solid var(--border);margin-bottom:2px;cursor:pointer;transition:box-shadow .15s}
+.att-item:hover{box-shadow:0 2px 8px rgba(0,0,0,.1)}
+.att-bar{height:3px}
+.att-bar.crit{background:var(--critical)}.att-bar.warn{background:var(--warn)}.att-bar.ok{background:var(--ok)}
+.att-main{padding:11px 14px;display:flex;align-items:flex-start;gap:10px}
+.att-sev-badge{padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700;flex-shrink:0;margin-top:1px}
+.att-sev-badge.crit{background:#fef2f2;color:var(--critical);border:1px solid #fecaca}
+.att-sev-badge.warn{background:#fffbeb;color:var(--warn);border:1px solid #fde68a}
+.att-content{flex:1}
+.att-title{font-weight:600;font-size:13px;margin-bottom:2px}
+.att-meta{font-size:11.5px;color:var(--muted);margin-bottom:4px}
+.att-root{font-size:12px;color:var(--text);display:flex;gap:5px;align-items:flex-start}
+.att-action{padding:7px 14px;background:var(--bg);border-top:1px solid var(--border);font-size:11.5px;color:var(--accent);font-weight:600;cursor:pointer}
+.att-action:hover{background:#eff6ff}
+
+/* reason breakdown bar */
+.reason-bar-wrap{margin-top:6px}
+.reason-bar-row{display:flex;align-items:center;gap:8px;margin-bottom:5px;font-size:12px}
+.rb-label{width:220px;flex-shrink:0;color:var(--text)}
+.rb-track{flex:1;background:#e5e7eb;border-radius:3px;height:8px;overflow:hidden}
+.rb-fill{height:100%;border-radius:3px;background:var(--critical)}
+.rb-fill.warn{background:var(--warn)}
+.rb-fill.ok{background:var(--ok)}
+.rb-pct{width:35px;text-align:right;font-weight:700;flex-shrink:0}
+
+/* perf table */
+.perf-table{width:100%;border-collapse:collapse;font-size:12.5px}
+.perf-table th{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);padding:6px 10px;border-bottom:1px solid var(--border);text-align:left}
+.perf-table th:not(:first-child){text-align:right}
+.perf-table td{padding:8px 10px;border-bottom:1px solid #f3f4f6}
+.perf-table td:not(:first-child){text-align:right;font-family:monospace;font-size:12px}
+.perf-table tr:last-child td{border-bottom:none}
+.status-pill{padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
+.pill-under{background:#fef2f2;color:var(--critical);border:1px solid #fecaca}
+.pill-over{background:#f0fdf4;color:var(--ok);border:1px solid #bbf7d0}
+.pill-avg{background:#fffbeb;color:var(--warn);border:1px solid #fde68a}
+
+/* loading */
+.loading-wrap{padding:14px 16px;display:flex;align-items:flex-start;gap:12px}
+.spinner{width:18px;height:18px;border:2.5px solid #e5e7eb;border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0;margin-top:2px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-steps{display:flex;flex-direction:column;gap:4px}
+.lstep{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--muted);transition:color .3s}
+.lstep.active{color:var(--accent);font-weight:600}
+.lstep.done{color:var(--ok)}
+.lstep-dot{width:7px;height:7px;border-radius:50%;background:currentColor;flex-shrink:0}
+
+/* input */
+.input-area{padding:14px 24px;background:var(--surface);border-top:1px solid var(--border);flex-shrink:0}
+.input-bar{display:flex;gap:10px;align-items:flex-end;background:var(--bg);border:1.5px solid var(--border);border-radius:11px;padding:9px 13px;transition:all .2s}
+.input-bar:focus-within{border-color:var(--accent);background:#fff;box-shadow:0 0 0 3px rgba(37,99,235,.08)}
+#qi{flex:1;border:none;background:transparent;font-size:13.5px;color:var(--text);resize:none;outline:none;max-height:100px;min-height:21px;font-family:inherit;line-height:1.5}
+#qi::placeholder{color:var(--muted)}
+.send-btn{width:32px;height:32px;background:var(--accent);border:none;border-radius:7px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .15s}
+.send-btn:hover{background:var(--accent-h)}.send-btn:active{transform:scale(.95)}.send-btn:disabled{background:#c5d0e6;cursor:not-allowed}
+.input-hint{text-align:center;font-size:11px;color:var(--muted);margin-top:7px}
+
+.divider-line{height:1px;background:var(--border);margin:4px 0}
+.no-anomaly{padding:11px 14px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:7px;font-size:13px;color:#166534;display:flex;align-items:center;gap:8px}
+
+/* wow table */
+.wow-section{margin-bottom:2px}
+.wow-hd{font-size:12px;font-weight:600;color:var(--muted);margin-bottom:6px;display:flex;align-items:center;gap:6px}
+</style>
+</head>
+<body>
+
+<!-- ── Sidebar ───────────────────────────── -->
+<aside class="sidebar">
+  <div class="sb-logo">
+    <div class="sb-logo-mark">
+      <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+    </div>
+    <div>
+      <div class="sb-logo-name">Asking Vector</div>
+      <div class="sb-logo-sub">Advertiser Insights Agent</div>
+    </div>
+  </div>
+
+  <div class="sb-section">Quick Actions</div>
+  <button class="sb-btn" onclick="firePreset(0,this)">
+    What're the top issues that require my attention?
+  </button>
+  <button class="sb-btn" onclick="firePreset(1,this)">
+    How are my campaigns performing overall?
+  </button>
+  <button class="sb-btn" onclick="firePreset(2,this)">
+    What are the week-over-week (WoW) performance changes?
+  </button>
+  <button class="sb-btn" onclick="firePreset(3,this)">
+    What're my top-performing/under-performing campaigns?
+  </button>
+
+  <div class="sb-divider"></div>
+  <div class="sb-section">Spend & Scale Diagnose</div>
+  <button class="sb-btn" onclick="fillQ('Why did the spend of gameid:500253218 decline WoW?')">
+    <span>gameid:500253218 WoW decline</span>
+  </button>
+  <button class="sb-btn" onclick="fillQ('Why did the spend of campaignid:6971dcad477ae8984b4a6dfa decline WoW?')">
+    <span>campaignid:6971dcad... decline</span>
+  </button>
+
+  <div class="sb-footer">
+    Asking Vector · Demo Mode<br>Advertiser Insights Agent Phase 1
+  </div>
+</aside>
+
+<!-- ── Main ─────────────────────────────── -->
+<div class="main">
+  <header class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-title">Asking Vector</div>
+      <span class="topbar-badge">Phase 1 · Demo</span>
+    </div>
+    <div class="topbar-status"><span class="status-dot"></span>Active</div>
+  </header>
+
+  <div class="messages" id="msgs">
+    <div class="welcome" id="wlc">
+      <div class="wlc-icon"></div>
+      <h2 class="wlc-title">Ask Vector</h2>
+      <p class="wlc-sub">Your AI-powered campaign insights assistant.<br>Ask me anything about your campaign performance, spend issues, or optimization opportunities.</p>
+      <div class="wlc-chips">
+        <div class="chip" onclick="firePreset(0)"><span>What're the top issues that require my attention?</span><span class="ch-arrow">›</span></div>
+        <div class="chip" onclick="firePreset(1)"><span>How are my campaigns performing overall?</span><span class="ch-arrow">›</span></div>
+        <div class="chip" onclick="firePreset(2)"><span>What are the week-over-week (WoW) performance changes?</span><span class="ch-arrow">›</span></div>
+        <div class="chip" onclick="firePreset(3)"><span>What're my top-performing/under-performing campaigns?</span><span class="ch-arrow">›</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="input-area">
+    <div class="input-bar">
+      <textarea id="qi" rows="1" placeholder="Ask about your campaigns, spend, or scale issues…" onkeydown="onKey(event)" oninput="resize(this)"></textarea>
+      <button class="send-btn" id="sbtn" onclick="send()" title="Send">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M14 8L2 2L5 8L2 14L14 8Z" fill="white"/></svg>
+      </button>
+    </div>
+    <div class="input-hint">Enter to send · Shift+Enter for new line</div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+//  MOCK DATA
+// ═══════════════════════════════════════════
+const MOCK = {
+  portfolio: {
+    period: "Mar 25–31 vs Mar 18–24",
+    total_spend_cur: 2847320,
+    total_spend_ref: 3124580,
+    pct_change: -8.9,
+    campaigns: [
+      {id:"6971dcad477ae8984b4a6dfa", name:"TK iOS US ROAS-H5",   game:"Take a kiss",       spend_cur:18240,   spend_ref:28150,  pct:-35.2, roas_cur:1.8,  roas_ref:3.1,  installs:12400, cvr:"2.1%", status:"under"},
+      {id:"69a79f0d72f827702923b52e", name:"mglb KR Android ROAS", game:"Last Asylum",       spend_cur:33946,   spend_ref:70811,  pct:-52.1, roas_cur:2.1,  roas_ref:2.3,  installs:9800,  cvr:"3.4%", status:"under"},
+      {id:"68b8fcaebf3c3cd17be15591", name:"mxcj iOS US D7 ROAS",  game:"Block Blast!",      spend_cur:193079,  spend_ref:178430, pct:+8.2,  roas_cur:3.8,  roas_ref:3.6,  installs:41200, cvr:"5.2%", status:"top"},
+      {id:"69b7da5b93de010234abc123", name:"mglb JP Android CPE",  game:"Last Asylum",       spend_cur:25820,   spend_ref:27682,  pct:-6.7,  roas_cur:2.9,  roas_ref:3.0,  installs:6100,  cvr:"4.1%", status:"avg"},
+      {id:"696e4038a7d1a35d95ffd9ee", name:"TK iOS Global CPI",   game:"Take a kiss",       spend_cur:44210,   spend_ref:38900,  pct:+13.7, roas_cur:4.1,  roas_ref:3.7,  installs:28300, cvr:"6.3%", status:"top"},
+      {id:"69aaa69184201b99ebd46979", name:"mglb JP ROAS-H5 c04",  game:"Last Asylum",       spend_cur:4810,    spend_ref:29289,  pct:-83.6, roas_cur:0.9,  roas_ref:2.2,  installs:1200,  cvr:"1.8%", status:"under"},
+    ],
+  },
+  attention: [
+    {
+      type: "mmp_validation",
+      severity: "crit",
+      title: "MMP validation",
+      subtitle: "Required MMP integration fixes",
+      campaigns_affected: 3,
+      description: "Integration-blocking issues detected for one or more campaigns. These issues can severely impact performance. Resolve issues to ensure accurate tracking and delivery. We recommend that you update your MMP settings as soon as possible. Starting April 9, unresolved required integration fixes can prevent newly created or paused campaigns from going live.",
+      cta: "Review MMP Settings",
+    },
+    {
+      type: "spend_decline_region",
+      severity: "crit",
+      campaign_id: "7847818",
+      campaign_name: "PP-ROAS-APAC-O-MED-PL",
+      spend_change: -56,
+      window: "past 7 days",
+      filter_reason_pct: 78,
+      filter_reason: "region targeting",
+      root_cause_detail: "78% of rejected candidates are blocked by region targeting. Campaign eligible in only 3 markets, severely limiting auction participation.",
+      current_regions: ["US","UK","DE"],
+      missed_regions: [{c:"JP",lift:"+18%"},{c:"KR",lift:"+12%"},{c:"BR",lift:"+9%"},{c:"CA",lift:null},{c:"AU",lift:null}],
+      recommendation: "Expand targeting to JP, KR, and BR. These markets show high auction demand matching your campaign goals. Adding 3 regions could increase eligible impressions by up to +35%.",
+      estimated_impact: "+35% scale with JP, KR, BR · CPI impact neutral",
+      cta: "Expand Region Targeting",
+    },
+    {
+      type: "spend_decline_budget",
+      severity: "warn",
+      campaign_id: "5934102",
+      campaign_name: "TK-CPI-US-IOS-SCALE",
+      spend_change: -60,
+      window: "past 7 days",
+      filter_reason_pct: 60,
+      filter_reason: "budget cap / pacing",
+      root_cause_detail: "60% of rejected candidates are filtered due to daily budget cap. Daily budget ($200) exhausted by 13:30 local time, blocking all afternoon and evening delivery.",
+      budget_daily: "$200",
+      budget_utilization: "99.8%",
+      exhaustion_time: "~13:30 local",
+      delivery_blocked: "~10.5 hrs/day",
+      recommendation: "Increase daily budget from $200 to $350 to extend delivery into afternoon and evening windows. Current budget cap is the primary constraint on spend scale.",
+      estimated_impact: "+60% scale with $350/day · eCPI remains stable",
+      cta: "Adjust Campaign Budget",
+    },
+  ],
+  network_incident: {
+    id:"INC-2026-0325-001",
+    title:"Ad Exchange Publisher Platform Slowdown",
+    severity:"P2 — High",
+    status:" Monitoring",
+    start:"2026-03-25 09:14 UTC",
+    updated:"2026-03-31 18:00 UTC",
+    affected_campaigns:"~7,519 campaigns (~50% of active demand)",
+    description:"A major ad exchange publisher experienced reduced ad request volume due to infrastructure maintenance overrun. This caused widespread delivery slowdown across Unity Ads demand campaigns globally.",
+    impact:"Average spend decline of 35–45% for affected advertisers. Campaigns targeting T1 markets (US, JP, KR, EU) most impacted.",
+    mitigation:"Unity engineering is coordinating with publisher partners on traffic recovery. Partial recovery observed from Mar 30.",
+    expected_resolution:"2026-04-02",
+    advertiser_action:"No action required. This is a supply-side infrastructure issue. Campaign settings remain optimal; spend will recover automatically as publisher traffic restores.",
+  },
+  isolated: {
+    campaign_id:"6971dcad477ae8984b4a6dfa",
+    campaign_name:"TK iOS US ROAS-H5",
+    game:"Take a kiss",
+    spend_cur:18240, spend_ref:28150, pct:-35.2,
+    network_pct:22.3,
+    step2:[
+      {
+        type:"roas_target_increase", severity:"warn",
+        title:"tROAS Target Raised",
+        detail:"tROAS increased from 2.50 → 3.20 (+28%) across 12 countries",
+        date:"2026-03-22", countries:"US, JP, KR, GB, DE, FR, CA, AU, SG, TW, HK, TH",
+        impact:"Higher tROAS restricts eligible inventory — campaigns only compete for high-ROAS placements, significantly reducing available auctions.",
+        recommendation:"Lower tROAS back to 2.50 if scale is the priority. The +28% increase reduced eligible auctions by an estimated 35%.",
+      },
+      {
+        type:"bid_decrease", severity:"crit",
+        title:"Base Bid Decreased — JP Market",
+        detail:"Base bid decreased from $1.20 → $0.95 (−20.8%) for country: JP",
+        date:"2026-03-20", countries:"JP",
+        impact:"JP bid ($0.95) fell below JP floor price range ($1.20–$1.80). Campaign effectively excluded from JP inventory.",
+        recommendation:"Restore JP base bid to ≥$1.20 to re-enter JP auctions. JP represents ~18% of this campaign's prior spend.",
+      },
+    ],
+    step3:{
+      filter:{
+        pass_rate:0.42, benchmark:0.68,
+        reasons:[
+          {
+            taxonomy:"Creative Does Not Fit Placement", pct:45, severity:"crit",
+            detail:"Campaign lacks vertical video format (9:16, 15–30s) required by rewarded video and fullscreen interstitial placements.",
+            show_detail:"Impacted placement types: Rewarded Video (fullscreen), Interstitial (fullscreen)\nEligible creatives: 2 horizontal video (16:9) only\nRecommended format: Vertical video 9:16 · 15–30s",
+            recommendation:"Add vertical video creative (9:16 aspect ratio, 15–30s) to unlock rewarded video and fullscreen inventory, unlocking ~45% of currently rejected candidates.",
+          },
+          {
+            taxonomy:"Bid Lower Than Floor Price", pct:32, severity:"crit",
+            detail:"Current JP bid ($0.95) is below JP floor price range $1.20–$1.80. 32% of candidates rejected before auction.",
+            show_detail:"Current bid: $0.95\nFloor price range (JP): $1.20 – $1.80\nRejections due to floor mismatch: 32%",
+            recommendation:"Increase JP country bid to at least $1.20 to clear floor price and access JP inventory.",
+          },
+          {
+            taxonomy:"Filtered by Pacing (Budget)", pct:15, severity:"warn",
+            detail:"Daily budget ($500) exhausted by midday. 15% of candidates filtered due to budget cap.",
+            show_detail:"Daily budget: $500\nBudget utilization: 99.6% (by 14:00 local)\nEstimated delivery lost to pacing: 15%",
+            recommendation:"Increase daily budget to $700+ or enable smart budget auto-adjustment to reduce pacing-based filtering.",
+          },
+          {taxonomy:"Other Filters", pct:8, severity:"info", detail:"Minor contributions from category targeting, OS version targeting, etc.", recommendation:"Review campaign targeting settings for further optimization."},
+        ],
+      },
+      ranking:{
+        win_rate:0.28, benchmark:0.52,
+        bbb:{discount:0.08, threshold:0.15, ok:true, detail:"BBB discount factor 8% — below 15% threshold. Not a primary issue."},
+        bid:{
+          status:"crit", campaign_bid:0.95, avg_winning:1.42, gap:-33,
+          detail:"Campaign adjusted bid ($0.95) is 33% below average winning bid ($1.42). Campaign loses majority of auctions to higher-bidding competitors.",
+          recommendation:"Increase target bid to ≥$1.40 to reach median auction competitiveness. A $0.45 bid increase is estimated to recover ~30% win rate.",
+        },
+        cvr:{
+          status:"warn", campaign_cvr:2.1, benchmark_cvr:3.8, gap:-44.7,
+          detail:"Campaign observed CVR (2.1%) is 44.7% below category benchmark (3.8%). Lower install rate reduces campaign value score in ranking.",
+          recommendation:"Refresh creatives with higher-performing formats. A/B test new creatives targeting CTR improvement to lift CVR toward benchmark.",
+        },
+        prediction_bias:{
+          predicted:3.5, observed:2.1, deviation:-40,
+          detail:"[Internal] Predicted CVR (3.5%) overestimates observed CVR (2.1%) by 40%. CVR model may need recalibration for this campaign type.",
+        },
+      },
+      mediation:{
+        winnable_rate:0.38, benchmark_wr:0.61,
+        winnable_win_rate:0.71, benchmark_wwr:0.65,
+        low_wr:{
+          status:"crit", ecpm:1.85, market_bid:2.40,
+          detail:"Campaign eCPM ($1.85) is below median market bid ($2.40). Only 38% of submitted auctions are considered winnable externally.",
+          recommendation:"Increase bid to improve eCPM above $2.40 median. This will expand the winnable auction pool and directly improve delivery scale.",
+        },
+        underbidding:{
+          status:"ok",
+          detail:"Winnable Win Rate (71%) is above benchmark (65%). Within winnable auctions, the campaign is bidding competitively. No underbidding issue in winnable space.",
+        },
+      },
+    },
+  },
+  // ── Q2: top 3 campaigns with >15% spend decline ──
+  topDeclining: [
+    {
+      id:"69aaa69184201b99ebd46979", name:"mglb JP ROAS-H5 c04", game:"Last Asylum",
+      spend_cur:4810, spend_ref:29289, pct:-83.6,
+      root_cause_type:"bid",
+      root_cause:"Base bid dropped below floor price — campaign excluded from JP auctions",
+      root_cause_detail:"Base bid reduced from $1.20 → $0.95 in JP. JP floor price range is $1.05–$1.80. Campaign is now ineligible in 82% of JP auctions, which represented the majority of prior delivery.",
+      bars:[
+        {label:"Bid Below Floor Price",  pct:82, c:"#dc2626"},
+        {label:"Creative Format Mismatch",pct:12,c:"#f97316"},
+        {label:"Filtered by Pacing",     pct:6,  c:"#9ca3af"},
+      ],
+      recommendation:"Restore base bid to ≥$1.10 in JP to regain auction eligibility. Consider A/B testing $1.10 vs $1.20 to find the optimal balance between scale and efficiency.",
+      impact:"+75% spend recovery in JP · estimated eCPI $2.1–2.4",
+    },
+    {
+      id:"69a79f0d72f827702923b52e", name:"mglb KR Android ROAS", game:"Last Asylum",
+      spend_cur:33946, spend_ref:70811, pct:-52.1,
+      root_cause_type:"filter",
+      root_cause:"Region targeting too narrow — 78% of candidates blocked before auction",
+      root_cause_detail:"Campaign eligible in only 3 markets (US, UK, DE). High-demand regions KR, JP, BR, AU excluded, representing 68% of available auction volume for this audience profile.",
+      bars:[
+        {label:"Excluded by Region Targeting",pct:78,c:"#dc2626"},
+        {label:"Creative Does Not Fit",       pct:14,c:"#f97316"},
+        {label:"Bid Below Floor",             pct:8, c:"#9ca3af"},
+      ],
+      recommendation:"Expand region targeting to include KR, JP, and BR. These markets show strong demand signal matching this campaign's audience. Estimated +45% scale recovery.",
+      impact:"+45% scale with KR, JP, BR · CPI impact neutral",
+    },
+    {
+      id:"6971dcad477ae8984b4a6dfa", name:"TK iOS US ROAS-H5", game:"Take a kiss",
+      spend_cur:18240, spend_ref:44850, pct:-59.3,
+      root_cause_type:"budget",
+      root_cause:"Daily budget cap exhausted by midday — blocking 10+ hrs of delivery per day",
+      root_cause_detail:"Daily budget ($150) reaches 99.6% utilization by ~12:45 local time. The 13:00–23:00 delivery window is entirely blocked, representing the highest-volume hours for this audience segment.",
+      bars:[
+        {label:"Filtered by Pacing (Budget Cap)",pct:72,c:"#d97706"},
+        {label:"Bid Below Floor Price",           pct:18,c:"#f97316"},
+        {label:"Creative Mismatch",               pct:10,c:"#9ca3af"},
+      ],
+      recommendation:"Increase daily budget from $150 to $280 to restore afternoon/evening delivery. Alternatively, adjust pacing to spread delivery more evenly throughout the day.",
+      impact:"+50% scale with $280/day · eCPI stable at $2.85",
+    },
+  ],
+  // ── Q3: game-level WoW KPI table ──
+  wowMetrics: {
+    period:"Mar 25–31 vs Mar 18–24",
+    rows:[
+      {metric:"Total Spend",       icon:"", cur:"$196,986", ref:"$333,880", pct:-41.0, good_dir:"up",   note:"Significant spend drop driven by delivery issues"},
+      {metric:"CPI",               icon:"", cur:"$2.85",    ref:"$2.40",    pct:+18.8, good_dir:"down", note:"Higher CPI = less efficient delivery mix"},
+      {metric:"Cost Per Install",  icon:"", cur:"$2.85",    ref:"$2.40",    pct:+18.8, good_dir:"down", note:"Same as CPI — blended average across all campaigns"},
+      {metric:"CVR",               icon:"", cur:"2.1%",     ref:"3.8%",     pct:-44.7, good_dir:"up",   note:"Low CVR weakens bid competitiveness and reduces scale"},
+      {metric:"D7 Retention Rate", icon:"", cur:"28.3%",    ref:"31.0%",    pct:-8.7,  good_dir:"up",   note:"Slight decline; monitor for further movement"},
+      {metric:"D7 ROAS",           icon:"", cur:"1.2x",     ref:"1.8x",     pct:-33.3, good_dir:"up",   note:"Full D7 ROAS reporting coming soon"},
+    ],
+    summary:"Spend dropped −41% WoW. The primary drivers are CVR deterioration (−44.7%) and bid-floor mismatches reducing auction participation. Rising CPI (+18.8%) signals efficiency loss. D7 ROAS shows downstream quality impact.",
+  },
+  // ── Q4: campaign ranking by selectable metric ──
+  rankingMetrics:[
+    {key:"Spend Growth",   desc:"WoW spend change (scale momentum)",
+     top:   {id:"68b8fcaebf3c3cd17be15591", name:"mxcj iOS US D7 ROAS",  val:"+8.2%",       abs:"+$14.6K",  detail:"Best-scaling campaign; broad US iOS market reach"},
+     under: {id:"69aaa69184201b99ebd46979", name:"mglb JP ROAS-H5 c04",  val:"−83.6%",      abs:"−$24.5K",  detail:"Near-zero delivery due to bid below floor in JP"}},
+    {key:"CPI Efficiency", desc:"Cost per install (lower = better)",
+     top:   {id:"68b8fcaebf3c3cd17be15591", name:"mxcj iOS US D7 ROAS",  val:"$1.85 CPI",   abs:null,       detail:"35% below portfolio average; efficient inventory mix"},
+     under: {id:"69aaa69184201b99ebd46979", name:"mglb JP ROAS-H5 c04",  val:"$5.20 CPI",   abs:null,       detail:"4× above portfolio avg; driven by bid floor mismatch in JP"}},
+    {key:"CVR",            desc:"Click-to-install conversion rate",
+     top:   {id:"696e4038a7d1a35d95ffd9ee", name:"TK iOS Global CPI",    val:"6.3% CVR",    abs:null,       detail:"Strongest creative-audience fit in portfolio"},
+     under: {id:"69aaa69184201b99ebd46979", name:"mglb JP ROAS-H5 c04",  val:"1.8% CVR",    abs:null,       detail:"Low CVR weakens bid competitiveness; below 2% threshold"}},
+    {key:"D7 ROAS",        desc:"7-day return on ad spend",
+     top:   {id:"696e4038a7d1a35d95ffd9ee", name:"TK iOS Global CPI",    val:"4.1× D7 ROAS",abs:null,       detail:"Highest quality users in portfolio; tier-1 market focus"},
+     under: {id:"69aaa69184201b99ebd46979", name:"mglb JP ROAS-H5 c04",  val:"0.9× D7 ROAS",abs:null,       detail:"Below 1× — campaign spending more than it earns in 7 days"}},
+    {key:"Install Volume", desc:"Total installs this week",
+     top:   {id:"68b8fcaebf3c3cd17be15591", name:"mxcj iOS US D7 ROAS",  val:"41,200",      abs:null,       detail:"Highest volume; broad reach in US market"},
+     under: {id:"69aaa69184201b99ebd46979", name:"mglb JP ROAS-H5 c04",  val:"1,200",        abs:null,       detail:"Near-zero installs; delivery almost fully blocked"}},
+  ],
+};
+
+// ═══════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════
+let state = {
+  pending: null,           // waiting for entity clarification (legacy)
+  pendingMetricFor: null,  // 'ranking' → waiting for metric selection in Q4
+};
+
+// Simulates the game_id known from the user's logged-in dashboard session
+const SESSION_GAME_ID = "500232905";
+const SESSION_GAME_NAME = "Last Asylum: Plague";
+
+// ═══════════════════════════════════════════
+//  INTENT PARSER
+// ═══════════════════════════════════════════
+function parseIntent(q) {
+  const ql = q.toLowerCase();
+  const intent = {
+    raw: q,
+    analysis_type: null,
+    entity_type: null,
+    entity_id: null,
+    metrics: [],
+    time_range: "WoW (this week vs last week)",
+    missing: [],
+  };
+
+  // Entity — always resolved: explicit in query or falls back to session (logged-in user)
+  const gmatch = ql.match(/game[_ ]?id[:\s]+(\d+)/);
+  const cmatch = ql.match(/campaign[_ ]?id[:\s]+([a-f0-9]{20,})/);
+  if (gmatch)      { intent.entity_type="game";     intent.entity_id=gmatch[1]; intent.entity_source="query"; }
+  else if (cmatch) { intent.entity_type="campaign";  intent.entity_id=cmatch[1]; intent.entity_source="query"; }
+  else             { intent.entity_type="game";     intent.entity_id=SESSION_GAME_ID; intent.entity_source="session"; }
+
+  // Time range
+  if (/last\s+(\d+)\s+day/.test(ql)) {
+    const d = ql.match(/last\s+(\d+)\s+day/)[1];
+    intent.time_range = `Last ${d} days`;
+  } else if (/wow|week.over.week/i.test(ql)) {
+    intent.time_range = "WoW (this week vs last week)";
+  }
+
+  // Analysis type + metrics (only spend/scale supported now)
+  if (/top issue|attention|problem|alert/i.test(ql)) {
+    intent.analysis_type = "Top issues & alerts";
+    intent.metrics = ["spend","scale"];
+  } else if (/performing overall|overall perf|how are my campaign/i.test(ql)) {
+    intent.analysis_type = "Campaign performance overview";
+    intent.metrics = ["spend","scale"];
+  } else if (/wow|week.over.week|weekly change|performance change/i.test(ql)) {
+    intent.analysis_type = "Week-over-week performance changes";
+    intent.metrics = ["spend","scale"];
+  } else if (/top.performing|under.perform|ranking|best|worst/i.test(ql)) {
+    intent.analysis_type = "Campaign performance ranking";
+    intent.metrics = ["spend","scale"];
+  } else if (/spend.*declin|scale.*declin|spend.*drop|why.*spend|why.*scale/i.test(ql)) {
+    intent.analysis_type = "Spend / scale decline diagnosis";
+    intent.metrics = ["spend","scale"];
+  } else {
+    intent.analysis_type = "General campaign inquiry";
+    intent.metrics = ["spend","scale"];
+  }
+
+  return intent;
+}
+
+// ═══════════════════════════════════════════
+//  UI HELPERS
+// ═══════════════════════════════════════════
+const msgs = document.getElementById("msgs");
+
+function esc(s) {
+  return String(s)
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;").replace(/\n/g,"<br>");
+}
+
+function scrollBot() { msgs.scrollTop = msgs.scrollHeight; }
+
+function hideWelcome() { const w=document.getElementById("wlc"); if(w) w.remove(); }
+
+function addUserMsg(text) {
+  hideWelcome();
+  const d = document.createElement("div");
+  d.className = "msg user";
+  d.innerHTML = `<div class="bubble">${esc(text)}</div>`;
+  msgs.appendChild(d); scrollBot();
+}
+
+function addLoading(steps) {
+  const d = document.createElement("div");
+  d.className = "msg assistant"; d.id = "loading-el";
+  const rows = steps.map((s,i)=>`<div class="lstep ${i===0?'active':''}" id="ls${i}"><span class="lstep-dot"></span>${esc(s)}</div>`).join("");
+  d.innerHTML = `<div class="bubble"><div class="loading-wrap"><div class="spinner"></div><div class="loading-steps"><div style="font-weight:600;font-size:13px;margin-bottom:6px;color:#374151">Analyzing…</div>${rows}</div></div></div>`;
+  msgs.appendChild(d); scrollBot();
+  let idx=0;
+  const iv = setInterval(()=>{
+    const prev=document.getElementById(`ls${idx}`);
+    if(prev){prev.classList.remove("active");prev.classList.add("done");}
+    idx++;
+    const cur=document.getElementById(`ls${idx}`);
+    if(cur) cur.classList.add("active"); else clearInterval(iv);
+  }, 2200);
+  d._iv = iv;
+  return d;
+}
+
+function removeLoading() {
+  const el = document.getElementById("loading-el");
+  if(el){ clearInterval(el._iv); el.remove(); }
+}
+
+function addAssistant(html) {
+  removeLoading();
+  const d = document.createElement("div");
+  d.className = "msg assistant";
+  d.innerHTML = `<div class="bubble">${html}</div>`;
+  msgs.appendChild(d); scrollBot();
+}
+
+// ═══════════════════════════════════════════
+//  INTENT CARD HTML
+// ═══════════════════════════════════════════
+function intentHtml(intent) {
+  const sessionNote = intent.entity_source === "session"
+    ? `<span style="font-size:10px;color:var(--muted);margin-left:6px;background:#f1f5f9;padding:1px 6px;border-radius:10px;border:1px solid var(--border)">from session</span>`
+    : `<span style="font-size:10px;color:var(--muted);margin-left:6px;background:#f0fdf4;padding:1px 6px;border-radius:10px;border:1px solid #bbf7d0">from query</span>`;
+
+  const entityRow = `<div class="intent-label">Entity</div><div class="intent-value">
+    <span class="ok-tag">✓</span> ${intent.entity_type} · <strong>${intent.entity_id}</strong>${sessionNote}
+  </div>`;
+
+  const metricChips = intent.metrics.map(m=>`<code style="background:#eff6ff;color:#1e40af;padding:2px 7px;border-radius:4px;font-size:11px;border:1px solid #bfdbfe">${m}</code>`).join(" ");
+  const comingSoon = `<span style="font-size:11px;color:var(--muted);margin-left:6px">· ROAS · CPI · CVR <span style="font-size:10px;background:#f8f0ff;color:#7c3aed;padding:1px 6px;border-radius:10px;border:1px solid #e9d5ff">coming soon</span></span>`;
+
+  return `<div class="intent-card">
+    <div class="intent-header"> Query Understanding</div>
+    <div class="intent-body">
+      <div class="intent-label">Analysis Type</div><div class="intent-value">${esc(intent.analysis_type)}</div>
+      ${entityRow}
+      <div class="intent-label">Metrics</div><div class="intent-value">${metricChips}${comingSoon}</div>
+      <div class="intent-label">Time Range</div><div class="intent-value"><strong>${esc(intent.time_range)}</strong></div>
+    </div>
+  </div>`;
+}
+
+function clarifyHtml(missing) {
+  return `<div class="clarify-card">
+    <div class="clarify-header"> Missing Information</div>
+    <div class="clarify-body">
+      To complete this analysis, please provide: <strong>${missing.join(", ")}</strong><br>
+      <div class="clarify-examples">
+        <span class="clarify-eg" onclick="fillQ('gameid:500232905')">gameid:500232905</span>
+        <span class="clarify-eg" onclick="fillQ('campaignid:6971dcad477ae8984b4a6dfa')">campaignid:6971dcad477ae8984b4a6dfa</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ═══════════════════════════════════════════
+//  RESPONSE GENERATORS
+// ═══════════════════════════════════════════
+
+function genTopIssues() {
+  const cards = MOCK.attention.map((a,i) => renderAttentionCard(a, i+1)).join("");
+  return `<div class="res-header"><span>Top issues requiring your attention · Rolling 7-day window</span></div>
+  <div class="res-body">
+    <div style="font-size:13px;color:var(--muted);margin-bottom:4px">Found <strong style="color:var(--text)">3 issues</strong> requiring your attention:</div>
+    ${cards}
+  </div>`;
+}
+
+function renderAttentionCard(a, rank) {
+  // ── Issue 1: MMP Validation ──
+  if (a.type === "mmp_validation") {
+    return `<div style="border:1px solid #fecaca;border-radius:8px;overflow:hidden;background:#fff;margin-bottom:2px">
+      <div style="background:#fef2f2;border-bottom:1px solid #fecaca;padding:10px 14px;display:flex;align-items:center;justify-content:space-between">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="background:#dc2626;color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px">REQUIRED ACTION</span>
+          <span style="font-weight:700;font-size:13.5px">${esc(a.title)}</span>
+          <span style="color:var(--muted);font-size:12px">${esc(a.subtitle)}</span>
+        </div>
+        <span style="font-size:11px;color:var(--muted)">${a.campaigns_affected} campaigns affected</span>
+      </div>
+      <div style="padding:14px 16px">
+        <div style="font-size:13px;line-height:1.65;color:var(--text)">${esc(a.description)}</div>
+      </div>
+      <div style="border-top:1px solid #fecaca;padding:0">
+        <button onclick="void(0)" style="width:100%;padding:10px;background:#dc2626;color:#fff;border:none;font-size:13px;font-weight:600;cursor:pointer;letter-spacing:.02em">${esc(a.cta)} →</button>
+      </div>
+      <div style="padding:7px 14px;font-size:11px;color:var(--muted);background:#fafafa;border-top:1px solid #fecaca">Generated by Unity Ads Intelligence · Updated 2 hours ago · Rolling 7-day window</div>
+    </div>`;
+  }
+
+  // ── Issues 2 & 3: Spend Decline cards (matching screenshot layout) ──
+  const isRegion = a.type === "spend_decline_region";
+  const isBudget = a.type === "spend_decline_budget";
+  const sevColor = a.severity === "crit" ? "#dc2626" : "#d97706";
+  const sevBg    = a.severity === "crit" ? "#fef2f2" : "#fffbeb";
+  const sevBorder= a.severity === "crit" ? "#fecaca" : "#fde68a";
+
+  // Left column
+  let leftExtra = "";
+  if (isRegion) {
+    const regionChips = a.current_regions.map(r=>`<span style="display:inline-block;padding:2px 8px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:4px;font-size:11.5px;font-weight:600;color:#1e40af;margin:2px">${r}</span>`).join("");
+    const missedChips = a.missed_regions.map(r=>`<span style="display:inline-block;padding:2px 8px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:4px;font-size:11.5px;font-weight:600;color:#166534;margin:2px">${r.c}${r.lift?` <span style="font-weight:400">${r.lift}</span>`:""}</span>`).join("");
+    leftExtra = `
+      <div style="margin-top:10px">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:4px">Current Targeted Regions</div>
+        <div>${regionChips}</div>
+      </div>
+      <div style="margin-top:8px">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:4px">Top Missed Regions</div>
+        <div>${missedChips}</div>
+      </div>`;
+  } else if (isBudget) {
+    leftExtra = `
+      <div style="margin-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:6px">
+        <div style="background:#fff8f1;border:1px solid #fed7aa;border-radius:6px;padding:8px 10px">
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px">Daily Budget</div>
+          <div style="font-size:16px;font-weight:700;color:var(--text)">${a.budget_daily}</div>
+        </div>
+        <div style="background:#fff8f1;border:1px solid #fed7aa;border-radius:6px;padding:8px 10px">
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px">Utilization</div>
+          <div style="font-size:16px;font-weight:700;color:var(--critical)">${a.budget_utilization}</div>
+        </div>
+        <div style="background:#fff8f1;border:1px solid #fed7aa;border-radius:6px;padding:8px 10px">
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px">Budget Exhausted By</div>
+          <div style="font-size:16px;font-weight:700;color:var(--warn)">${a.exhaustion_time}</div>
+        </div>
+        <div style="background:#fff8f1;border:1px solid #fed7aa;border-radius:6px;padding:8px 10px">
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px">Delivery Blocked</div>
+          <div style="font-size:16px;font-weight:700;color:var(--critical)">${a.delivery_blocked}</div>
+        </div>
+      </div>`;
+  }
+
+  // Filter reason bar
+  const filterBar = `<div style="margin-top:10px">
+    <div style="display:flex;align-items:center;justify-content:space-between;font-size:12px;margin-bottom:4px">
+      <span style="color:var(--muted)">Rejected candidates blocked by ${esc(a.filter_reason)}</span>
+      <span style="font-weight:700;color:${sevColor}">${a.filter_reason_pct}%</span>
+    </div>
+    <div style="height:7px;background:#e5e7eb;border-radius:4px;overflow:hidden">
+      <div style="width:${a.filter_reason_pct}%;height:100%;background:${sevColor};border-radius:4px"></div>
+    </div>
+  </div>`;
+
+  return `<div style="border:1px solid ${sevBorder};border-radius:8px;overflow:hidden;background:#fff;margin-bottom:2px">
+    <!-- Header -->
+    <div style="background:${sevBg};border-bottom:1px solid ${sevBorder};padding:9px 14px;display:flex;align-items:center;gap:8px;justify-content:space-between">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-family:monospace;font-size:11px;color:var(--muted);background:#fff;border:1px solid var(--border);padding:1px 7px;border-radius:4px">ID: ${a.campaign_id}</span>
+        <span style="background:${sevColor};color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px">Spend Decline</span>
+        <span style="font-weight:700;font-size:13px">${esc(a.campaign_name)}</span>
+      </div>
+      <span style="font-size:20px;font-weight:800;color:${sevColor}">${a.spend_change}%</span>
+    </div>
+    <!-- Sub-header -->
+    <div style="padding:7px 14px;background:${sevBg};border-bottom:1px solid ${sevBorder};font-size:12px;color:var(--muted)">
+      Spend dropped <strong style="color:${sevColor}">${Math.abs(a.spend_change)}%</strong> in the ${esc(a.window)} · ${a.filter_reason_pct}% of rejected candidates blocked by ${esc(a.filter_reason)}
+    </div>
+    <!-- Body: two columns -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;border-bottom:1px solid ${sevBorder}">
+      <!-- Left: Root Cause -->
+      <div style="padding:14px;border-right:1px solid ${sevBorder}">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:6px">Root Cause</div>
+        <div style="font-size:13px;line-height:1.6;color:var(--text)">${esc(a.root_cause_detail)}</div>
+        ${filterBar}
+        ${leftExtra}
+      </div>
+      <!-- Right: Recommendation -->
+      <div style="padding:14px">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:6px">Recommendation</div>
+        <div style="font-size:13px;line-height:1.6;color:var(--text);margin-bottom:12px">${esc(a.recommendation)}</div>
+        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:8px 11px;font-size:12px;color:#166534;margin-bottom:12px">
+          <strong>Estimated:</strong> ${esc(a.estimated_impact)}
+        </div>
+        <button onclick="void(0)" style="width:100%;padding:9px;background:var(--accent);color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer">${esc(a.cta)} →</button>
+      </div>
+    </div>
+    <div style="padding:7px 14px;font-size:11px;color:var(--muted);background:#fafafa">Generated by Unity Ads Intelligence · Updated 2 hours ago · Rolling 7-day window</div>
+  </div>`;
+}
+
+function genOverallPerf(entity_type, entity_id) {
+  const p = MOCK.portfolio;
+  const declining = MOCK.topDeclining;
+  const totalCampaigns = p.campaigns.length;
+  const declCount = p.campaigns.filter(c => c.pct < -15).length;
+
+  const diagCards = declining.map((c, i) => {
+    const sevColor = c.pct < -50 ? "#dc2626" : "#d97706";
+    const sevBg    = c.pct < -50 ? "#fef2f2" : "#fffbeb";
+    const sevBorder= c.pct < -50 ? "#fecaca" : "#fde68a";
+    const rcIcon = "";
+    const bars = c.bars.map(b => `
+      <div style="margin-bottom:6px">
+        <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px">
+          <span style="color:var(--text)">${b.label}</span>
+          <span style="font-weight:700;color:${b.c}">${b.pct}%</span>
+        </div>
+        <div style="height:6px;background:#f3f4f6;border-radius:3px;overflow:hidden">
+          <div style="width:${b.pct}%;height:100%;background:${b.c};border-radius:3px"></div>
+        </div>
+      </div>`).join("");
+
+    return `<div style="border:1px solid ${sevBorder};border-radius:8px;overflow:hidden;background:#fff;margin-top:10px">
+      <!-- Header -->
+      <div style="background:${sevBg};border-bottom:1px solid ${sevBorder};padding:9px 14px;display:flex;align-items:center;justify-content:space-between">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <span style="font-size:12px;font-weight:700;color:#374151">#${i+1}</span>
+          <span style="font-family:monospace;font-size:11px;color:var(--muted);background:#fff;border:1px solid var(--border);padding:1px 7px;border-radius:4px">${c.id.substring(0,14)}…</span>
+          <span style="background:${sevColor};color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px">Spend Decline</span>
+          <span style="font-weight:700;font-size:13px">${esc(c.name)}</span>
+        </div>
+        <span style="font-size:20px;font-weight:800;color:${sevColor}">${c.pct}%</span>
+      </div>
+      <!-- Body: two columns -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0">
+        <!-- Root Cause -->
+        <div style="padding:13px 14px;border-right:1px solid ${sevBorder}">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:6px">Root Cause</div>
+          <div style="font-size:12.5px;font-weight:600;color:${sevColor};margin-bottom:6px">${rcIcon} ${esc(c.root_cause)}</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:10px">${esc(c.root_cause_detail)}</div>
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:6px">Rejection Breakdown</div>
+          ${bars}
+        </div>
+        <!-- Recommendation -->
+        <div style="padding:13px 14px">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:6px">Recommendation</div>
+          <div style="font-size:12.5px;line-height:1.65;color:var(--text);margin-bottom:10px">${esc(c.recommendation)}</div>
+          <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:8px 11px;font-size:12px;color:#166534;margin-bottom:12px">
+            <strong>Estimated impact:</strong> ${esc(c.impact)}
+          </div>
+          <button onclick="startDiagnose('campaign','${c.id}')" style="width:100%;padding:9px;background:var(--accent);color:#fff;border:none;border-radius:7px;font-size:12.5px;font-weight:600;cursor:pointer">Run full step-by-step diagnosis →</button>
+        </div>
+      </div>
+    </div>`;
+  }).join("");
+
+  return `<div class="res-header"><span>Campaign spend diagnosis · ${p.period}</span></div>
+  <div class="res-body">
+    <div class="overview-card">
+      <div class="ov-metrics">
+        <div class="ov-metric"><div class="lbl">Active Campaigns</div><div class="val neu">${totalCampaigns}</div></div>
+        <div class="ov-metric"><div class="lbl">Total Spend (This Week)</div><div class="val neu">$${(p.total_spend_cur/1e6).toFixed(2)}M</div></div>
+        <div class="ov-metric"><div class="lbl">WoW Spend Change</div><div class="val red">${p.pct_change}%</div></div>
+        <div class="ov-metric"><div class="lbl">Campaigns Declining &gt;15%</div><div class="val red">${declCount}</div></div>
+      </div>
+    </div>
+    <div style="font-size:13px;color:var(--text);margin-bottom:2px">
+      Automatically diagnosed all <strong>${totalCampaigns}</strong> campaigns. Found <strong style="color:var(--critical)">${declCount} campaigns</strong> with spend decline &gt;15% WoW. Showing top 3 by severity:
+    </div>
+    ${diagCards}
+    <div style="font-size:12px;color:var(--muted);margin-top:8px">Generated by Unity Ads Intelligence · Updated 2 hours ago · Rolling 7-day window</div>
+  </div>`;
+}
+
+function genWoW(entity_type, entity_id) {
+  const wm = MOCK.wowMetrics;
+  const rows = wm.rows.map(r => {
+    const isGood = r.good_dir === "up" ? r.pct >= 0 : r.pct <= 0;
+    const pctColor = isGood ? "var(--ok)" : (Math.abs(r.pct) > 20 ? "var(--critical)" : "var(--warn)");
+    const pctBg    = isGood ? "#f0fdf4" : (Math.abs(r.pct) > 20 ? "#fef2f2" : "#fffbeb");
+    const arrow    = r.pct > 0 ? "▲" : "▼";
+    const barW     = Math.min(Math.abs(r.pct), 100);
+    return `<tr>
+      <td>
+        <div style="font-weight:600;font-size:13px">${esc(r.metric)}</div>
+        ${r.note ? `<div style="font-size:11px;color:var(--muted);margin-top:2px">${esc(r.note)}</div>` : ''}
+      </td>
+      <td style="font-weight:700;font-size:13px">${esc(r.cur)}</td>
+      <td style="color:var(--muted)">${esc(r.ref)}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span style="background:${pctBg};color:${pctColor};font-weight:700;font-size:12px;padding:3px 9px;border-radius:20px;white-space:nowrap">${arrow} ${r.pct > 0 ? '+' : ''}${r.pct}%</span>
+        </div>
+        <div style="height:4px;background:#f3f4f6;border-radius:2px;margin-top:5px;overflow:hidden">
+          <div style="width:${barW}%;height:100%;background:${pctColor};border-radius:2px"></div>
+        </div>
+      </td>
+      <td style="font-size:11px;color:var(--muted);max-width:160px">${isGood ? 'On track' : (Math.abs(r.pct)>20?'Needs attention':'Monitor')}</td>
+    </tr>`;
+  }).join("");
+
+  return `<div class="res-header"><span>Week-over-week performance changes · Game ID: ${SESSION_GAME_ID} · ${wm.period}</span></div>
+  <div class="res-body">
+    <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:13px;line-height:1.65">
+      <strong>Summary:</strong> ${esc(wm.summary)}
+    </div>
+    <table class="perf-table">
+      <thead>
+        <tr>
+          <th>Metric</th>
+          <th>This Week<br><span style="font-weight:400;color:var(--muted);font-size:10px">Mar 25–31</span></th>
+          <th>Last Week<br><span style="font-weight:400;color:var(--muted);font-size:10px">Mar 18–24</span></th>
+          <th>WoW Change</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <div style="font-size:12px;color:var(--muted);margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
+      <strong>Spend/scale metrics</strong> are fully supported. ROAS · CPI · CVR diagnosis support <span style="background:#f8f0ff;color:#7c3aed;padding:1px 6px;border-radius:10px;border:1px solid #e9d5ff;font-size:10px">coming soon</span>
+    </div>
+  </div>`;
+}
+
+function genRanking(entity_type, entity_id) {
+  // Step 1: Show metric selection prompt
+  state.pendingMetricFor = 'ranking';
+  const metricChips = MOCK.rankingMetrics.map(m =>
+    `<div onclick="selectMetric('${m.key}')" style="cursor:pointer;border:1px solid var(--border);border-radius:8px;padding:10px 14px;background:#fff;transition:all .15s;hover:background:#eff6ff" onmouseover="this.style.borderColor='#2563eb';this.style.background='#eff6ff'" onmouseout="this.style.borderColor='#e5e7eb';this.style.background='#fff'">
+      <div style="font-weight:700;font-size:13px;color:var(--text)">${m.key}</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:2px">${m.desc}</div>
+    </div>`
+  ).join("");
+
+  return `<div class="res-header"><span>Campaign ranking · Select performance metric</span></div>
+  <div class="res-body">
+    <div style="font-size:13px;color:var(--text);margin-bottom:12px">
+      To rank your campaigns, which metric would you like to use to evaluate performance?
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+      ${metricChips}
+    </div>
+    <div style="font-size:12px;color:var(--muted)">Click a metric above or type your choice below (e.g. "CVR" or "D7 ROAS")</div>
+  </div>`;
+}
+
+function selectMetric(metricKey) {
+  state.pendingMetricFor = null;
+  addUserMsg(metricKey);
+  addLoading(["Loading campaign data…","Ranking by " + metricKey + "…","Identifying top and underperforming campaigns…"]);
+  setTimeout(() => {
+    removeLoading();
+    const m = MOCK.rankingMetrics.find(r => r.key === metricKey) || MOCK.rankingMetrics[0];
+    addAssistant(genRankingByMetric(m));
+  }, 2500);
+}
+
+function genRankingByMetric(m) {
+  const topCard = `<div style="border:1px solid #bbf7d0;border-radius:8px;overflow:hidden;background:#fff">
+    <div style="background:#f0fdf4;border-bottom:1px solid #bbf7d0;padding:9px 14px;display:flex;align-items:center;gap:8px">
+      
+      <span style="font-weight:700;color:#166534">Top Performing</span>
+      <span style="font-size:11px;color:var(--muted)">by ${m.key}</span>
+    </div>
+    <div style="padding:14px">
+      <div style="display:flex;align-items:start;justify-content:space-between;margin-bottom:8px">
+        <div>
+          <div style="font-weight:700;font-size:14px">${esc(m.top.name)}</div>
+          <div style="font-family:monospace;font-size:11px;color:var(--muted);margin-top:2px">${m.top.id.substring(0,14)}…</div>
+        </div>
+        <div style="background:#f0fdf4;color:#166534;font-weight:800;font-size:18px;padding:6px 14px;border-radius:8px;border:1px solid #bbf7d0">${esc(m.top.val)}</div>
+      </div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.6">${esc(m.top.detail)}</div>
+      ${m.top.abs ? `<div style="margin-top:6px;font-size:12px;color:#166534;font-weight:600">${esc(m.top.abs)} this period</div>` : ''}
+    </div>
+  </div>`;
+
+  const underCard = `<div style="border:1px solid #fecaca;border-radius:8px;overflow:hidden;background:#fff">
+    <div style="background:#fef2f2;border-bottom:1px solid #fecaca;padding:9px 14px;display:flex;align-items:center;gap:8px">
+      
+      <span style="font-weight:700;color:#991b1b">Underperforming</span>
+      <span style="font-size:11px;color:var(--muted)">by ${m.key}</span>
+    </div>
+    <div style="padding:14px">
+      <div style="display:flex;align-items:start;justify-content:space-between;margin-bottom:8px">
+        <div>
+          <div style="font-weight:700;font-size:14px">${esc(m.under.name)}</div>
+          <div style="font-family:monospace;font-size:11px;color:var(--muted);margin-top:2px">${m.under.id.substring(0,14)}…</div>
+        </div>
+        <div style="background:#fef2f2;color:#dc2626;font-weight:800;font-size:18px;padding:6px 14px;border-radius:8px;border:1px solid #fecaca">${esc(m.under.val)}</div>
+      </div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.6">${esc(m.under.detail)}</div>
+      ${m.under.abs ? `<div style="margin-top:6px;font-size:12px;color:#dc2626;font-weight:600">${esc(m.under.abs)} this period</div>` : ''}
+    </div>
+    <div style="border-top:1px solid #fecaca;padding:10px 14px;background:#fef9f9">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:8px">
+        Would you like to diagnose <strong>${esc(m.under.name)}</strong> to find the root cause of its underperformance and get recommendations?
+      </div>
+      <button onclick="startDiagnose('campaign','${m.under.id}')" style="padding:8px 18px;background:var(--accent);color:#fff;border:none;border-radius:7px;font-size:12.5px;font-weight:600;cursor:pointer">
+        Diagnose underperforming campaign →
+      </button>
+    </div>
+  </div>`;
+
+  return `<div class="res-header"><span>Campaign ranking by ${esc(m.key)} · Mar 25–31</span></div>
+  <div class="res-body">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      ${topCard}
+      ${underCard}
+    </div>
+    <div style="margin-top:10px;font-size:12px;color:var(--muted)">
+      Ranked across ${MOCK.portfolio.campaigns.length} active campaigns under game ID: ${SESSION_GAME_ID} · Generated by Unity Ads Intelligence
+    </div>
+  </div>`;
+}
+
+// ═══════════════════════════════════════════
+//  DIAGNOSE FLOW
+// ═══════════════════════════════════════════
+function genDiagnose(entity_type, entity_id) {
+  // Determine scenario
+  const isNetwork = (entity_type==='game' && entity_id==='500253218');
+  const d = MOCK.isolated;
+  const inc = MOCK.network_incident;
+
+  // Spend overview (same for both paths)
+  const spend_cur = isNetwork ? 196986 : d.spend_cur;
+  const spend_ref = isNetwork ? 333880 : d.spend_ref;
+  const pct = isNetwork ? -41.0 : d.pct;
+  const eName = isNetwork ? 'Last Asylum: Plague' : d.campaign_name;
+
+  let html = `<div class="res-header"><span>Spend/Scale Decline Diagnosis · ${entity_type} ${entity_id.substring(0,16)}… · WoW</span></div>
+  <div class="res-body">`;
+
+  // Overview
+  html += `<div class="overview-card">
+    <div class="ov-metrics">
+      <div class="ov-metric"><div class="lbl">Campaign / Game</div><div class="val neu" style="font-size:14px">${esc(eName)}</div></div>
+      <div class="ov-metric"><div class="lbl">Current Spend</div><div class="val neu">$${(spend_cur/1000).toFixed(1)}K</div></div>
+      <div class="ov-metric"><div class="lbl">Prior Spend</div><div class="val neu">$${(spend_ref/1000).toFixed(1)}K</div></div>
+      <div class="ov-metric"><div class="lbl">WoW Change</div><div class="val red">${pct}%</div></div>
+    </div>
+    <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:5px;padding:7px 10px;font-size:12.5px;color:#991b1b;display:flex;gap:7px">
+      <span>Significant spend decline detected (${pct}%). Threshold: &lt;−10%. Initiating step-by-step diagnosis.</span>
+    </div>
+  </div>`;
+
+  // ── STEP 1 ──
+  const netPct = isNetwork ? 50.5 : d.network_pct;
+  const isNetIssue = netPct >= 30;
+  html += `<div class="step-card">
+    <div class="step-hd"><span class="step-num">1</span>Network-Level Check</div>
+    <div class="step-body">
+      <div class="metric-row">
+        <div class="mr-label">Active campaigns on platform</div><div class="mr-val">14,887</div>
+      </div>
+      <div class="metric-row">
+        <div class="mr-label">Platform-wide spend change</div>
+        <div class="mr-val">${isNetwork?'−5.9% (all advertisers)':'−1.2% (normal fluctuation)'}</div>
+        <div class="mr-badge ${isNetIssue?'badge-crit':'badge-ok'}">${isNetIssue?' PLATFORM-WIDE':'✓ NORMAL'}</div>
+      </div>
+      <div class="metric-row">
+        <div class="mr-label">Campaigns with &gt;10% decline</div>
+        <div class="mr-val">${isNetwork?'7,519':'3,312'} <span class="mr-bench">(${netPct}% of active)</span></div>
+        <div class="mr-badge ${isNetIssue?'badge-crit':'badge-ok'}">${isNetIssue?'≥30% threshold':'Below 30% threshold'}</div>
+      </div>
+      <div class="finding ${isNetIssue?'warn':'ok'}">
+        <span class="finding-icon">${isNetIssue?'':''}</span>
+        <div class="finding-content">
+          <div class="finding-title">${isNetIssue?`Network-Level Decline — ${netPct}% of all platform campaigns declining`:`Isolated Issue — Only ${netPct}% of campaigns declining platform-wide`}</div>
+          <div class="finding-detail">${isNetIssue?
+            'The spend decline is a <strong>platform-wide phenomenon</strong> — the entire Unity Ads ad delivery system is experiencing reduced output, affecting the majority of advertisers. This is NOT caused by this campaign\'s settings. Proceeding to check for an active incident.' :
+            'Platform-wide spend is stable. This campaign\'s decline is an <strong>isolated issue</strong> specific to its own settings or competitive position. Proceeding to campaign-level diagnosis.'}</div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+
+  if (isNetIssue) {
+    // Network path: show incident and STOP
+    html += `<div class="incident-card">
+      <div class="incident-hd">🚨 Active Incident: ${esc(inc.title)}</div>
+      <div class="incident-body">
+        <div class="incident-row"><div class="ir-label">Incident ID</div><div class="ir-val">${esc(inc.id)}</div></div>
+        <div class="incident-row"><div class="ir-label">Severity</div><div class="ir-val">${esc(inc.severity)}</div></div>
+        <div class="incident-row"><div class="ir-label">Status</div><div class="ir-val">${inc.status}</div></div>
+        <div class="incident-row"><div class="ir-label">Started</div><div class="ir-val">${esc(inc.start)}</div></div>
+        <div class="incident-row"><div class="ir-label">Last Updated</div><div class="ir-val">${esc(inc.updated)}</div></div>
+        <div class="incident-row"><div class="ir-label">Affected Campaigns</div><div class="ir-val">${esc(inc.affected_campaigns)}</div></div>
+        <div class="incident-row"><div class="ir-label">Description</div><div class="ir-val">${esc(inc.description)}</div></div>
+        <div class="incident-row"><div class="ir-label">Impact</div><div class="ir-val">${esc(inc.impact)}</div></div>
+        <div class="incident-row"><div class="ir-label">Mitigation</div><div class="ir-val">${esc(inc.mitigation)}</div></div>
+        <div class="incident-row"><div class="ir-label">Expected Recovery</div><div class="ir-val">${esc(inc.expected_resolution)}</div></div>
+        <div class="incident-no-action"><span>ℹ</span><span><strong>Advertiser Action:</strong> ${esc(inc.advertiser_action)}</span></div>
+      </div>
+    </div>`;
+
+    html += `<div class="summary-card">
+      <div class="summary-hd"> Diagnosis Summary</div>
+      <div class="summary-body">
+        <div class="si"><span class="si-icon"></span><span><strong>Root Cause:</strong> Network-level publisher platform slowdown (supply-side incident)</span></div>
+        <div class="si"><span class="si-icon">📅</span><span><strong>Duration:</strong> Mar 25–31, 2026 (ongoing mitigation)</span></div>
+        <div class="si"><span class="si-icon"></span><span><strong>Action Required:</strong> None. Campaign settings are correct. Spend will recover automatically once publisher traffic is restored.</span></div>
+        <div class="si"><span class="si-icon">📬</span><span><strong>Follow-up:</strong> Unity team will notify via dashboard when incident is resolved.</span></div>
+      </div>
+    </div>`;
+
+  } else {
+    // Isolated path: Step 2 + Step 3
+    // ── STEP 2 ──
+    html += `<div class="step-card">
+      <div class="step-hd"><span class="step-num">2</span>Campaign Setting Changes</div>
+      <div class="step-body">`;
+
+    for (const ch of d.step2) {
+      html += `<div class="finding ${ch.severity==='crit'?'crit':'warn'}">
+        <span class="finding-icon">${ch.severity==='crit'?'':''}</span>
+        <div class="finding-content">
+          <div class="finding-title">${esc(ch.title)}</div>
+          <div class="finding-detail">
+            <strong>Change:</strong> ${esc(ch.detail)}<br>
+            <strong>Date:</strong> ${esc(ch.date)} &nbsp;·&nbsp; <strong>Countries:</strong> ${esc(ch.countries)}<br>
+            <strong>Impact:</strong> ${esc(ch.impact)}
+          </div>
+          <div class="finding-rec">${esc(ch.recommendation)}</div>
+        </div>
+      </div>`;
+    }
+    html += `</div></div>`;
+
+    // ── STEP 3 ──
+    const f = d.step3.filter;
+    const r = d.step3.ranking;
+    const m = d.step3.mediation;
+
+    html += `<div class="step-card">
+      <div class="step-hd"><span class="step-num">3</span>Ads Flow Pipeline Diagnosis</div>
+      <div class="step-body">`;
+
+    // 3.1 Filter
+    html += `<div style="font-weight:600;font-size:12.5px;color:#1e40af;margin-bottom:6px">Step 3.1 · Candidate Filter</div>`;
+    html += `<div class="metric-row">
+      <div class="mr-label">Filter pass-through rate</div>
+      <div class="mr-val">${(f.pass_rate*100).toFixed(0)}%</div>
+      <div class="mr-bench">Benchmark (60th pct): ${(f.benchmark*100).toFixed(0)}%</div>
+      <div class="mr-badge badge-crit"> BELOW BENCHMARK</div>
+    </div>`;
+    html += `<div class="reason-bar-wrap">`;
+    for (const reason of f.reasons) {
+      const fillClass = reason.severity==='crit'?'':reason.severity==='warn'?'warn':'ok';
+      html += `<div class="reason-bar-row">
+        <div class="rb-label">${esc(reason.taxonomy)}</div>
+        <div class="rb-track"><div class="rb-fill ${fillClass}" style="width:${reason.pct}%"></div></div>
+        <div class="rb-pct ${reason.severity==='crit'?'pct-r':reason.severity==='warn'?'pct-w':''}">${reason.pct}%</div>
+      </div>`;
+    }
+    html += `</div>`;
+
+    for (const reason of f.reasons) {
+      if (reason.severity === 'info') continue;
+      html += `<div class="finding ${reason.severity==='crit'?'crit':'warn'}">
+        <span class="finding-icon">${reason.severity==='crit'?'':''}</span>
+        <div class="finding-content">
+          <div class="finding-title">[Filter] ${esc(reason.taxonomy)} — ${reason.pct}% of rejections</div>
+          <div class="finding-detail">${esc(reason.detail)}${reason.show_detail?'<br><span style="font-family:monospace;font-size:11px;white-space:pre-line;display:block;margin-top:4px;padding:5px 8px;background:#f8faff;border-radius:4px">'+esc(reason.show_detail)+'</span>':''}</div>
+          <div class="finding-rec">${esc(reason.recommendation)}</div>
+        </div>
+      </div>`;
+    }
+
+    // 3.3 Ranking
+    html += `<div class="divider-line"></div>
+    <div style="font-weight:600;font-size:12.5px;color:#1e40af;margin:6px 0">Step 3.3 · Ranking Stage</div>`;
+    html += `<div class="metric-row">
+      <div class="mr-label">Auction win rate</div>
+      <div class="mr-val">${(r.win_rate*100).toFixed(0)}%</div>
+      <div class="mr-bench">Benchmark (60th pct): ${(r.benchmark*100).toFixed(0)}%</div>
+      <div class="mr-badge badge-crit"> BELOW BENCHMARK</div>
+    </div>`;
+
+    // 3.3.1 BBB
+    html += `<div class="finding ok">
+      <span class="finding-icon"></span>
+      <div class="finding-content">
+        <div class="finding-title">[3.3.1] BBB Discount — Not a Primary Issue</div>
+        <div class="finding-detail">${esc(r.bbb.detail)}</div>
+      </div>
+    </div>`;
+
+    // 3.3.2 Bid
+    html += `<div class="finding crit">
+      <span class="finding-icon"></span>
+      <div class="finding-content">
+        <div class="finding-title">[3.3.2] Bid Below Average Winning Bid</div>
+        <div class="finding-detail">
+          Campaign adjusted bid: <strong>$${r.bid.campaign_bid.toFixed(2)}</strong><br>
+          Avg winning bid (50th pct of internal winners): <strong>$${r.bid.avg_winning.toFixed(2)}</strong><br>
+          Gap: <strong style="color:var(--critical)">${r.bid.gap}% BELOW benchmark</strong><br>
+          ${esc(r.bid.detail)}
+        </div>
+        <div class="finding-rec">${esc(r.bid.recommendation)}</div>
+      </div>
+    </div>`;
+
+    // 3.3.3 CVR
+    html += `<div class="finding warn">
+      <span class="finding-icon"></span>
+      <div class="finding-content">
+        <div class="finding-title">[3.3.3] CVR Below Benchmark</div>
+        <div class="finding-detail">
+          Campaign observed CVR: <strong>${r.cvr.campaign_cvr}%</strong><br>
+          Benchmark CVR (50th pct of winners): <strong>${r.cvr.benchmark_cvr}%</strong><br>
+          Gap: <strong style="color:var(--warn)">${r.cvr.gap}%</strong><br>
+          ${esc(r.cvr.detail)}
+        </div>
+        <div class="finding-rec">${esc(r.cvr.recommendation)}</div>
+      </div>
+    </div>`;
+
+    // 3.3.4 Prediction bias (internal)
+    html += `<div class="finding info">
+      <span class="finding-icon">ℹ</span>
+      <div class="finding-content">
+        <div class="finding-title">[3.3.4] CVR Prediction Bias (Internal)</div>
+        <div class="finding-detail">
+          Predicted CVR: ${r.prediction_bias.predicted}% &nbsp;·&nbsp; Observed CVR: ${r.prediction_bias.observed}% &nbsp;·&nbsp; Deviation: <strong>${r.prediction_bias.deviation}%</strong><br>
+          ${esc(r.prediction_bias.detail)}
+        </div>
+      </div>
+    </div>`;
+
+    // 3.4 Mediation
+    html += `<div class="divider-line"></div>
+    <div style="font-weight:600;font-size:12.5px;color:#1e40af;margin:6px 0">Step 3.4 · Mediation Auction</div>`;
+    html += `<div class="metric-row">
+      <div class="mr-label">Winnable Rate</div>
+      <div class="mr-val">${(m.winnable_rate*100).toFixed(0)}%</div>
+      <div class="mr-bench">Benchmark (50th pct): ${(m.benchmark_wr*100).toFixed(0)}%</div>
+      <div class="mr-badge badge-crit"> BELOW BENCHMARK</div>
+    </div>
+    <div class="metric-row">
+      <div class="mr-label">Winnable Win Rate</div>
+      <div class="mr-val">${(m.winnable_win_rate*100).toFixed(0)}%</div>
+      <div class="mr-bench">Benchmark: ${(m.benchmark_wwr*100).toFixed(0)}%</div>
+      <div class="mr-badge badge-ok">✓ HEALTHY</div>
+    </div>`;
+
+    html += `<div class="finding crit">
+      <span class="finding-icon"></span>
+      <div class="finding-content">
+        <div class="finding-title">[3.4.1] Low External Competitiveness — Winnable Rate Below Benchmark</div>
+        <div class="finding-detail">
+          Campaign eCPM: <strong>$${m.low_wr.ecpm.toFixed(2)}</strong><br>
+          Median market bid (MarketBid): <strong>$${m.low_wr.market_bid.toFixed(2)}</strong><br>
+          Only <strong>${(m.winnable_rate*100).toFixed(0)}%</strong> of submitted auctions have eCPM ≥ MarketBid (winnable)<br>
+          ${esc(m.low_wr.detail)}
+        </div>
+        <div class="finding-rec">${esc(m.low_wr.recommendation)}</div>
+      </div>
+    </div>
+    <div class="finding ok">
+      <span class="finding-icon"></span>
+      <div class="finding-content">
+        <div class="finding-title">[3.4.2] No Underbidding in Winnable Space</div>
+        <div class="finding-detail">${esc(m.underbidding.detail)}</div>
+      </div>
+    </div>`;
+
+    html += `</div></div>`; // close step-body, step-card
+
+    // Summary
+    html += `<div class="summary-card">
+      <div class="summary-hd"> Diagnosis Summary — Isolated Issue</div>
+      <div class="summary-body">
+        <div class="si"><span class="si-icon"></span><span><strong>Root Cause 1:</strong> Creative format mismatch — Missing vertical video (9:16) blocking 45% of candidates at filter stage</span></div>
+        <div class="si"><span class="si-icon"></span><span><strong>Root Cause 2:</strong> JP bid ($0.95) below floor price ($1.20–$1.80) — 32% of JP inventory inaccessible</span></div>
+        <div class="si"><span class="si-icon"></span><span><strong>Contributing:</strong> tROAS raised +28% → reduced eligible inventory by ~35%</span></div>
+        <div class="si"><span class="si-icon"></span><span><strong>Contributing:</strong> Bid ($0.95) is 33% below avg winning bid ($1.42) → low win rate in ranking stage</span></div>
+        <div class="si"><span class="si-icon"></span><span><strong>Contributing:</strong> Low eCPM ($1.85 vs $2.40 market) → only 38% of auctions are winnable externally</span></div>
+        <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--net-b)">
+          <div style="font-weight:700;font-size:12px;color:#92400e;margin-bottom:5px">Recommended Actions (Priority Order):</div>
+          <div class="si"><span class="si-icon">1⃣</span><span>Add vertical video creative (9:16, 15–30s) to unlock rewarded video & fullscreen placements</span></div>
+          <div class="si"><span class="si-icon">2⃣</span><span>Restore JP base bid to ≥$1.20 to re-enter JP auctions</span></div>
+          <div class="si"><span class="si-icon">3⃣</span><span>Reduce tROAS from 3.20 back to 2.50 to restore eligible inventory</span></div>
+          <div class="si"><span class="si-icon">4⃣</span><span>Increase target bid to ≥$1.40 to improve auction win rate</span></div>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  html += `</div>`; // close res-body
+  return html;
+}
+
+// ═══════════════════════════════════════════
+//  MAIN DISPATCHER
+// ═══════════════════════════════════════════
+function startDiagnose(entity_type, entity_id) {
+  const q = entity_type==='game'
+    ? `Why did the spend of gameid:${entity_id} decline WoW?`
+    : `Why did the spend of campaignid:${entity_id} decline WoW?`;
+  fillAndSend(q);
+}
+
+function dispatch(question) {
+  const intent = parseIntent(question);
+
+  // If state has pending clarification, merge entity from new input
+  if (state.pending) {
+    const newIntent = parseIntent(question);
+    if (newIntent.entity_type) {
+      intent.entity_type = newIntent.entity_type;
+      intent.entity_id   = newIntent.entity_id;
+      intent.analysis_type = state.pending.analysis_type;
+      intent.missing = [];
+      state.pending = null;
+    }
+  }
+
+  // Show intent card
+  const intentCard = intentHtml(intent);
+
+  // ── Intercept metric selection for Q4 ranking ──
+  if (state.pendingMetricFor === 'ranking') {
+    state.pendingMetricFor = null;
+    const ql2 = question.toLowerCase();
+    const found = MOCK.rankingMetrics.find(r =>
+      ql2.includes(r.key.toLowerCase()) ||
+      (r.key === "CPI Efficiency" && ql2.includes("cpi")) ||
+      (r.key === "D7 ROAS" && (ql2.includes("roas") || ql2.includes("d7"))) ||
+      (r.key === "Install Volume" && (ql2.includes("install") || ql2.includes("volume"))) ||
+      (r.key === "Spend Growth" && ql2.includes("spend")) ||
+      (r.key === "CVR" && ql2.includes("cvr"))
+    ) || MOCK.rankingMetrics[0];
+    addLoading(["Loading campaign data…","Ranking by "+found.key+"…","Identifying top and underperforming campaigns…"]);
+    setTimeout(()=>{ removeLoading(); addAssistant(genRankingByMetric(found)); }, 2500);
+    return;
+  }
+
+  // Entity is always resolved from session or query — no clarification needed
+  state.pending = null;
+
+  // Dispatch by analysis type
+  const steps = {
+    "Top issues & alerts":                ["Scanning campaign portfolio…","Checking alert thresholds…","Ranking by severity…"],
+    "Campaign spend & scale overview":    ["Diagnosing all campaigns…","Detecting spend/scale declines…","Ranking by severity…"],
+    "Campaign performance overview":      ["Diagnosing all campaigns…","Detecting spend/scale declines…","Ranking by severity…"],
+    "Week-over-week spend changes":       ["Fetching game-level metrics…","Computing WoW changes…","Preparing metric comparison…"],
+    "Week-over-week performance changes": ["Fetching game-level metrics…","Computing WoW changes…","Preparing metric comparison…"],
+    "Campaign spend ranking":             ["Loading campaign data…","Awaiting metric selection…"],
+    "Campaign performance ranking":       ["Loading campaign data…","Awaiting metric selection…"],
+    "Spend / scale decline diagnosis":    ["Fetching spend data…","Step 1: Network-level check…","Step 2: Setting changes…","Step 3: Ads flow pipeline…","Generating root cause summary…"],
+  };
+  const loadingSteps = steps[intent.analysis_type] || ["Analyzing…","Preparing response…"];
+  addLoading(loadingSteps);
+
+  const delay = intent.analysis_type.includes('diagnosis') ? 14000 : 3000;
+
+  setTimeout(()=>{
+    let html = "";
+    const at = intent.analysis_type;
+    if (at === "Top issues & alerts") {
+      html = genTopIssues();
+    } else if (at === "Campaign spend & scale overview" || at === "Campaign performance overview") {
+      html = genOverallPerf(intent.entity_type, intent.entity_id);
+    } else if (at === "Week-over-week spend changes" || at === "Week-over-week performance changes") {
+      html = genWoW(intent.entity_type, intent.entity_id);
+    } else if (at === "Campaign spend ranking" || at === "Campaign performance ranking") {
+      html = genRanking(intent.entity_type, intent.entity_id);
+    } else if (at === "Spend / scale decline diagnosis") {
+      html = genDiagnose(intent.entity_type, intent.entity_id);
+    } else {
+      html = `<div class="res-body">${intentCard}<div class="clarify-card"><div class="clarify-header"> Try one of these</div><div class="clarify-body">I can help with:<br>• Spend/scale decline diagnosis<br>• Auto-diagnosis of all campaigns<br>• WoW metric changes<br>• Top/underperforming campaigns by metric</div></div></div>`;
+    }
+    addAssistant(`<div class="res-body">${intentCard}</div>` + html);
+  }, delay);
+}
+
+// ═══════════════════════════════════════════
+//  INPUT HANDLING
+// ═══════════════════════════════════════════
+const PRESETS = [
+  "What're the top issues that require my attention?",
+  "How are my campaigns performing overall?",
+  "What are the week-over-week (WoW) performance changes?",
+  "What're my top-performing/under-performing campaigns?",
+];
+
+function firePreset(idx, btn) {
+  document.querySelectorAll(".sb-btn").forEach(b=>b.classList.remove("active"));
+  if(btn) btn.classList.add("active");
+  fillAndSend(PRESETS[idx]);
+}
+
+function fillQ(q) {
+  document.getElementById("qi").value = q;
+  resize(document.getElementById("qi"));
+  document.getElementById("qi").focus();
+}
+
+function fillAndSend(q) {
+  document.getElementById("qi").value = q;
+  send();
+}
+
+function send() {
+  const q = document.getElementById("qi").value.trim();
+  if(!q) return;
+  document.getElementById("qi").value = "";
+  resize(document.getElementById("qi"));
+  document.getElementById("sbtn").disabled = true;
+  addUserMsg(q);
+  dispatch(q);
+  setTimeout(()=>{ document.getElementById("sbtn").disabled = false; }, 500);
+}
+
+function onKey(e) {
+  if(e.key==="Enter"&&!e.shiftKey){ e.preventDefault(); send(); }
+}
+
+function resize(el) {
+  el.style.height="auto";
+  el.style.height=Math.min(el.scrollHeight,100)+"px";
+}
+</script>
+</body>
+</html>
