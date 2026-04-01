@@ -166,6 +166,75 @@ input[type=checkbox]{accent-color:#2563eb;width:13px;height:13px;cursor:pointer}
 .av-msgs .finding{display:flex;gap:8px;padding:8px 10px;border-radius:6px;margin-top:5px;font-size:11.5px;line-height:1.55}
 .av-msgs .finding.warn{background:#fffbeb;border:1px solid #fde68a}
 .av-msgs .finding.info{background:#f0f9ff;border:1px solid #bae6fd}
+.av-msgs .rc-card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;margin-bottom:12px;box-shadow:0 1px 5px rgba(0,0,0,.06)}
+.av-msgs .rc-card-hd{display:flex;align-items:center;gap:8px;padding:11px 14px;border-bottom:1px solid #f1f5f9;flex-wrap:wrap}
+.av-msgs .rc-card-id{font-size:11px;color:#64748b;font-family:monospace;font-weight:600;white-space:nowrap}
+.av-msgs .rc-badge{background:#fed7aa;color:#c2410c;font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:4px;white-space:nowrap}
+.av-msgs .rc-card-name{font-weight:700;font-size:13px;color:#1e293b;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.av-msgs .rc-pct{font-weight:800;font-size:16px;color:#dc2626;white-space:nowrap;margin-left:auto}
+.av-msgs .rc-summary{padding:7px 14px;font-size:12px;color:#64748b;background:#f8fafc;border-bottom:1px solid #f1f5f9}
+.av-msgs .rc-body{display:grid;grid-template-columns:1fr 1fr;gap:0}
+.av-msgs .rc-cause{padding:14px;border-right:1px solid #f1f5f9}
+.av-msgs .rc-rec{padding:14px;display:flex;flex-direction:column}
+.av-msgs .rc-col-label{font-size:10px;font-weight:700;letter-spacing:.08em;color:#94a3b8;text-transform:uppercase;margin-bottom:8px}
+.av-msgs .rc-cause-text,.av-msgs .rc-rec-text{font-size:12px;color:#334155;line-height:1.5;margin-bottom:10px}
+.av-msgs .rc-bar-wrap{margin-bottom:10px}
+.av-msgs .rc-bar-label{font-size:11px;color:#475569;margin-bottom:4px;display:flex;justify-content:space-between;align-items:center}
+.av-msgs .rc-bar-label span{font-weight:700;color:#dc2626}
+.av-msgs .rc-bar-track{background:#e2e8f0;border-radius:3px;height:7px;overflow:hidden}
+.av-msgs .rc-bar-fill{background:#ef4444;height:100%;border-radius:3px}
+.av-msgs .rc-region-section{margin-bottom:8px}
+.av-msgs .rc-region-section-label{font-size:10px;font-weight:700;letter-spacing:.06em;color:#94a3b8;text-transform:uppercase;margin-bottom:5px}
+.av-msgs .rc-region-chips{display:flex;flex-wrap:wrap;gap:5px}
+.av-msgs .rc-region-chip{background:#dbeafe;color:#1e40af;font-size:11px;font-weight:600;padding:3px 9px;border-radius:5px}
+.av-msgs .rc-missed-chip{background:#f0fdf4;color:#166534;font-size:11px;font-weight:600;padding:3px 9px;border-radius:5px}
+.av-msgs .rc-missed-pct{color:#16a34a;font-weight:700}
+.av-msgs .rc-tiles{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:4px}
+.av-msgs .rc-tile{background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;padding:8px 10px}
+.av-msgs .rc-tile-label{font-size:9px;font-weight:700;letter-spacing:.06em;color:#94a3b8;text-transform:uppercase;margin-bottom:3px}
+.av-msgs .rc-tile-val{font-size:15px;font-weight:800;color:#0f172a;line-height:1.1}
+.av-msgs .rc-tile-val.warn{color:#ea580c}
+.av-msgs .rc-tile-val.crit{color:#dc2626}
+.av-msgs .rc-tile-sub{font-size:10px;color:#64748b;margin-top:2px}
+.av-msgs .rc-estimated{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:8px 10px;font-size:11.5px;color:#166534;margin-bottom:10px;flex-shrink:0}
+.av-msgs .rc-cta{display:block;width:100%;background:#2563eb;color:#fff;border:none;border-radius:7px;padding:10px 0;font-size:12.5px;font-weight:700;cursor:pointer;text-align:center;margin-top:auto}
+.av-msgs .rc-cta:hover{background:#1d4ed8}
+.av-msgs .rc-footer{padding:6px 14px;font-size:10px;color:#94a3b8;border-top:1px solid #f1f5f9;text-align:center}
+.av-msgs .compact-step{display:flex;align-items:center;gap:8px;padding:6px 12px;border-radius:7px;font-size:12px;margin-bottom:8px;border:1px solid}
+.av-msgs .compact-step.ok{background:#f0fdf4;color:#166534;border-color:#bbf7d0}
+.av-msgs .compact-step.warn{background:#fffbeb;color:#92400e;border-color:#fde68a}
+/* Settings modal */
+.sm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:99999;display:none;align-items:center;justify-content:center}
+.sm-modal{background:#fff;border-radius:12px;width:480px;max-width:calc(100vw - 32px);max-height:88vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.sm-hd{display:flex;align-items:flex-start;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #f1f5f9;position:sticky;top:0;background:#fff;z-index:1}
+.sm-title{font-weight:700;font-size:15px;color:#0f172a}
+.sm-subtitle{font-size:11.5px;color:#64748b;margin-top:2px}
+.sm-close{background:none;border:none;font-size:20px;color:#94a3b8;cursor:pointer;padding:0 4px;line-height:1}
+.sm-body{padding:20px}
+.sm-section{margin-bottom:18px}
+.sm-section-label{font-size:10.5px;font-weight:700;letter-spacing:.08em;color:#94a3b8;text-transform:uppercase;margin-bottom:10px}
+.sm-field{margin-bottom:14px}
+.sm-field-label{font-size:12.5px;font-weight:600;color:#374151;margin-bottom:5px}
+.sm-field-row{display:flex;align-items:center;gap:8px}
+.sm-input{flex:1;padding:8px 11px;border:1.5px solid #d1d5db;border-radius:7px;font-size:14px;font-weight:600;color:#0f172a;background:#fff}
+.sm-input.suggested{border-color:#2563eb;background:#eff6ff;color:#1d4ed8}
+.sm-tag{font-size:10.5px;padding:2px 8px;border-radius:4px;font-weight:600;white-space:nowrap}
+.sm-tag.current{background:#fef2f2;color:#b91c1c}
+.sm-tag.suggested{background:#dbeafe;color:#1d4ed8}
+.sm-impact{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px 14px;font-size:12.5px;color:#166534;margin-bottom:16px;line-height:1.5}
+.sm-save{display:block;width:100%;background:#2563eb;color:#fff;border:none;border-radius:8px;padding:11px;font-size:14px;font-weight:700;cursor:pointer;text-align:center}
+.sm-save:hover{background:#1d4ed8}
+.sm-chip-group{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.sm-chip{padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;cursor:default;border:1.5px solid}
+.sm-chip.active{background:#dbeafe;color:#1e40af;border-color:#93c5fd}
+.sm-chip.add{background:#f0fdf4;color:#166534;border-color:#86efac}
+.sm-format-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1.5px solid #e2e8f0;border-radius:8px;margin-bottom:8px}
+.sm-format-icon{width:36px;height:36px;background:#f1f5f9;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.sm-format-missing{border-color:#fecaca;background:#fef2f2}
+.sm-format-ok{border-color:#bbf7d0;background:#f0fdf4}
+.sm-format-badge{font-size:10px;font-weight:700;padding:1px 7px;border-radius:3px}
+.sm-format-badge.missing{background:#fecaca;color:#b91c1c}
+.sm-format-badge.ok{background:#bbf7d0;color:#166534}
 .av-msgs .finding.ok{background:#f0fdf4;border:1px solid #bbf7d0}
 .av-msgs .finding.crit{background:#fef2f2;border:1px solid #fecaca}
 .av-msgs .finding-icon{font-size:14px;flex-shrink:0}
@@ -607,6 +676,20 @@ const MOCK = {
         },
       },
     },
+    card_vis:{
+      short_id:"6971dca",cause_type:"troas_bid",
+      cause_bar_label:"Rejected candidates blocked by tROAS / bid below floor",
+      cause_bar_pct:82,cause_bar_cls:"",
+      tiles:[
+        {label:"CURRENT tROAS",val:"3.20×",sub:"↑28% from 2.50×",cls:"warn"},
+        {label:"BASE BID (JP)",val:"$0.95",sub:"Floor: $1.05–$1.80",cls:"crit"},
+        {label:"JP DELIVERY LOSS",val:"82%",sub:"of JP candidates blocked",cls:"crit"},
+        {label:"JP PRIOR SPEND",val:"67%",sub:"of total campaign spend",cls:""},
+      ],
+      estimated:"+65% scale recovery · tROAS 2.80× stays within ±5% of return goal",
+      cta_text:"Review Bid & tROAS Settings →",cta_type:"bid_settings",
+      settings:{campaign_name:"mglb TK iOS US ROAS-H5",current_troas:"3.20×",suggested_troas:"2.80×",current_bid:"$0.95",suggested_bid:"$1.20",market:"JP"},
+    },
   },
   // ── Additional isolated scenarios (covers all PRD root causes) ──
   isolated_scenarios: [
@@ -624,6 +707,7 @@ const MOCK = {
         ranking:{win_rate:0.44,benchmark:0.52,bbb:{discount:0.06,threshold:0.15,ok:true,detail:"BBB discount 6% — within range."},bid:{status:"ok",campaign_bid:1.10,avg_winning:1.18,gap:-6.8,detail:"Bid ($1.10) is only 6.8% below average winning bid ($1.18). Not a primary issue.",recommendation:"Bid is competitive for eligible inventory. Focus on budget cap resolution."},cvr:{status:"ok",campaign_cvr:3.9,benchmark_cvr:3.8,gap:+2.6,detail:"CVR (3.9%) is above benchmark (3.8%). Creative quality is healthy.",recommendation:"No action needed."},prediction_bias:{predicted:3.8,observed:3.9,deviation:+2.6,detail:"[Internal] CVR prediction closely matches observed. Model well-calibrated."}},
         mediation:{winnable_rate:0.58,benchmark_wr:0.61,winnable_win_rate:0.74,benchmark_wwr:0.65,low_wr:{status:"ok",ecpm:2.35,market_bid:2.40,detail:"Campaign eCPM ($2.35) is near median. Not a primary issue.",recommendation:"eCPM is competitive. Main issue is budget cap."},underbidding:{status:"ok",detail:"Winnable Win Rate (74%) exceeds benchmark (65%)."}},
       },
+      card_vis:{short_id:"5934102",cause_type:"budget_cap",cause_bar_label:"Rejected candidates blocked by budget cap / pacing",cause_bar_pct:72,tiles:[{label:"DAILY BUDGET",val:"$200",sub:"",cls:""},{label:"UTILIZATION",val:"99.8%",sub:"",cls:"crit"},{label:"BUDGET EXHAUSTED BY",val:"~13:30 local",sub:"",cls:"warn"},{label:"DELIVERY BLOCKED",val:"~10.5 hrs/day",sub:"",cls:"crit"}],estimated:"+60% scale with $380/day · eCPI remains stable",cta_text:"Adjust Campaign Budget →",cta_type:"budget_settings",settings:{campaign_name:"TK-CPI-US-ANDROID-SCALE",current_budget:"$200",suggested_budget:"$380",daily_cap_time:"13:30",blocked_hours:"10.5"}},
     },
     {
       campaign_id:"696e4038a7d1a35d95ffd9ee", campaign_name:"PP-ROAS-APAC-O-MED-PL", game:"Last Asylum",
@@ -638,6 +722,7 @@ const MOCK = {
         ranking:{win_rate:0.49,benchmark:0.52,bbb:{discount:0.07,threshold:0.15,ok:true,detail:"BBB discount 7% — within range."},bid:{status:"ok",campaign_bid:1.42,avg_winning:1.38,gap:+2.9,detail:"Within eligible markets, bid ($1.42) is above avg winning ($1.38). Competitive.",recommendation:"Expand targeting to unlock more inventory."},cvr:{status:"ok",campaign_cvr:4.1,benchmark_cvr:3.8,gap:+7.9,detail:"CVR (4.1%) above benchmark. Good creative quality.",recommendation:"Expand targeting to scale."},prediction_bias:{predicted:4.0,observed:4.1,deviation:+2.5,detail:"[Internal] CVR model well-calibrated."}},
         mediation:{winnable_rate:0.62,benchmark_wr:0.61,winnable_win_rate:0.72,benchmark_wwr:0.65,low_wr:{status:"ok",ecpm:2.55,market_bid:2.40,detail:"eCPM ($2.55) above median. Mediation is not the issue.",recommendation:"Mediation healthy. Root cause is targeting restriction."},underbidding:{status:"ok",detail:"Winnable Win Rate (72%) exceeds benchmark."}},
       },
+      card_vis:{short_id:"7847818",cause_type:"region_targeting",cause_bar_label:"Rejected candidates blocked by region targeting",cause_bar_pct:78,current_regions:["US","UK","DE"],missed_regions:[{r:"JP",pct:18},{r:"KR",pct:12},{r:"BR",pct:9},{r:"CA",pct:null},{r:"AU",pct:null}],estimated:"+35% scale with JP, KR, BR · CPI impact neutral",cta_text:"Expand Region Targeting →",cta_type:"region_settings",settings:{campaign_name:"PP-ROAS-APAC-O-MED-PL",current_regions:["US","UK","DE"],add_regions:["JP","KR","BR","CA","AU"]}},
     },
     {
       campaign_id:"68b8fcaebf3c3cd17be15591", campaign_name:"mxcj iOS US D7 ROAS", game:"Block Blast!",
@@ -652,6 +737,7 @@ const MOCK = {
         ranking:{win_rate:0.31,benchmark:0.52,bbb:{discount:0.09,threshold:0.15,ok:true,detail:"BBB discount 9% — within range."},bid:{status:"warn",campaign_bid:1.05,avg_winning:1.35,gap:-22.2,detail:"Campaign bid ($1.05) is 22.2% below average winning bid ($1.35).",recommendation:"Increase base bid to $1.30."},cvr:{status:"crit",campaign_cvr:1.5,benchmark_cvr:3.8,gap:-60.5,detail:"CVR dropped from 4.2% → 1.5% WoW (−60.5%). New horizontal-only creatives drive significantly lower install conversion rates.",recommendation:"Revert to previous creative set or upload high-performing vertical format assets. CVR recovery is highest-leverage action."},prediction_bias:{predicted:3.2,observed:1.5,deviation:-53.1,detail:"[Internal] Predicted CVR (3.2%) severely overestimates observed (1.5%). Model has not adapted to post-creative-change performance."}},
         mediation:{winnable_rate:0.29,benchmark_wr:0.61,winnable_win_rate:0.68,benchmark_wwr:0.65,low_wr:{status:"crit",ecpm:1.42,market_bid:2.40,detail:"Campaign eCPM ($1.42) far below median ($2.40). Low CVR depresses eCPM and winnable rate.",recommendation:"eCPM improvement requires CVR recovery. Upload vertical video creatives."},underbidding:{status:"ok",detail:"Winnable Win Rate (68%) above benchmark (65%)."}},
       },
+      card_vis:{short_id:"6848fcb",cause_type:"creative_mismatch",cause_bar_label:"Rejected candidates blocked by creative format mismatch",cause_bar_pct:55,tiles:[{label:"CURRENT CVR",val:"1.5%",sub:"↓60.5% from 4.2%",cls:"crit"},{label:"CREATIVE FORMATS",val:"1 of 3",sub:"Only 16:9 available",cls:"warn"},{label:"PLACEMENTS BLOCKED",val:"55%",sub:"No 9:16 or 1:1",cls:"crit"},{label:"MISSING FORMATS",val:"9:16 + 1:1",sub:"Upload to recover",cls:"warn"}],estimated:"+55% scale recovery · CVR expected back to 3.8–4.2%",cta_text:"Upload Creative Assets →",cta_type:"creative_settings",settings:{campaign_name:"mxcj iOS US D7 ROAS",missing_formats:["9:16 Vertical Video (15–30s)","1:1 Square Video (15–30s)"]}},
     },
     {
       campaign_id:"69a79f0d72f827702923b52e", campaign_name:"mglb KR Android ROAS", game:"Last Asylum",
@@ -666,6 +752,7 @@ const MOCK = {
         ranking:{win_rate:0.15,benchmark:0.52,bbb:{discount:0.08,threshold:0.15,ok:true,detail:"BBB discount 8% — within range."},bid:{status:"crit",campaign_bid:0.85,avg_winning:1.62,gap:-47.5,detail:"Campaign bid ($0.85) is 47.5% below avg winning bid ($1.62). Market has repriced significantly upward.",recommendation:"Raise bid to at least $1.60 to reach median competitiveness."},cvr:{status:"ok",campaign_cvr:3.7,benchmark_cvr:3.8,gap:-2.6,detail:"CVR (3.7%) is in-line with benchmark (3.8%). Creative quality is not a contributing factor.",recommendation:"No action needed on CVR."},prediction_bias:{predicted:3.6,observed:3.7,deviation:+2.8,detail:"[Internal] CVR model well-calibrated."}},
         mediation:{winnable_rate:0.22,benchmark_wr:0.61,winnable_win_rate:0.66,benchmark_wwr:0.65,low_wr:{status:"crit",ecpm:1.28,market_bid:2.40,detail:"Campaign eCPM ($1.28) far below median ($2.40, −46.7%). Direct result of stale bid not tracking market price increases.",recommendation:"Raise base bid to bring eCPM above $2.40."},underbidding:{status:"ok",detail:"Within winnable auctions, win rate (66%) is above benchmark (65%)."}},
       },
+      card_vis:{short_id:"69a79f0",cause_type:"bid_stale",cause_bar_label:"Rejected candidates blocked by bid below floor price",cause_bar_pct:65,tiles:[{label:"CURRENT BID",val:"$0.85",sub:"Set 3+ months ago",cls:"crit"},{label:"MARKET FLOOR (KR)",val:"$1.40",sub:"↑65% since last set",cls:""},{label:"FLOOR MISS RATE",val:"65%",sub:"of all candidates",cls:"crit"},{label:"AVG WINNING BID",val:"$1.62",sub:"vs campaign $0.85",cls:""}],estimated:"+65% scale recovery · raising bid to $1.60",cta_text:"Adjust Bid Settings →",cta_type:"bid_settings",settings:{campaign_name:"mglb KR Android ROAS",current_troas:null,suggested_troas:null,current_bid:"$0.85",suggested_bid:"$1.60",market:"KR / JP / US T2"}},
     },
   ],
 
@@ -1351,11 +1438,15 @@ function genDiagnose(entity_type, entity_id) {
     </div>`;
 
   } else {
-    // Isolated path: Step 2 + Step 3
-    // ── STEP 2 ──
-    html += `<div class="step-card">
-      <div class="step-hd"><span class="step-num">2</span>Campaign Setting Changes</div>
-      <div class="step-body">`;
+    // Isolated path: compact Step 2 banner + root cause card
+    const settingChange = d.step2.find(ch => ch.severity !== 'info');
+    if (settingChange) {
+      html += `<div class="compact-step warn"><span style="flex-shrink:0"></span><span><strong>Step 2 · Setting Change Detected:</strong> ${esc(settingChange.title)} — ${esc(settingChange.date)}</span></div>`;
+    } else {
+      html += `<div class="compact-step ok"><span style="flex-shrink:0">✓</span><span><strong>Step 2 · No Setting Changes</strong> — No bid, tROAS, or targeting changes in the past 14 days.</span></div>`;
+    }
+    html += genRootCauseCard(d);
+    /*
 
     for (const ch of d.step2) {
       const sClass = ch.severity==='crit'?'crit':ch.severity==='info'?'info':'warn';
@@ -1532,11 +1623,48 @@ function genDiagnose(entity_type, entity_id) {
         </div>
       </div>
     </div>`;
+    */
   }
 
   html += `</div>`; // close res-body
   return html;
 }
+
+// ─────────────────────────────────────────────────────
+//  ROOT CAUSE CARD
+// ─────────────────────────────────────────────────────
+function genRootCauseCard(d) {
+  const cv = d.card_vis;
+  if (!cv) return '';
+  const pctText = d.pct > 0 ? `+${d.pct}%` : `${d.pct}%`;
+  const primaryReason = (d.step3.filter.reasons.find(r=>r.severity==='crit') || d.step3.filter.reasons[0]);
+  const causeText = primaryReason.detail;
+  const recText = primaryReason.recommendation;
+  let causeExtra = '';
+  if (cv.cause_type === 'region_targeting' && cv.current_regions) {
+    causeExtra = `<div class="rc-region-section"><div class="rc-region-section-label">Current Targeted Regions</div><div class="rc-region-chips">${cv.current_regions.map(r=>`<span class="rc-region-chip">${r}</span>`).join('')}</div></div><div class="rc-region-section"><div class="rc-region-section-label">Top Missed Regions</div><div class="rc-region-chips">${cv.missed_regions.map(r=>`<span class="rc-missed-chip">${r.r}${r.pct?` <span class="rc-missed-pct">+${r.pct}%</span>`:''}</span>`).join('')}</div></div>`;
+  } else if (cv.tiles) {
+    causeExtra = `<div class="rc-tiles">${cv.tiles.map(t=>`<div class="rc-tile"><div class="rc-tile-label">${t.label}</div><div class="rc-tile-val ${t.cls||''}">${t.val}</div>${t.sub?`<div class="rc-tile-sub">${t.sub}</div>`:''}</div>`).join('')}</div>`;
+  }
+  const settingsJson = JSON.stringify(cv.settings).replace(/"/g,'&quot;');
+  return `<div class="rc-card">
+    <div class="rc-card-hd"><span class="rc-card-id">ID: ${cv.short_id}</span><span class="rc-badge">Spend Decline</span><span class="rc-card-name">${esc(d.campaign_name)}</span><span class="rc-pct">${pctText}</span></div>
+    <div class="rc-summary">Spend dropped <strong>${Math.abs(d.pct)}%</strong> in the past 7 days &nbsp;·&nbsp; ${cv.cause_bar_pct}% of rejected candidates blocked by ${causeTypeLabel(cv.cause_type)}</div>
+    <div class="rc-body">
+      <div class="rc-cause"><div class="rc-col-label">Root Cause</div><div class="rc-cause-text">${esc(causeText)}</div><div class="rc-bar-wrap"><div class="rc-bar-label"><span>${esc(cv.cause_bar_label)}</span><span>${cv.cause_bar_pct}%</span></div><div class="rc-bar-track"><div class="rc-bar-fill" style="width:${cv.cause_bar_pct}%"></div></div></div>${causeExtra}</div>
+      <div class="rc-rec"><div class="rc-col-label">Recommendation</div><div class="rc-rec-text">${esc(recText)}</div><div class="rc-estimated"><strong>Estimated:</strong> ${esc(cv.estimated)}</div><button class="rc-cta" onclick="openSettings('${cv.cta_type}','${settingsJson}')">${esc(cv.cta_text)}</button></div>
+    </div>
+    <div class="rc-footer">Generated by Vector Intelligence &nbsp;·&nbsp; Updated 2 hours ago &nbsp;·&nbsp; Rolling 7-day window</div>
+  </div>`;
+}
+function causeTypeLabel(type){return{troas_bid:"tROAS / bid floor mismatch",budget_cap:"budget cap / pacing",region_targeting:"region targeting",creative_mismatch:"creative format mismatch",bid_stale:"bid below floor price"}[type]||type;}
+function openSettings(type,settingsJson){const s=JSON.parse(settingsJson.replace(/&quot;/g,'"'));document.getElementById('sm-title').textContent={budget_settings:'Campaign Budget Settings',region_settings:'Campaign Targeting Settings',bid_settings:'Bid & tROAS Settings',creative_settings:'Creative Assets'}[type]||'Settings';document.getElementById('sm-subtitle').textContent=s.campaign_name||'';document.getElementById('sm-body-content').innerHTML=genSettingsBody(type,s);document.getElementById('sm-overlay').style.display='flex';}
+function closeSettings(){document.getElementById('sm-overlay').style.display='none';}
+function genSettingsBody(type,s){if(type==='budget_settings')return genBudgetSettings(s);if(type==='region_settings')return genRegionSettings(s);if(type==='bid_settings')return genBidSettings(s);if(type==='creative_settings')return genCreativeSettings(s);return'';}
+function genBudgetSettings(s){return`<div class="sm-section"><div class="sm-section-label">Daily Budget</div><div class="sm-field"><div class="sm-field-label">Current daily budget</div><div class="sm-field-row"><input class="sm-input" value="${s.current_budget}" readonly><span class="sm-tag current">CURRENT</span></div></div><div class="sm-field"><div class="sm-field-label">Recommended daily budget</div><div class="sm-field-row"><input class="sm-input suggested" value="${s.suggested_budget}"><span class="sm-tag suggested">RECOMMENDED</span></div></div></div><div class="sm-section"><div class="sm-section-label">Delivery Insight</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px"><div class="rc-tile"><div class="rc-tile-label">Budget Exhausted By</div><div class="rc-tile-val warn">~${s.daily_cap_time} local</div></div><div class="rc-tile"><div class="rc-tile-label">Delivery Blocked</div><div class="rc-tile-val crit">~${s.blocked_hours} hrs/day</div></div></div></div><div class="sm-impact"><strong>Estimated impact:</strong> Increasing budget to ${s.suggested_budget} restores full-day delivery and is expected to recover ~60% of lost spend. eCPI is projected to remain stable.</div><button class="sm-save" onclick="closeSettings()">Save Budget Changes</button>`;}
+function genRegionSettings(s){const activeChips=(s.current_regions||[]).map(r=>`<span class="sm-chip active">${r}</span>`).join('');const addChips=(s.add_regions||[]).map(r=>`<span class="sm-chip add">+ ${r}</span>`).join('');return`<div class="sm-section"><div class="sm-section-label">Targeted Regions</div><div class="sm-field-label">Currently active</div><div class="sm-chip-group">${activeChips}</div><div style="margin-top:14px"><div class="sm-field-label">Recommended to add</div><div class="sm-chip-group">${addChips}</div><div style="font-size:11.5px;color:#64748b;margin-top:8px">These markets show strong demand signal matching your campaign goals.</div></div></div><div class="sm-impact"><strong>Estimated impact:</strong> Restoring JP, KR, BR is expected to recover +35% scale. CPI impact projected neutral.</div><button class="sm-save" onclick="closeSettings()">Save Targeting Changes</button>`;}
+function genBidSettings(s){const hasTroas=s.current_troas&&s.suggested_troas;return`${hasTroas?`<div class="sm-section"><div class="sm-section-label">tROAS Setting</div><div class="sm-field"><div class="sm-field-label">Current tROAS target</div><div class="sm-field-row"><input class="sm-input" value="${s.current_troas}" readonly><span class="sm-tag current">CURRENT</span></div></div><div class="sm-field"><div class="sm-field-label">Recommended tROAS</div><div class="sm-field-row"><input class="sm-input suggested" value="${s.suggested_troas}"><span class="sm-tag suggested">RECOMMENDED</span></div></div></div>`:''}<div class="sm-section"><div class="sm-section-label">Base Bid${s.market?` · ${s.market}`:''}</div><div class="sm-field"><div class="sm-field-label">Current base bid</div><div class="sm-field-row"><input class="sm-input" value="${s.current_bid}" readonly><span class="sm-tag current">BELOW FLOOR</span></div></div><div class="sm-field"><div class="sm-field-label">Recommended base bid</div><div class="sm-field-row"><input class="sm-input suggested" value="${s.suggested_bid}"><span class="sm-tag suggested">RECOMMENDED</span></div></div></div><div class="sm-impact"><strong>Estimated impact:</strong> Adjusting bid to ${s.suggested_bid}${hasTroas?` and tROAS to ${s.suggested_troas}`:''} is expected to recover 60–70% of lost scale.</div><button class="sm-save" onclick="closeSettings()">Save Bid Settings</button>`;}
+function genCreativeSettings(s){const missingItems=(s.missing_formats||[]).map(f=>`<div class="sm-format-item sm-format-missing"><div class="sm-format-icon">▭</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:#1e293b">${f}</div><div style="font-size:11.5px;color:#64748b;margin-top:2px">Required for rewarded video &amp; fullscreen placements</div></div><span class="sm-format-badge missing">MISSING</span></div>`).join('');return`<div class="sm-section"><div class="sm-section-label">Creative Assets</div><div class="sm-format-item sm-format-ok"><div class="sm-format-icon">▬</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:#1e293b">16:9 Horizontal Video (30s)</div><div style="font-size:11.5px;color:#64748b;margin-top:2px">Currently active</div></div><span class="sm-format-badge ok">ACTIVE</span></div>${missingItems}</div><div class="sm-impact"><strong>Estimated impact:</strong> Adding 9:16 vertical and 1:1 square creatives unlocks 55% of blocked placements and is expected to return CVR to 3.8–4.2%.</div><button class="sm-save" onclick="closeSettings()">Upload Creative Assets</button>`;}
 
 // ═══════════════════════════════════════════
 //  MAIN DISPATCHER
@@ -1668,7 +1796,20 @@ function resize(el) {
   el.style.height="auto";
   el.style.height=Math.min(el.scrollHeight,100)+"px";
 }
-
 </script>
+
+<!-- Settings Modal -->
+<div class="sm-overlay" id="sm-overlay" onclick="if(event.target===this)closeSettings()">
+  <div class="sm-modal">
+    <div class="sm-hd">
+      <div>
+        <div class="sm-title" id="sm-title">Campaign Settings</div>
+        <div class="sm-subtitle" id="sm-subtitle"></div>
+      </div>
+      <button class="sm-close" onclick="closeSettings()">&#x2715;</button>
+    </div>
+    <div class="sm-body" id="sm-body-content"></div>
+  </div>
+</div>
 </body>
 </html>
