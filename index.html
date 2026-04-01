@@ -1468,33 +1468,33 @@ function genDiagnose(entity_type, entity_id) {
   // ── STEP 1 ──
   const netPct = isNetwork ? 50.5 : d.network_pct;
   const isNetIssue = netPct >= 30;
-  html += `<div class="step-card">
-    <div class="step-hd"><span class="step-num">1</span>Network-Level Check</div>
+  if (isNetIssue) {
+    html += `<div class="step-card">
+    <div class="step-hd"><span class="step-num">1</span>Network Level Check</div>
     <div class="step-body">
       <div class="metric-row">
         <div class="mr-label">Active campaigns on platform</div><div class="mr-val">14,887</div>
       </div>
       <div class="metric-row">
         <div class="mr-label">Platform-wide spend change</div>
-        <div class="mr-val">${isNetwork?'−5.9% (all advertisers)':'−1.2% (normal fluctuation)'}</div>
-        <div class="mr-badge ${isNetIssue?'badge-crit':'badge-ok'}">${isNetIssue?' PLATFORM-WIDE':'✓ NORMAL'}</div>
+        <div class="mr-val">−5.9% (all advertisers)</div>
+        <div class="mr-badge badge-crit"> PLATFORM-WIDE</div>
       </div>
       <div class="metric-row">
         <div class="mr-label">Campaigns with &gt;10% decline</div>
-        <div class="mr-val">${isNetwork?'7,519':'3,312'} <span class="mr-bench">(${netPct}% of active)</span></div>
-        <div class="mr-badge ${isNetIssue?'badge-crit':'badge-ok'}">${isNetIssue?'≥30% threshold':'Below 30% threshold'}</div>
+        <div class="mr-val">7,519 <span class="mr-bench">(${netPct}% of active)</span></div>
+        <div class="mr-badge badge-crit">≥30% threshold</div>
       </div>
-      <div class="finding ${isNetIssue?'warn':'ok'}">
-        <span class="finding-icon">${isNetIssue?'':''}</span>
+      <div class="finding warn">
+        <span class="finding-icon"></span>
         <div class="finding-content">
-          <div class="finding-title">${isNetIssue?`Network-Level Decline — ${netPct}% of all platform campaigns declining`:`Isolated Issue — Only ${netPct}% of campaigns declining platform-wide`}</div>
-          <div class="finding-detail">${isNetIssue?
-            'The spend decline is a <strong>platform-wide phenomenon</strong> — the entire Unity Ads ad delivery system is experiencing reduced output, affecting the majority of advertisers. This is NOT caused by this campaign\'s settings. Proceeding to check for an active incident.' :
-            'Platform-wide spend is stable. This campaign\'s decline is an <strong>isolated issue</strong> specific to its own settings or competitive position. Proceeding to campaign-level diagnosis.'}</div>
+          <div class="finding-title">Network Level Decline — ${netPct}% of all platform campaigns declining</div>
+          <div class="finding-detail">The spend decline is a <strong>platform-wide phenomenon</strong> — the entire Unity Ads ad delivery system is experiencing reduced output, affecting the majority of advertisers. This is NOT caused by this campaign's settings. Proceeding to check for an active incident.</div>
         </div>
       </div>
     </div>
   </div>`;
+  }
 
   if (isNetIssue) {
     // Network path: show incident and STOP
