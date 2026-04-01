@@ -165,6 +165,7 @@ input[type=checkbox]{accent-color:#2563eb;width:13px;height:13px;cursor:pointer}
 .av-msgs .badge-warn{background:#fffbeb;color:#d97706;padding:1px 6px;border-radius:10px;font-size:10px;font-weight:600;white-space:nowrap}
 .av-msgs .finding{display:flex;gap:8px;padding:8px 10px;border-radius:6px;margin-top:5px;font-size:11.5px;line-height:1.55}
 .av-msgs .finding.warn{background:#fffbeb;border:1px solid #fde68a}
+.av-msgs .finding.info{background:#f0f9ff;border:1px solid #bae6fd}
 .av-msgs .finding.ok{background:#f0fdf4;border:1px solid #bbf7d0}
 .av-msgs .finding.crit{background:#fef2f2;border:1px solid #fecaca}
 .av-msgs .finding-icon{font-size:14px;flex-shrink:0}
@@ -607,6 +608,67 @@ const MOCK = {
       },
     },
   },
+  // ── Additional isolated scenarios (covers all PRD root causes) ──
+  isolated_scenarios: [
+    null,
+    {
+      campaign_id:"69b7da5b93de010234abc123", campaign_name:"TK-CPI-US-ANDROID-SCALE", game:"Take a kiss",
+      spend_cur:22400, spend_ref:58600, pct:-61.8, network_pct:19.2,
+      step2:[{type:"no_setting_change",severity:"info",title:"No Campaign Setting Changes Detected",detail:"No changes to bid, tROAS, targeting, or budget settings in the past 14 days.",date:"—",countries:"—",impact:"The decline is NOT caused by intentional setting changes. Proceeding to ads flow diagnosis.",recommendation:"Continue to Step 3 to identify delivery-side root causes."}],
+      step3:{
+        filter:{pass_rate:0.31,benchmark:0.68,reasons:[
+          {taxonomy:"Filtered by Pacing (Budget Cap)",pct:72,severity:"crit",detail:"Daily budget ($200) exhausted by ~13:30 local time. Afternoon and evening delivery (13:30–23:59) is entirely blocked — the highest-volume hours for this audience.",show_detail:"Daily budget: $200\nBudget utilization: 99.8% by 13:30\nBlocked delivery window: ~10.5 hours/day",recommendation:"Increase daily budget from $200 to $380. This will restore full-day delivery and recover estimated 60%+ of lost spend."},
+          {taxonomy:"Bid Lower Than Floor Price",pct:18,severity:"warn",detail:"Current bid ($1.10) falls below floor price in 3 markets (AU $1.25, CA $1.30, NZ $1.40). 18% of candidates rejected pre-auction.",show_detail:"Markets with floor mismatch: AU ($1.25), CA ($1.30), NZ ($1.40)\nCurrent bid: $1.10",recommendation:"Increase bid to $1.40 for AU, CA, NZ or exclude these markets until budget is increased."},
+          {taxonomy:"Creative Does Not Fit Placement",pct:10,severity:"info",detail:"Minor creative-placement mismatch contributes 10% of rejections. Not a primary issue.",recommendation:"Add a vertical video (9:16) creative to improve placement eligibility."},
+        ]},
+        ranking:{win_rate:0.44,benchmark:0.52,bbb:{discount:0.06,threshold:0.15,ok:true,detail:"BBB discount 6% — within range."},bid:{status:"ok",campaign_bid:1.10,avg_winning:1.18,gap:-6.8,detail:"Bid ($1.10) is only 6.8% below average winning bid ($1.18). Not a primary issue.",recommendation:"Bid is competitive for eligible inventory. Focus on budget cap resolution."},cvr:{status:"ok",campaign_cvr:3.9,benchmark_cvr:3.8,gap:+2.6,detail:"CVR (3.9%) is above benchmark (3.8%). Creative quality is healthy.",recommendation:"No action needed."},prediction_bias:{predicted:3.8,observed:3.9,deviation:+2.6,detail:"[Internal] CVR prediction closely matches observed. Model well-calibrated."}},
+        mediation:{winnable_rate:0.58,benchmark_wr:0.61,winnable_win_rate:0.74,benchmark_wwr:0.65,low_wr:{status:"ok",ecpm:2.35,market_bid:2.40,detail:"Campaign eCPM ($2.35) is near median. Not a primary issue.",recommendation:"eCPM is competitive. Main issue is budget cap."},underbidding:{status:"ok",detail:"Winnable Win Rate (74%) exceeds benchmark (65%)."}},
+      },
+    },
+    {
+      campaign_id:"696e4038a7d1a35d95ffd9ee", campaign_name:"PP-ROAS-APAC-O-MED-PL", game:"Last Asylum",
+      spend_cur:18900, spend_ref:71200, pct:-73.5, network_pct:21.8,
+      step2:[{type:"targeting_change",severity:"crit",title:"Region Targeting Reduced — 12 Countries Removed",detail:"Country targeting reduced from 15 markets → 3 markets (US, UK, DE only). 12 high-volume countries removed on 2026-03-18.",date:"2026-03-18",countries:"JP, KR, BR, AU, CA, SG, TW, HK, MX, FR, IT, ES",impact:"Eligible auction pool reduced by ~78%. Campaign now ineligible for the majority of previously served inventory.",recommendation:"Restore targeting to include KR, JP, BR, AU — estimated +65% scale recovery."}],
+      step3:{
+        filter:{pass_rate:0.22,benchmark:0.68,reasons:[
+          {taxonomy:"Excluded by Region Targeting",pct:78,severity:"crit",detail:"78% of all candidate impressions are from markets outside US/UK/DE. These are now excluded by targeting settings.",show_detail:"Eligible markets: US, UK, DE\nExcluded high-volume markets: JP (22%), KR (18%), BR (12%), AU (8%), CA (7%)…",recommendation:"Re-enable JP, KR, BR targeting immediately. These markets represent ~60% of prior delivery volume."},
+          {taxonomy:"Creative Does Not Fit Placement",pct:14,severity:"warn",detail:"14% of candidates in eligible markets rejected due to creative-placement mismatch.",show_detail:"Missing: vertical video (9:16) for rewarded placements",recommendation:"Add a 9:16 vertical video creative."},
+          {taxonomy:"Bid Lower Than Floor Price",pct:8,severity:"info",detail:"Minor bid-floor mismatch in DE ($0.95 vs €1.05 floor).",recommendation:"Increase DE bid to $1.10 to clear floor price."},
+        ]},
+        ranking:{win_rate:0.49,benchmark:0.52,bbb:{discount:0.07,threshold:0.15,ok:true,detail:"BBB discount 7% — within range."},bid:{status:"ok",campaign_bid:1.42,avg_winning:1.38,gap:+2.9,detail:"Within eligible markets, bid ($1.42) is above avg winning ($1.38). Competitive.",recommendation:"Expand targeting to unlock more inventory."},cvr:{status:"ok",campaign_cvr:4.1,benchmark_cvr:3.8,gap:+7.9,detail:"CVR (4.1%) above benchmark. Good creative quality.",recommendation:"Expand targeting to scale."},prediction_bias:{predicted:4.0,observed:4.1,deviation:+2.5,detail:"[Internal] CVR model well-calibrated."}},
+        mediation:{winnable_rate:0.62,benchmark_wr:0.61,winnable_win_rate:0.72,benchmark_wwr:0.65,low_wr:{status:"ok",ecpm:2.55,market_bid:2.40,detail:"eCPM ($2.55) above median. Mediation is not the issue.",recommendation:"Mediation healthy. Root cause is targeting restriction."},underbidding:{status:"ok",detail:"Winnable Win Rate (72%) exceeds benchmark."}},
+      },
+    },
+    {
+      campaign_id:"68b8fcaebf3c3cd17be15591", campaign_name:"mxcj iOS US D7 ROAS", game:"Block Blast!",
+      spend_cur:31200, spend_ref:82400, pct:-62.1, network_pct:23.4,
+      step2:[{type:"creative_update",severity:"warn",title:"New Creative Set Uploaded — Format Coverage Reduced",detail:"Creative pack updated on 2026-03-19. New set contains only horizontal video (16:9). Previous set included vertical (9:16) and square (1:1) formats.",date:"2026-03-19",countries:"Global",impact:"Vertical and square format placements now have no eligible creatives — these represented ~55% of prior delivery volume.",recommendation:"Re-upload vertical video (9:16, 15–30s) and square (1:1) creatives to restore format coverage."}],
+      step3:{
+        filter:{pass_rate:0.38,benchmark:0.68,reasons:[
+          {taxonomy:"Creative Does Not Fit Placement",pct:55,severity:"crit",detail:"55% of candidate impressions are for vertical/square placements. Campaign has no creatives in 9:16 or 1:1 format after Mar 19 update.",show_detail:"Missing formats:\n  9:16 vertical video → 42% of inventory\n  1:1 square → 13% of inventory\nAvailable: 16:9 horizontal only",recommendation:"Upload at minimum: one 9:16 vertical video (15–30s) to recover rewarded and fullscreen inventory."},
+          {taxonomy:"Bid Lower Than Floor Price",pct:28,severity:"warn",detail:"28% of candidates rejected due to bid-floor mismatch. Bid ($1.05) is below floor in US premium placements ($1.20–$1.80).",show_detail:"US premium placement floor: $1.20–$1.80\nCurrent bid: $1.05",recommendation:"Increase US bid to $1.25 to clear premium placement floors."},
+          {taxonomy:"Filtered by Pacing (Budget)",pct:17,severity:"info",detail:"17% of candidates filtered due to pacing. Daily budget ($400) runs short in peak hours.",recommendation:"Consider increasing daily budget by $100–$150."},
+        ]},
+        ranking:{win_rate:0.31,benchmark:0.52,bbb:{discount:0.09,threshold:0.15,ok:true,detail:"BBB discount 9% — within range."},bid:{status:"warn",campaign_bid:1.05,avg_winning:1.35,gap:-22.2,detail:"Campaign bid ($1.05) is 22.2% below average winning bid ($1.35).",recommendation:"Increase base bid to $1.30."},cvr:{status:"crit",campaign_cvr:1.5,benchmark_cvr:3.8,gap:-60.5,detail:"CVR dropped from 4.2% → 1.5% WoW (−60.5%). New horizontal-only creatives drive significantly lower install conversion rates.",recommendation:"Revert to previous creative set or upload high-performing vertical format assets. CVR recovery is highest-leverage action."},prediction_bias:{predicted:3.2,observed:1.5,deviation:-53.1,detail:"[Internal] Predicted CVR (3.2%) severely overestimates observed (1.5%). Model has not adapted to post-creative-change performance."}},
+        mediation:{winnable_rate:0.29,benchmark_wr:0.61,winnable_win_rate:0.68,benchmark_wwr:0.65,low_wr:{status:"crit",ecpm:1.42,market_bid:2.40,detail:"Campaign eCPM ($1.42) far below median ($2.40). Low CVR depresses eCPM and winnable rate.",recommendation:"eCPM improvement requires CVR recovery. Upload vertical video creatives."},underbidding:{status:"ok",detail:"Winnable Win Rate (68%) above benchmark (65%)."}},
+      },
+    },
+    {
+      campaign_id:"69a79f0d72f827702923b52e", campaign_name:"mglb KR Android ROAS", game:"Last Asylum",
+      spend_cur:14100, spend_ref:68900, pct:-79.5, network_pct:24.1,
+      step2:[{type:"no_setting_change",severity:"info",title:"No Campaign Setting Changes Detected",detail:"No changes to bid, tROAS, targeting, or budget settings in the past 14 days. Market-side floor price increases detected in Step 3.",date:"—",countries:"—",impact:"The decline is NOT caused by intentional setting changes.",recommendation:"Continue to Step 3 for supply-side analysis."}],
+      step3:{
+        filter:{pass_rate:0.29,benchmark:0.68,reasons:[
+          {taxonomy:"Bid Lower Than Floor Price",pct:65,severity:"crit",detail:"65% of candidate impressions rejected — campaign bid ($0.85) is now below floor price in 8 key markets. Market floor prices increased significantly in the past 3 weeks.",show_detail:"Bid-floor gaps:\n  KR: bid $0.85 vs floor $1.40 (↑65%)\n  JP: bid $0.85 vs floor $1.25 (↑47%)\n  US T2: bid $0.85 vs floor $1.10 (↑29%)\n  + 5 more markets",recommendation:"Increase base bid to $1.50 to clear floor prices in top 5 markets."},
+          {taxonomy:"Creative Does Not Fit Placement",pct:22,severity:"warn",detail:"22% of candidates rejected — campaign lacks vertical video required for premium placements.",show_detail:"Missing: 9:16 vertical video (15–30s)",recommendation:"Add vertical video creative."},
+          {taxonomy:"Filtered by Pacing (Budget)",pct:13,severity:"info",detail:"13% pacing-based filtering — remaining eligible inventory has shifted to costlier segments.",recommendation:"After bid adjustment, consider increasing daily budget by $100."},
+        ]},
+        ranking:{win_rate:0.15,benchmark:0.52,bbb:{discount:0.08,threshold:0.15,ok:true,detail:"BBB discount 8% — within range."},bid:{status:"crit",campaign_bid:0.85,avg_winning:1.62,gap:-47.5,detail:"Campaign bid ($0.85) is 47.5% below avg winning bid ($1.62). Market has repriced significantly upward.",recommendation:"Raise bid to at least $1.60 to reach median competitiveness."},cvr:{status:"ok",campaign_cvr:3.7,benchmark_cvr:3.8,gap:-2.6,detail:"CVR (3.7%) is in-line with benchmark (3.8%). Creative quality is not a contributing factor.",recommendation:"No action needed on CVR."},prediction_bias:{predicted:3.6,observed:3.7,deviation:+2.8,detail:"[Internal] CVR model well-calibrated."}},
+        mediation:{winnable_rate:0.22,benchmark_wr:0.61,winnable_win_rate:0.66,benchmark_wwr:0.65,low_wr:{status:"crit",ecpm:1.28,market_bid:2.40,detail:"Campaign eCPM ($1.28) far below median ($2.40, −46.7%). Direct result of stale bid not tracking market price increases.",recommendation:"Raise base bid to bring eCPM above $2.40."},underbidding:{status:"ok",detail:"Within winnable auctions, win rate (66%) is above benchmark (65%)."}},
+      },
+    },
+  ],
+
   // ── Q2: top 3 campaigns with >15% spend decline ──
   topDeclining: [
     {
@@ -1189,10 +1251,21 @@ function genRankingByMetric(m) {
 // ═══════════════════════════════════════════
 //  DIAGNOSE FLOW
 // ═══════════════════════════════════════════
+
+function pickScenario(entity_id) {
+  let h = 0;
+  for (let i = 0; i < entity_id.length; i++) {
+    h = (h * 31 + entity_id.charCodeAt(i)) | 0;
+  }
+  const scenarios = MOCK.isolated_scenarios;
+  const idx = Math.abs(h) % scenarios.length;
+  return idx === 0 ? MOCK.isolated : scenarios[idx];
+}
+
 function genDiagnose(entity_type, entity_id) {
   // Determine scenario
   const isNetwork = (entity_type==='game' && entity_id==='500253218');
-  const d = MOCK.isolated;
+  const d = isNetwork ? MOCK.isolated : pickScenario(entity_id);
   const inc = MOCK.network_incident;
 
   // Spend overview (same for both paths)
@@ -1285,13 +1358,14 @@ function genDiagnose(entity_type, entity_id) {
       <div class="step-body">`;
 
     for (const ch of d.step2) {
-      html += `<div class="finding ${ch.severity==='crit'?'crit':'warn'}">
-        <span class="finding-icon">${ch.severity==='crit'?'':''}</span>
+      const sClass = ch.severity==='crit'?'crit':ch.severity==='info'?'info':'warn';
+      html += `<div class="finding ${sClass}">
+        <span class="finding-icon">${ch.severity==='crit'?'':ch.severity==='info'?'ℹ':''}</span>
         <div class="finding-content">
           <div class="finding-title">${esc(ch.title)}</div>
           <div class="finding-detail">
-            <strong>Change:</strong> ${esc(ch.detail)}<br>
-            <strong>Date:</strong> ${esc(ch.date)} &nbsp;·&nbsp; <strong>Countries:</strong> ${esc(ch.countries)}<br>
+            <strong>${ch.severity==='info'?'Finding':'Change'}:</strong> ${esc(ch.detail)}<br>
+            ${ch.date!=='—'?`<strong>Date:</strong> ${esc(ch.date)} &nbsp;·&nbsp; <strong>Countries:</strong> ${esc(ch.countries)}<br>`:''}
             <strong>Impact:</strong> ${esc(ch.impact)}
           </div>
           <div class="finding-rec">${esc(ch.recommendation)}</div>
