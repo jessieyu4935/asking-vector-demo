@@ -203,38 +203,46 @@ input[type=checkbox]{accent-color:#2563eb;width:13px;height:13px;cursor:pointer}
 .av-msgs .compact-step{display:flex;align-items:center;gap:8px;padding:6px 12px;border-radius:7px;font-size:12px;margin-bottom:8px;border:1px solid}
 .av-msgs .compact-step.ok{background:#f0fdf4;color:#166534;border-color:#bbf7d0}
 .av-msgs .compact-step.warn{background:#fffbeb;color:#92400e;border-color:#fde68a}
-/* Settings modal */
-.sm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:99999;display:none;align-items:center;justify-content:center}
-.sm-modal{background:#fff;border-radius:12px;width:480px;max-width:calc(100vw - 32px);max-height:88vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.25)}
-.sm-hd{display:flex;align-items:flex-start;justify-content:space-between;padding:16px 20px;border-bottom:1px solid #f1f5f9;position:sticky;top:0;background:#fff;z-index:1}
-.sm-title{font-weight:700;font-size:15px;color:#0f172a}
-.sm-subtitle{font-size:11.5px;color:#64748b;margin-top:2px}
-.sm-close{background:none;border:none;font-size:20px;color:#94a3b8;cursor:pointer;padding:0 4px;line-height:1}
-.sm-body{padding:20px}
-.sm-section{margin-bottom:18px}
-.sm-section-label{font-size:10.5px;font-weight:700;letter-spacing:.08em;color:#94a3b8;text-transform:uppercase;margin-bottom:10px}
-.sm-field{margin-bottom:14px}
-.sm-field-label{font-size:12.5px;font-weight:600;color:#374151;margin-bottom:5px}
-.sm-field-row{display:flex;align-items:center;gap:8px}
-.sm-input{flex:1;padding:8px 11px;border:1.5px solid #d1d5db;border-radius:7px;font-size:14px;font-weight:600;color:#0f172a;background:#fff}
-.sm-input.suggested{border-color:#2563eb;background:#eff6ff;color:#1d4ed8}
-.sm-tag{font-size:10.5px;padding:2px 8px;border-radius:4px;font-weight:600;white-space:nowrap}
-.sm-tag.current{background:#fef2f2;color:#b91c1c}
-.sm-tag.suggested{background:#dbeafe;color:#1d4ed8}
-.sm-impact{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:12px 14px;font-size:12.5px;color:#166534;margin-bottom:16px;line-height:1.5}
-.sm-save{display:block;width:100%;background:#2563eb;color:#fff;border:none;border-radius:8px;padding:11px;font-size:14px;font-weight:700;cursor:pointer;text-align:center}
-.sm-save:hover{background:#1d4ed8}
-.sm-chip-group{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
-.sm-chip{padding:4px 12px;border-radius:20px;font-size:12px;font-weight:600;cursor:default;border:1.5px solid}
-.sm-chip.active{background:#dbeafe;color:#1e40af;border-color:#93c5fd}
-.sm-chip.add{background:#f0fdf4;color:#166534;border-color:#86efac}
-.sm-format-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border:1.5px solid #e2e8f0;border-radius:8px;margin-bottom:8px}
-.sm-format-icon{width:36px;height:36px;background:#f1f5f9;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
-.sm-format-missing{border-color:#fecaca;background:#fef2f2}
-.sm-format-ok{border-color:#bbf7d0;background:#f0fdf4}
-.sm-format-badge{font-size:10px;font-weight:700;padding:1px 7px;border-radius:3px}
-.sm-format-badge.missing{background:#fecaca;color:#b91c1c}
-.sm-format-badge.ok{background:#bbf7d0;color:#166534}
+/* Settings modal — Unity Ads style */
+.sm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:99999;display:none;align-items:center;justify-content:center}
+.sm-modal{background:#fff;border-radius:8px;width:720px;max-width:calc(100vw - 32px);max-height:86vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 8px 40px rgba(0,0,0,.22)}
+.sm-mhd{padding:20px 24px 14px;border-bottom:1px solid #e5e7eb;flex-shrink:0}
+.sm-mhd-row{display:flex;align-items:flex-start;justify-content:space-between}
+.sm-title{font-weight:700;font-size:16px;color:#111827;line-height:1.3}
+.sm-subtitle{font-size:13px;color:#6b7280;margin-top:3px}
+.sm-close{background:none;border:none;cursor:pointer;color:#9ca3af;font-size:20px;line-height:1;padding:0}
+.sm-close:hover{color:#374151}
+.sm-search-btn{background:none;border:none;cursor:pointer;color:#6b7280;padding:2px}
+.sm-mbody{overflow-y:auto;flex:1}
+.sm-tbl{width:100%;border-collapse:collapse}
+.sm-tbl thead th{padding:9px 20px;text-align:left;font-size:12px;font-weight:600;color:#6b7280;background:#f9fafb;border-top:1px solid #e5e7eb;border-bottom:1px solid #e5e7eb;white-space:nowrap}
+.sm-tbl thead th.right{text-align:right}
+.sm-tbl tbody td{padding:11px 20px;font-size:13.5px;color:#111827;border-bottom:1px solid #f3f4f6;vertical-align:middle}
+.sm-tbl tbody tr:last-child td{border-bottom:none}
+.sm-tbl tbody tr:hover td{background:#fafafa}
+.sm-tbl .right{text-align:right}
+.sm-row-check{display:flex;align-items:center;gap:14px}
+.sm-cb{width:16px;height:16px;accent-color:#2563eb;cursor:pointer;flex-shrink:0}
+.sm-inp-wrap{display:inline-flex;align-items:stretch;border:1px solid #d1d5db;border-radius:5px;overflow:hidden}
+.sm-inp-wrap input{width:72px;padding:6px 8px;border:none;font-size:13px;text-align:right;outline:none;background:#fff}
+.sm-inp-suffix{padding:6px 8px;font-size:12px;color:#6b7280;background:#f9fafb;border-left:1px solid #d1d5db;white-space:nowrap}
+.sm-dash{color:#9ca3af;font-size:13px}
+.sm-htag{font-size:12px;font-weight:600;padding:2px 8px;border-radius:4px;white-space:nowrap}
+.sm-htag.high{background:#dcfce7;color:#166534}
+.sm-htag.med{background:#fef9c3;color:#854d0e}
+.sm-htag.active{background:#dbeafe;color:#1e40af}
+.sm-htag.missing{background:#fee2e2;color:#991b1b}
+.sm-mfooter{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;border-top:1px solid #e5e7eb;flex-shrink:0;background:#fff}
+.sm-footer-left{display:flex;align-items:center;gap:10px;font-size:12.5px;color:#6b7280}
+.sm-toggle-pill{width:38px;height:22px;background:#d1d5db;border-radius:11px;position:relative;cursor:pointer;flex-shrink:0;border:none}
+.sm-footer-btns{display:flex;align-items:center;gap:6px}
+.sm-btn-cancel{background:none;border:none;font-size:13.5px;color:#374151;cursor:pointer;padding:7px 14px;font-weight:500;border-radius:5px}
+.sm-btn-cancel:hover{background:#f3f4f6}
+.sm-btn-primary{background:#2563eb;color:#fff;border:none;border-radius:5px;padding:7px 18px;font-size:13.5px;font-weight:600;cursor:pointer}
+.sm-btn-primary:hover{background:#1d4ed8}
+.sm-btn-dim{background:#e5e7eb;color:#9ca3af;border:none;border-radius:5px;padding:7px 18px;font-size:13.5px;font-weight:600;cursor:default}
+.sm-impact-note{margin:0 24px 16px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:10px 14px;font-size:12.5px;color:#166534;line-height:1.5}
+.sm-impact-note strong{color:#15803d}
 .av-msgs .finding.ok{background:#f0fdf4;border:1px solid #bbf7d0}
 .av-msgs .finding.crit{background:#fef2f2;border:1px solid #fecaca}
 .av-msgs .finding-icon{font-size:14px;flex-shrink:0}
@@ -1658,13 +1666,14 @@ function genRootCauseCard(d) {
   </div>`;
 }
 function causeTypeLabel(type){return{troas_bid:"tROAS / bid floor mismatch",budget_cap:"budget cap / pacing",region_targeting:"region targeting",creative_mismatch:"creative format mismatch",bid_stale:"bid below floor price"}[type]||type;}
-function openSettings(type,settingsJson){const s=JSON.parse(settingsJson.replace(/&quot;/g,'"'));document.getElementById('sm-title').textContent={budget_settings:'Campaign Budget Settings',region_settings:'Campaign Targeting Settings',bid_settings:'Bid & tROAS Settings',creative_settings:'Creative Assets'}[type]||'Settings';document.getElementById('sm-subtitle').textContent=s.campaign_name||'';document.getElementById('sm-body-content').innerHTML=genSettingsBody(type,s);document.getElementById('sm-overlay').style.display='flex';}
+function openSettings(type,settingsJson){const s=JSON.parse(settingsJson.replace(/&quot;/g,'"'));let html='';if(type==='budget_settings')html=genBudgetSettings(s);if(type==='region_settings')html=genRegionSettings(s);if(type==='bid_settings')html=genBidSettings(s);if(type==='creative_settings')html=genCreativeSettings(s);document.getElementById('sm-body-content').innerHTML=html;document.getElementById('sm-overlay').style.display='flex';}
 function closeSettings(){document.getElementById('sm-overlay').style.display='none';}
-function genSettingsBody(type,s){if(type==='budget_settings')return genBudgetSettings(s);if(type==='region_settings')return genRegionSettings(s);if(type==='bid_settings')return genBidSettings(s);if(type==='creative_settings')return genCreativeSettings(s);return'';}
-function genBudgetSettings(s){return`<div class="sm-section"><div class="sm-section-label">Daily Budget</div><div class="sm-field"><div class="sm-field-label">Current daily budget</div><div class="sm-field-row"><input class="sm-input" value="${s.current_budget}" readonly><span class="sm-tag current">CURRENT</span></div></div><div class="sm-field"><div class="sm-field-label">Recommended daily budget</div><div class="sm-field-row"><input class="sm-input suggested" value="${s.suggested_budget}"><span class="sm-tag suggested">RECOMMENDED</span></div></div></div><div class="sm-section"><div class="sm-section-label">Delivery Insight</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px"><div class="rc-tile"><div class="rc-tile-label">Budget Exhausted By</div><div class="rc-tile-val warn">~${s.daily_cap_time} local</div></div><div class="rc-tile"><div class="rc-tile-label">Delivery Blocked</div><div class="rc-tile-val crit">~${s.blocked_hours} hrs/day</div></div></div></div><div class="sm-impact"><strong>Estimated impact:</strong> Increasing budget to ${s.suggested_budget} restores full-day delivery and is expected to recover ~60% of lost spend. eCPI is projected to remain stable.</div><button class="sm-save" onclick="closeSettings()">Save Budget Changes</button>`;}
-function genRegionSettings(s){const activeChips=(s.current_regions||[]).map(r=>`<span class="sm-chip active">${r}</span>`).join('');const addChips=(s.add_regions||[]).map(r=>`<span class="sm-chip add">+ ${r}</span>`).join('');return`<div class="sm-section"><div class="sm-section-label">Targeted Regions</div><div class="sm-field-label">Currently active</div><div class="sm-chip-group">${activeChips}</div><div style="margin-top:14px"><div class="sm-field-label">Recommended to add</div><div class="sm-chip-group">${addChips}</div><div style="font-size:11.5px;color:#64748b;margin-top:8px">These markets show strong demand signal matching your campaign goals.</div></div></div><div class="sm-impact"><strong>Estimated impact:</strong> Restoring JP, KR, BR is expected to recover +35% scale. CPI impact projected neutral.</div><button class="sm-save" onclick="closeSettings()">Save Targeting Changes</button>`;}
-function genBidSettings(s){const hasTroas=s.current_troas&&s.suggested_troas;return`${hasTroas?`<div class="sm-section"><div class="sm-section-label">tROAS Setting</div><div class="sm-field"><div class="sm-field-label">Current tROAS target</div><div class="sm-field-row"><input class="sm-input" value="${s.current_troas}" readonly><span class="sm-tag current">CURRENT</span></div></div><div class="sm-field"><div class="sm-field-label">Recommended tROAS</div><div class="sm-field-row"><input class="sm-input suggested" value="${s.suggested_troas}"><span class="sm-tag suggested">RECOMMENDED</span></div></div></div>`:''}<div class="sm-section"><div class="sm-section-label">Base Bid${s.market?` · ${s.market}`:''}</div><div class="sm-field"><div class="sm-field-label">Current base bid</div><div class="sm-field-row"><input class="sm-input" value="${s.current_bid}" readonly><span class="sm-tag current">BELOW FLOOR</span></div></div><div class="sm-field"><div class="sm-field-label">Recommended base bid</div><div class="sm-field-row"><input class="sm-input suggested" value="${s.suggested_bid}"><span class="sm-tag suggested">RECOMMENDED</span></div></div></div><div class="sm-impact"><strong>Estimated impact:</strong> Adjusting bid to ${s.suggested_bid}${hasTroas?` and tROAS to ${s.suggested_troas}`:''} is expected to recover 60–70% of lost scale.</div><button class="sm-save" onclick="closeSettings()">Save Bid Settings</button>`;}
-function genCreativeSettings(s){const missingItems=(s.missing_formats||[]).map(f=>`<div class="sm-format-item sm-format-missing"><div class="sm-format-icon">▭</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:#1e293b">${f}</div><div style="font-size:11.5px;color:#64748b;margin-top:2px">Required for rewarded video &amp; fullscreen placements</div></div><span class="sm-format-badge missing">MISSING</span></div>`).join('');return`<div class="sm-section"><div class="sm-section-label">Creative Assets</div><div class="sm-format-item sm-format-ok"><div class="sm-format-icon">▬</div><div style="flex:1"><div style="font-size:13px;font-weight:600;color:#1e293b">16:9 Horizontal Video (30s)</div><div style="font-size:11.5px;color:#64748b;margin-top:2px">Currently active</div></div><span class="sm-format-badge ok">ACTIVE</span></div>${missingItems}</div><div class="sm-impact"><strong>Estimated impact:</strong> Adding 9:16 vertical and 1:1 square creatives unlocks 55% of blocked placements and is expected to return CVR to 3.8–4.2%.</div><button class="sm-save" onclick="closeSettings()">Upload Creative Assets</button>`;}
+function smHeader(title,subtitle){return`<div class="sm-mhd"><div class="sm-mhd-row"><div><div class="sm-title">${title}</div><div class="sm-subtitle">${subtitle}</div></div><div style="display:flex;align-items:center;gap:6px"><button class="sm-search-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button><button class="sm-close" onclick="closeSettings()">&#x2715;</button></div></div></div>`;}
+function smFooter(toggleLabel,saveLabel){return`<div class="sm-mfooter"><div class="sm-footer-left"><button class="sm-toggle-pill"></button><span>${toggleLabel}</span></div><div class="sm-footer-btns"><button class="sm-btn-cancel" onclick="closeSettings()">Cancel</button><button class="sm-btn-primary" onclick="closeSettings()">${saveLabel}</button></div></div>`;}
+function genBudgetSettings(s){return smHeader('Edit Daily Budget',`${s.campaign_name} · Increasing budget extends afternoon and evening delivery.`)+`<div class="sm-mbody"><table class="sm-tbl"><thead><tr><th>Setting</th><th class="right">Current</th><th></th><th class="right">Recommended</th></tr></thead><tbody><tr><td><div>Daily budget</div><div style="font-size:12px;color:#6b7280;margin-top:2px">Maximum spend per day</div></td><td class="right" style="color:#dc2626;font-weight:600">${s.current_budget}</td><td class="right"><span style="color:#9ca3af">→</span></td><td class="right"><div class="sm-inp-wrap"><input value="${s.suggested_budget.replace('$','')}"><span class="sm-inp-suffix">USD</span></div></td></tr><tr><td><div>Budget exhausted by</div><div style="font-size:12px;color:#6b7280;margin-top:2px">Local advertiser timezone</div></td><td class="right" style="color:#ea580c;font-weight:600">~${s.daily_cap_time}</td><td></td><td></td></tr><tr><td><div>Delivery blocked</div><div style="font-size:12px;color:#6b7280;margin-top:2px">Afternoon &amp; evening hours</div></td><td class="right" style="color:#dc2626;font-weight:600">~${s.blocked_hours} hrs/day</td><td></td><td></td></tr></tbody></table><div style="padding:14px 24px 6px"><div class="sm-impact-note"><strong>Estimated impact:</strong> Increasing budget to ${s.suggested_budget} restores full-day delivery and is expected to recover ~60% of lost spend. eCPI is projected to remain stable.</div></div></div>`+smFooter('Apply suggested budget','Save Changes');}
+function genRegionSettings(s){const CN={US:'United States',UK:'United Kingdom',DE:'Germany',JP:'Japan',KR:'South Korea',BR:'Brazil',CA:'Canada',AU:'Australia'};const DEM={JP:'+18%',KR:'+12%',BR:'+9%',CA:'+6%',AU:'+5%'};const aRows=(s.current_regions||[]).map(r=>`<tr><td><div class="sm-row-check"><input type="checkbox" class="sm-cb" checked> ${CN[r]||r} (${r})</div></td><td class="right"><span class="sm-dash">—</span></td><td class="right"><span class="sm-htag active">Active</span></td></tr>`).join('');const bRows=(s.add_regions||[]).map(r=>`<tr><td><div class="sm-row-check"><input type="checkbox" class="sm-cb"> ${CN[r]||r} (${r})</div></td><td class="right">${DEM[r]?`<span class="sm-htag high">${DEM[r]} demand</span>`:`<span class="sm-dash">—</span>`}</td><td class="right"><span class="sm-htag med">Suggested</span></td></tr>`).join('');return smHeader('Add Countries & Bids',`${s.campaign_name} · Select countries where your campaign should be eligible.`)+`<div class="sm-mbody"><table class="sm-tbl"><thead><tr><th>Country</th><th class="right">Demand signal</th><th class="right">Status</th></tr></thead><tbody>${aRows}${bRows}</tbody></table></div>`+smFooter('Select all suggested regions','Save Targeting');}
+function genBidSettings(s){const hasTroas=s.current_troas&&s.suggested_troas;const mLabel={JP:'Japan',KR:'South Korea','KR / JP / US T2':'Japan · Korea · US T2'}[s.market]||s.market||'Global';let rows=hasTroas?`<tr><td><div>tROAS target</div><div style="font-size:12px;color:#6b7280;margin-top:2px">Return on ad spend goal</div></td><td class="right"><span style="color:#dc2626;font-weight:600">${s.current_troas}</span>&nbsp;<span class="sm-htag missing" style="font-size:10.5px">Too high</span></td><td class="right"><span style="color:#9ca3af">→</span></td><td class="right"><div class="sm-inp-wrap"><input value="${s.suggested_troas.replace('×','')}"><span class="sm-inp-suffix">×</span></div></td></tr>`:'';rows+=`<tr><td><div>Base bid · ${mLabel}</div><div style="font-size:12px;color:#6b7280;margin-top:2px">Must exceed market floor price</div></td><td class="right"><span style="color:#dc2626;font-weight:600">${s.current_bid}</span>&nbsp;<span class="sm-htag missing" style="font-size:10.5px">Below floor</span></td><td class="right"><span style="color:#9ca3af">→</span></td><td class="right"><div class="sm-inp-wrap"><input value="${s.suggested_bid.replace('$','')}"><span class="sm-inp-suffix">USD</span></div></td></tr>`;return smHeader('Edit Bid Settings',`${s.campaign_name} · Adjust bid to clear market floor prices.`)+`<div class="sm-mbody"><table class="sm-tbl"><thead><tr><th>Setting</th><th class="right">Current</th><th></th><th class="right">Recommended</th></tr></thead><tbody>${rows}</tbody></table><div style="padding:14px 24px 6px"><div class="sm-impact-note"><strong>Estimated impact:</strong> Adjusting bid to ${s.suggested_bid}${hasTroas?` and tROAS to ${s.suggested_troas}`:''} is expected to recover 60–70% of lost scale.</div></div></div>`+smFooter('Apply suggested values','Save Bid Settings');}
+function genCreativeSettings(s){const allFormats=[{ratio:'16:9',label:'Horizontal Video',spec:'16:9 · 15–30s · MP4',ok:true,placement:'Banner, interstitial (landscape)'},...(s.missing_formats||[]).map(f=>{const is916=f.includes('9:16');return{ratio:is916?'9:16':'1:1',label:is916?'Vertical Video':'Square Video',spec:f.replace(' Video','').replace('(','·').replace(')','')+'· MP4',ok:false,placement:is916?'Rewarded video, fullscreen':'Interstitial (square)'};})];const rows=allFormats.map(f=>`<tr><td><div style="display:flex;align-items:center;gap:12px"><div style="width:42px;height:30px;background:${f.ok?'#dbeafe':'#fee2e2'};border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:${f.ok?'#1e40af':'#991b1b'};flex-shrink:0">${f.ratio}</div><div><div style="font-weight:500">${f.label}</div><div style="font-size:12px;color:#6b7280;margin-top:1px">${f.spec}</div></div></div></td><td>${f.placement}</td><td class="right"><span class="sm-htag ${f.ok?'active':'missing'}">${f.ok?'Active':'Missing'}</span></td><td class="right">${f.ok?'<span class="sm-dash">—</span>':'<button style="background:#fff;border:1px solid #d1d5db;color:#374151;font-size:12.5px;padding:5px 12px;border-radius:5px;cursor:pointer">Upload</button>'}</td></tr>`).join('');return smHeader('Creative Assets',`${s.campaign_name} · Add missing formats to unlock rewarded and fullscreen placements.`)+`<div class="sm-mbody"><table class="sm-tbl"><thead><tr><th>Format</th><th>Placement types</th><th class="right">Status</th><th class="right">Action</th></tr></thead><tbody>${rows}</tbody></table><div style="padding:14px 24px 6px"><div class="sm-impact-note"><strong>Estimated impact:</strong> Adding 9:16 vertical and 1:1 square creatives unlocks 55% of blocked placements and is expected to return CVR to 3.8–4.2%.</div></div></div>`+smFooter('','Upload Assets');}
 
 // ═══════════════════════════════════════════
 //  MAIN DISPATCHER
@@ -1800,16 +1809,7 @@ function resize(el) {
 
 <!-- Settings Modal -->
 <div class="sm-overlay" id="sm-overlay" onclick="if(event.target===this)closeSettings()">
-  <div class="sm-modal">
-    <div class="sm-hd">
-      <div>
-        <div class="sm-title" id="sm-title">Campaign Settings</div>
-        <div class="sm-subtitle" id="sm-subtitle"></div>
-      </div>
-      <button class="sm-close" onclick="closeSettings()">&#x2715;</button>
-    </div>
-    <div class="sm-body" id="sm-body-content"></div>
-  </div>
+  <div class="sm-modal" id="sm-body-content"></div>
 </div>
 </body>
 </html>
