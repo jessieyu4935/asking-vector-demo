@@ -935,14 +935,14 @@ function parseIntent(q) {
   } else if (/performing overall|overall perf|how are my campaign/i.test(ql)) {
     intent.analysis_type = "Campaign performance overview";
     intent.metrics = ["spend","scale"];
+  } else if (/spend.*declin|scale.*declin|spend.*drop|scale.*drop|why.*spend|why.*scale|did.*declin|declin.*wow/i.test(ql)) {
+    intent.analysis_type = "Spend / scale decline diagnosis";
+    intent.metrics = ["spend","scale"];
   } else if (/wow|week.over.week|weekly change|performance change/i.test(ql)) {
     intent.analysis_type = "Week-over-week performance changes";
     intent.metrics = ["spend","scale"];
   } else if (/top.performing|under.perform|ranking|best|worst/i.test(ql)) {
     intent.analysis_type = "Campaign performance ranking";
-    intent.metrics = ["spend","scale"];
-  } else if (/spend.*declin|scale.*declin|spend.*drop|why.*spend|why.*scale/i.test(ql)) {
-    intent.analysis_type = "Spend / scale decline diagnosis";
     intent.metrics = ["spend","scale"];
   } else {
     intent.analysis_type = "General campaign inquiry";
