@@ -1,0 +1,1600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Unity Ads User Acquisition</title>
+<style>
+/* ─── Reset ─────────────────────────────────── */
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:13px;color:#1a1a1a;background:#f5f5f5;overflow:hidden;height:100vh}
+
+/* ─── Top nav ──────────────────────────────── */
+.topnav{height:48px;background:#0c0c14;display:flex;align-items:center;padding:0 16px;gap:10px;flex-shrink:0;position:relative;z-index:100}
+.topnav-logo{display:flex;align-items:center;gap:8px;color:#fff;font-size:13px;font-weight:600;text-decoration:none}
+.tnav-div{width:1px;height:20px;background:rgba(255,255,255,.15)}
+.topnav-title{color:#c9cdd4;font-size:12.5px;font-weight:400;white-space:nowrap}
+.tnav-right{margin-left:auto;display:flex;align-items:center;gap:3px}
+.tnav-icon{width:32px;height:32px;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;border-radius:6px;color:rgba(255,255,255,.55);transition:all .15s}
+.tnav-icon:hover{background:rgba(255,255,255,.1);color:#fff}
+.tnav-try{height:28px;padding:0 10px;border:1px solid rgba(255,255,255,.2);background:transparent;color:rgba(255,255,255,.75);border-radius:6px;font-size:11.5px;cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .15s;white-space:nowrap}
+.tnav-try:hover{background:rgba(255,255,255,.08)}
+.tnav-avatar{width:28px;height:28px;border-radius:50%;background:#2563eb;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:700;cursor:pointer;flex-shrink:0}
+/* Ask Vector button */
+.av-btn{height:30px;padding:0 12px;border:1px solid rgba(147,197,253,.35);background:rgba(37,99,235,.2);color:#93c5fd;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .15s;white-space:nowrap}
+.av-btn:hover{background:rgba(37,99,235,.4);color:#bfdbfe;border-color:rgba(147,197,253,.6)}
+.av-btn svg{width:14px;height:14px}
+
+/* ─── Layout ─────────────────────────────── */
+.layout{display:flex;height:calc(100vh - 48px)}
+
+/* ─── Left sidebar ─────────────────────── */
+.sidebar{width:224px;min-width:224px;background:#1a1c23;display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0}
+.sidebar::-webkit-scrollbar{width:4px}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px}
+.sb-hd{padding:14px 14px 5px;font-size:10px;font-weight:700;letter-spacing:.08em;color:rgba(255,255,255,.28);text-transform:uppercase}
+.sb-app{padding:9px 14px;display:flex;align-items:center;gap:8px;cursor:pointer;color:rgba(255,255,255,.8);font-size:12.5px;font-weight:600}
+.sb-app-ic{width:24px;height:24px;border-radius:6px;background:#2563eb;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;font-weight:800;color:#fff}
+.sb-item{padding:7px 14px 7px 28px;color:rgba(255,255,255,.5);font-size:12px;cursor:pointer;transition:all .12s;border-left:2px solid transparent;display:flex;align-items:center;gap:5px}
+.sb-item:hover{color:rgba(255,255,255,.85);background:rgba(255,255,255,.05)}
+.sb-item.active{color:#fff;background:rgba(255,255,255,.07);border-left-color:#2563eb}
+.sb-tag{padding:1px 5px;font-size:9px;font-weight:700;background:#374151;color:rgba(255,255,255,.4);border-radius:3px;text-transform:uppercase}
+.sb-div{height:1px;background:rgba(255,255,255,.06);margin:5px 0}
+.sb-sub{padding:9px 14px 3px;font-size:10px;font-weight:700;color:rgba(255,255,255,.22);text-transform:uppercase;letter-spacing:.07em}
+
+/* ─── Main area ──────────────────────────── */
+.main{flex:1;overflow-y:auto;background:#f5f5f5;min-width:0}
+.dev-bar{background:#1a1c23;padding:8px 24px;display:flex;align-items:center;gap:8px;font-size:12px;color:#93c5fd;border-bottom:1px solid rgba(255,255,255,.06)}
+.breadcrumb{padding:9px 24px;font-size:12px;color:#6b7280;display:flex;align-items:center;gap:4px;background:#fff;border-bottom:1px solid #e5e7eb}
+.breadcrumb a{color:#6b7280;text-decoration:none}
+.breadcrumb a:hover{color:#2563eb}
+.page-hd{padding:14px 24px 12px;background:#fff;border-bottom:1px solid #e5e7eb}
+.page-title{font-size:22px;font-weight:700;color:#111}
+.alert{margin:12px 24px 0;padding:11px 14px;border-radius:6px;display:flex;align-items:flex-start;gap:10px;font-size:12.5px;line-height:1.55}
+.alert.err{background:#fef2f2;border:1px solid #fecaca;color:#991b1b}
+.alert.info{background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af}
+.alert svg{flex-shrink:0;margin-top:2px}
+.alert-body strong{display:block;font-weight:700;margin-bottom:2px}
+.alert-learn{margin-left:auto;flex-shrink:0;font-size:12px;font-weight:600;padding:5px 10px;border:1px solid currentColor;border-radius:5px;cursor:pointer;white-space:nowrap}
+.camp-area{padding:16px 24px}
+.toolbar{display:flex;align-items:center;gap:7px;margin-bottom:12px;flex-wrap:wrap}
+.t-btn{height:30px;padding:0 10px;border:1px solid #d1d5db;background:#fff;border-radius:5px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:5px;color:#374151;transition:all .12s}
+.t-btn:hover{border-color:#9ca3af;background:#f9fafb}
+.t-btn.primary{background:#2563eb;color:#fff;border-color:#2563eb;font-weight:600}
+.t-btn.primary:hover{background:#1d4ed8}
+.t-search{height:30px;padding:0 10px 0 28px;border:1px solid #d1d5db;border-radius:5px;font-size:12px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='8'/%3E%3Cpath d='m21 21-4.35-4.35'/%3E%3C/svg%3E") no-repeat 9px center;min-width:220px}
+.t-search:focus{outline:none;border-color:#2563eb}
+.t-sel{height:30px;padding:0 8px;border:1px solid #d1d5db;background:#fff;border-radius:5px;font-size:12px;color:#374151;cursor:pointer}
+.t-right{margin-left:auto;display:flex;align-items:center;gap:7px}
+
+/* Campaign table */
+.ctable{width:100%;border-collapse:collapse;background:#fff;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;font-size:12px}
+.ctable th{background:#f9fafb;padding:9px 12px;text-align:left;font-weight:600;color:#374151;border-bottom:1px solid #e5e7eb;white-space:nowrap;font-size:11.5px}
+.ctable td{padding:10px 12px;border-bottom:1px solid #f3f4f6;color:#374151;vertical-align:middle}
+.ctable tr:last-child td{border-bottom:none}
+.ctable tr:hover td{background:#fafafa}
+.s-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
+.s-paused{background:#f1f5f9;color:#64748b}
+.s-live{background:#f0fdf4;color:#16a34a}
+.s-badge .dot{width:5px;height:5px;border-radius:50%;background:currentColor}
+.c-name{font-weight:500;color:#111}
+.c-warn{width:14px;height:14px;border-radius:50%;background:#f97316;display:inline-flex;align-items:center;justify-content:center;color:#fff;font-size:9px;font-weight:700;margin-left:4px}
+.expand{width:18px;height:18px;border:none;background:transparent;cursor:pointer;color:#9ca3af;font-size:13px;padding:0}
+.muted{color:#9ca3af}
+input[type=checkbox]{accent-color:#2563eb;width:13px;height:13px;cursor:pointer}
+
+/* ─── Ask Vector Panel ──────────────────── */
+.av-overlay{position:fixed;inset:0;background:rgba(0,0,0,0);pointer-events:none;z-index:199;transition:background .25s}
+.av-overlay.open{background:rgba(0,0,0,.3);pointer-events:all}
+.av-panel{position:fixed;top:0;right:-450px;width:450px;height:100vh;background:#fff;box-shadow:-4px 0 28px rgba(0,0,0,.18);z-index:200;display:flex;flex-direction:column;transition:right .28s cubic-bezier(.4,0,.2,1);overflow:hidden}
+.av-panel.open{right:0}
+.av-panel-hd{padding:13px 16px;background:#0c0c14;display:flex;align-items:center;gap:9px;flex-shrink:0}
+.av-panel-title{color:#fff;font-size:15px;font-weight:700;flex:1}
+.av-panel-badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;background:rgba(37,99,235,.35);color:#93c5fd;border:1px solid rgba(147,197,253,.25)}
+.av-ctx{padding:7px 16px;background:#0f0f1c;font-size:11px;color:rgba(255,255,255,.4);display:flex;align-items:center;gap:5px;border-bottom:1px solid rgba(255,255,255,.06);flex-shrink:0}
+.av-ctx strong{color:rgba(255,255,255,.65)}
+.av-close{width:28px;height:28px;border:none;background:rgba(255,255,255,.1);border-radius:6px;cursor:pointer;color:rgba(255,255,255,.65);font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .12s;line-height:1}
+.av-close:hover{background:rgba(255,255,255,.2);color:#fff}
+.av-msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;background:#f8f9fb}
+.av-msgs::-webkit-scrollbar{width:4px}
+.av-msgs::-webkit-scrollbar-thumb{background:#dde1e7;border-radius:2px}
+.av-welcome{text-align:center;padding:24px 14px;margin:auto}
+.av-welcome h2{font-size:17px;font-weight:700;color:#111;margin-bottom:5px}
+.av-welcome p{font-size:12px;color:#6b7280;margin-bottom:16px;line-height:1.55}
+.av-chips{display:flex;flex-direction:column;gap:6px;text-align:left}
+.av-chip{padding:9px 11px;background:#fff;border:1px solid #e5e7eb;border-radius:7px;cursor:pointer;font-size:12px;color:#374151;transition:all .12s;display:flex;align-items:center;justify-content:space-between}
+.av-chip:hover{border-color:#2563eb;color:#2563eb;background:#eff6ff}
+.av-chip-arr{color:#9ca3af;font-size:13px}
+.av-input-area{padding:10px 12px;background:#fff;border-top:1px solid #e5e7eb;flex-shrink:0}
+.av-input-row{display:flex;align-items:flex-end;gap:7px;background:#f8f9fb;border:1px solid #e5e7eb;border-radius:8px;padding:7px 10px}
+.av-input-row textarea{flex:1;border:none;background:transparent;resize:none;font-size:12.5px;font-family:inherit;color:#111;outline:none;max-height:80px;line-height:1.5}
+.av-send{width:28px;height:28px;border:none;background:#2563eb;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .12s}
+.av-send:hover{background:#1d4ed8}
+.av-send:disabled{background:#9ca3af;cursor:not-allowed}
+.av-hint{font-size:10.5px;color:#9ca3af;margin-top:5px;text-align:center}
+
+/* ─── Ask Vector chat styles (scoped inside panel) ── */
+.av-msgs .msg{display:flex;gap:8px;align-items:flex-start}
+.av-msgs .msg.user{flex-direction:row-reverse}
+.av-msgs .bubble{max-width:100%;padding:9px 12px;border-radius:10px;font-size:12.5px;line-height:1.55}
+.av-msgs .msg.user .bubble{background:#2563eb;color:#fff;border-radius:10px 10px 2px 10px}
+.av-msgs .msg.assistant .bubble{background:#fff;border:1px solid #e5e7eb;border-radius:10px 10px 10px 2px;width:100%}
+.av-msgs .loading-bubble{background:#fff;border:1px solid #e5e7eb;padding:10px 12px;border-radius:10px;font-size:12px;color:#6b7280}
+.av-msgs .loading-step{display:flex;align-items:center;gap:6px;color:#6b7280;font-size:12px;padding:2px 0}
+.av-msgs .l-spin{width:11px;height:11px;border:2px solid #e5e7eb;border-top-color:#2563eb;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+.av-msgs .l-done{width:11px;height:11px;border-radius:50%;background:#16a34a;flex-shrink:0}
+.av-msgs .l-pend{width:11px;height:11px;border-radius:50%;background:#e5e7eb;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.av-msgs .res-header{font-size:12px;font-weight:700;color:#374151;padding:6px 0 5px;border-bottom:1px solid #f3f4f6;margin-bottom:7px;display:flex;align-items:center;gap:5px}
+.av-msgs .res-body{font-size:12px;line-height:1.6}
+.av-msgs .intent-card{background:#f0f4ff;border:1px solid #c7d7fc;border-radius:7px;margin-bottom:8px;overflow:hidden;font-size:11.5px}
+.av-msgs .intent-header{background:#dbeafe;padding:6px 10px;font-weight:700;font-size:11px;color:#1e40af}
+.av-msgs .intent-body{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;padding:8px 10px;align-items:start}
+.av-msgs .intent-label{color:#6b7280;font-size:11px;white-space:nowrap;padding-top:2px}
+.av-msgs .intent-value{color:#111;font-size:11.5px}
+.av-msgs .ok-tag{color:#16a34a;font-weight:700}
+.av-msgs .missing{color:#d97706;font-weight:600}
+.av-msgs .overview-card{background:#f8f9fb;border:1px solid #e5e7eb;border-radius:7px;padding:10px;margin-bottom:8px}
+.av-msgs .ov-metrics{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.av-msgs .ov-metric .lbl{font-size:10px;color:#9ca3af;margin-bottom:2px;text-transform:uppercase;letter-spacing:.04em}
+.av-msgs .ov-metric .val{font-size:14px;font-weight:700}
+.av-msgs .ov-metric .val.red{color:#dc2626}
+.av-msgs .ov-metric .val.grn{color:#16a34a}
+.av-msgs .ov-metric .val.neu{color:#111}
+.av-msgs .perf-table{width:100%;border-collapse:collapse;font-size:11px;margin-top:6px}
+.av-msgs .perf-table th{background:#f8f9fb;padding:5px 8px;text-align:left;font-weight:600;color:#374151;border-bottom:1px solid #e5e7eb;font-size:10.5px}
+.av-msgs .perf-table td{padding:5px 8px;border-bottom:1px solid #f3f4f6;color:#374151;vertical-align:top}
+.av-msgs .perf-table tr:last-child td{border-bottom:none}
+.av-msgs .pct-r{color:#dc2626;font-weight:600}
+.av-msgs .pct-w{color:#d97706;font-weight:600}
+.av-msgs .pct-g{color:#16a34a;font-weight:600}
+.av-msgs .status-pill{display:inline-block;padding:1px 7px;border-radius:10px;font-size:10px;font-weight:600}
+.av-msgs .pill-under{background:#fef2f2;color:#dc2626}
+.av-msgs .pill-over{background:#f0fdf4;color:#16a34a}
+.av-msgs .pill-avg{background:#f1f5f9;color:#64748b}
+.av-msgs .step-block{background:#fff;border:1px solid #e5e7eb;border-radius:7px;margin-top:7px;overflow:hidden}
+.av-msgs .step-hd{background:#f8f9fb;padding:7px 10px;font-weight:700;font-size:11.5px;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;gap:6px}
+.av-msgs .step-body{padding:10px}
+.av-msgs .metric-row{display:grid;grid-template-columns:1fr auto auto;gap:6px;align-items:center;padding:4px 0;border-bottom:1px solid #f3f4f6;font-size:11.5px}
+.av-msgs .metric-row:last-child{border-bottom:none}
+.av-msgs .mr-label{color:#374151}
+.av-msgs .mr-val{font-weight:600;text-align:right;white-space:nowrap}
+.av-msgs .mr-bench{color:#9ca3af;font-size:10px}
+.av-msgs .badge-ok{background:#f0fdf4;color:#16a34a;padding:1px 6px;border-radius:10px;font-size:10px;font-weight:600;white-space:nowrap}
+.av-msgs .badge-crit{background:#fef2f2;color:#dc2626;padding:1px 6px;border-radius:10px;font-size:10px;font-weight:600;white-space:nowrap}
+.av-msgs .badge-warn{background:#fffbeb;color:#d97706;padding:1px 6px;border-radius:10px;font-size:10px;font-weight:600;white-space:nowrap}
+.av-msgs .finding{display:flex;gap:8px;padding:8px 10px;border-radius:6px;margin-top:5px;font-size:11.5px;line-height:1.55}
+.av-msgs .finding.warn{background:#fffbeb;border:1px solid #fde68a}
+.av-msgs .finding.ok{background:#f0fdf4;border:1px solid #bbf7d0}
+.av-msgs .finding.crit{background:#fef2f2;border:1px solid #fecaca}
+.av-msgs .finding-icon{font-size:14px;flex-shrink:0}
+.av-msgs .finding-title{font-weight:700;margin-bottom:2px}
+.av-msgs .finding-detail{color:#374151}
+.av-msgs .net-incident-card{background:#fff8f1;border:1px solid #fed7aa;border-radius:7px;padding:11px;margin-top:7px;font-size:11.5px}
+.av-msgs .inc-hd{display:flex;align-items:center;gap:7px;margin-bottom:7px;flex-wrap:wrap}
+.av-msgs .inc-badge-p2{background:#d97706;color:#fff;padding:2px 7px;border-radius:10px;font-size:10px;font-weight:700}
+.av-msgs .inc-kv{display:grid;grid-template-columns:110px 1fr;gap:3px 8px;font-size:11px}
+.av-msgs .inc-k{color:#9ca3af}
+.av-msgs .inc-v{color:#111}
+.av-msgs .rec-box{background:#eff6ff;border:1px solid #bfdbfe;border-radius:6px;padding:8px 10px;font-size:11.5px;margin-top:7px}
+.av-msgs .wow-section{margin-top:7px}
+.av-msgs .wow-hd{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#6b7280;padding:5px 0 4px;border-bottom:1px solid #f3f4f6;margin-bottom:4px}
+.av-msgs .clarify-card{background:#fffbeb;border:1px solid #fde68a;border-radius:7px;overflow:hidden;margin-top:6px}
+.av-msgs .clarify-header{padding:6px 10px;background:#fef3c7;border-bottom:1px solid #fde68a;font-size:11px;font-weight:600;color:#92400e}
+.av-msgs .clarify-body{padding:10px;font-size:12px;color:#111;line-height:1.6}
+.av-msgs .clarify-eg{font-size:11px;color:#6b7280;font-family:monospace;cursor:pointer;padding:3px 7px;background:white;border:1px solid #e5e7eb;border-radius:4px;display:inline-block;transition:all .12s;margin:2px}
+.av-msgs .clarify-eg:hover{border-color:#2563eb;color:#2563eb}
+</style>
+</head>
+<body>
+
+<!-- Top Navigation -->
+<nav class="topnav">
+  <a class="topnav-logo" href="#">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+    Unity
+  </a>
+  <div class="tnav-div"></div>
+  <span class="topnav-title">Test- APP Campaign management</span>
+
+  <div class="tnav-right">
+    <!-- Ask Vector button -->
+    <button class="av-btn" onclick="openAskVector()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Ask Vector
+    </button>
+    <div class="tnav-div" style="margin:0 4px"></div>
+    <button class="tnav-try">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+      Try new experience
+    </button>
+    <div class="tnav-div" style="margin:0 4px"></div>
+    <button class="tnav-icon" title="Language"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></button>
+    <button class="tnav-icon" title="Preview"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+    <button class="tnav-icon" title="Lock"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></button>
+    <button class="tnav-icon" title="Settings"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+    <button class="tnav-icon" title="Search"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button>
+    <button class="tnav-icon" title="Notifications"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+    <div class="tnav-avatar" title="Jessie Yu">JY</div>
+  </div>
+</nav>
+
+<div class="layout">
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sb-hd">GROW</div>
+    <div class="sb-app">
+      <div class="sb-app-ic">U</div>
+      Unity Ads User Acquisition
+    </div>
+    <div class="sb-item" style="padding-left:20px">Apps</div>
+    <div style="padding:4px 0 0 14px">
+      <div style="padding:6px 14px 6px 6px;display:flex;align-items:center;gap:7px;cursor:pointer;color:rgba(255,255,255,.8);font-size:12px;font-weight:600">
+        <div style="width:18px;height:18px;border-radius:4px;background:#10b981;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#fff;flex-shrink:0">B</div>
+        Block Blast!
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:auto;color:rgba(255,255,255,.35)"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="sb-item active">Campaigns</div>
+      <div class="sb-item">Creative Packs</div>
+      <div class="sb-item">Creatives</div>
+      <div class="sb-item">Share of Voice <span class="sb-tag">Admin</span></div>
+      <div class="sb-item">Eligibility Data <span class="sb-tag">Admin</span></div>
+    </div>
+    <div class="sb-sub">Creative Tools</div>
+    <div class="sb-item">Creatives Upload</div>
+    <div class="sb-div"></div>
+    <div class="sb-sub">Reporting</div>
+    <div class="sb-item">Dashboard</div>
+    <div class="sb-item">Stats API Access</div>
+    <div class="sb-item">Chat with Unity AI <span class="sb-tag">Dev</span></div>
+    <div class="sb-div"></div>
+    <div class="sb-item" style="padding-left:16px">Finance</div>
+    <div class="sb-item" style="padding-left:16px">API Management</div>
+    <div class="sb-item" style="padding-left:16px">Settings</div>
+    <div style="margin-top:auto;padding:12px 14px;font-size:11px;color:rgba(255,255,255,.18)">Unity* v6.2</div>
+  </aside>
+
+  <!-- Main -->
+  <main class="main">
+    <!-- Developer data bar -->
+    <div class="dev-bar">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+      Unlock advanced optimization with Developer Data Framework sharing, usage and analytics
+      <span style="color:rgba(255,255,255,.35);font-size:11px">— Enable data collection and usage to unlock advanced optimization, insights and full product capabilities.</span>
+      <button style="margin-left:auto;padding:4px 10px;background:transparent;border:1px solid rgba(255,255,255,.2);border-radius:4px;color:rgba(255,255,255,.65);font-size:11px;cursor:pointer">Configure Developer Data Settings</button>
+      <button style="background:transparent;border:none;color:rgba(255,255,255,.35);cursor:pointer;font-size:15px;line-height:1;margin-left:4px">&#x2715;</button>
+    </div>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+      <a href="#">Apps</a><span>&#x203A;</span>
+      <a href="#">Block Blast!</a><span style="margin:0 2px">|</span>
+      <span style="color:#374151">Game ID: 500205758</span>
+    </div>
+
+    <!-- Page header -->
+    <div class="page-hd"><div class="page-title">Campaigns</div></div>
+
+    <!-- Alerts -->
+    <div class="alert err">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:2px"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+      <div class="alert-body">
+        <strong>Required MMP integration fixes</strong>
+        Integration-blocking issues detected for one or more campaigns. These issues can severely impact performance. Resolve issues to ensure accurate tracking and delivery. We recommend that you update your MMP settings as soon as possible. Starting April 9, unresolved required integration fixes can prevent newly created or paused campaigns from going live.
+      </div>
+      <div class="alert-learn">Learn more &#x2197;</div>
+    </div>
+
+    <div class="alert info" style="margin-top:8px">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="flex-shrink:0;margin-top:2px"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+      <div class="alert-body">
+        <strong>New feature release: Instant ROAS Campaigns and MMP integration alerts</strong>
+        You can now launch ROAS campaigns immediately without waiting for historical data. To ensure peak performance, we've also added MMP integrations alerts to flag required fixes and setup warnings across your apps.
+      </div>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div class="alert-learn">Learn more &#x2197;</div>
+        <button onclick="this.closest('.alert').remove()" style="background:transparent;border:none;cursor:pointer;color:inherit;font-size:15px;line-height:1">&#x2715;</button>
+      </div>
+    </div>
+
+    <!-- Campaigns area -->
+    <div class="camp-area">
+      <div class="toolbar">
+        <button class="t-btn"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg> Delete</button>
+        <button class="t-btn"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg> Pause</button>
+        <input class="t-search" placeholder="Search by campaign name or ID" type="text"/>
+        <button class="t-btn">+ Add filters</button>
+        <div class="t-right">
+          <button class="t-btn">History &amp; Performance</button>
+          <button class="t-btn">&#x2193; Import</button>
+          <button class="t-btn">&#x2191; Export</button>
+          <span style="font-size:12px;color:#6b7280;display:flex;align-items:center;gap:5px">View <select class="t-sel"><option>Basic</option></select></span>
+          <span style="font-size:12px;color:#6b7280;display:flex;align-items:center;gap:5px">Timeframe <select class="t-sel"><option>Past 30 days</option><option>Past 7 days</option></select></span>
+          <button class="t-btn primary">Create</button>
+        </div>
+      </div>
+
+      <table class="ctable">
+        <thead>
+          <tr>
+            <th style="width:36px"><input type="checkbox"/></th>
+            <th>Campaign name &#x2191;</th>
+            <th>Status</th>
+            <th>Goal</th>
+            <th>Optimization type</th>
+            <th>Bid strategy</th>
+            <th>Billing</th>
+            <th>Starts</th>
+            <th>Installs</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><input type="checkbox"/></td>
+            <td><button class="expand">&#x203A;</button> <span class="c-name">ROAS 2025-06-03</span></td>
+            <td><span class="s-badge s-paused"><span class="dot"></span> Paused</span></td>
+            <td>ROAS optimization</td><td>In-app purchase ROAS</td><td class="muted">&#x2013;</td><td>CPI</td><td class="muted">&#x2013;</td><td class="muted">&#x2013;</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"/></td>
+            <td><button class="expand">&#x203A;</button> <span class="c-name">ROAS 2025-09-04</span></td>
+            <td><span class="s-badge s-paused"><span class="dot"></span> Paused</span></td>
+            <td>ROAS optimization</td><td>In-app purchase ROAS</td><td class="muted">&#x2013;</td><td>CPI</td><td class="muted">&#x2013;</td><td class="muted">&#x2013;</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"/></td>
+            <td><button class="expand">&#x203A;</button> <span class="c-name">ROAS 2025-09-<span class="muted">...</span><span class="c-warn">!</span></span></td>
+            <td><span class="s-badge s-paused"><span class="dot"></span> Paused</span></td>
+            <td>ROAS optimization</td><td>In-app purchase ROAS</td><td class="muted">&#x2013;</td><td>CPI</td><td class="muted">&#x2013;</td><td class="muted">&#x2013;</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"/></td>
+            <td><button class="expand">&#x203A;</button> <span class="c-name">Event Optimization ...</span></td>
+            <td><span class="s-badge s-paused"><span class="dot"></span> Paused</span></td>
+            <td>Event optimization</td><td>Payer</td><td>Manual</td><td>CPI</td><td class="muted">&#x2013;</td><td class="muted">&#x2013;</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"/></td>
+            <td><button class="expand">&#x203A;</button> <span class="c-name">Event Optimization ...</span></td>
+            <td><span class="s-badge s-paused"><span class="dot"></span> Paused</span></td>
+            <td>Event optimization</td><td>Payer</td><td>Manual</td><td>CPI</td><td class="muted">&#x2013;</td><td class="muted">&#x2013;</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"/></td>
+            <td><button class="expand">&#x203A;</button> <span class="c-name">Event Optimization ...</span></td>
+            <td><span class="s-badge s-paused"><span class="dot"></span> Paused</span></td>
+            <td>Event optimization</td><td>Payer</td><td>Manual</td><td>CPI</td><td class="muted">&#x2013;</td><td class="muted">&#x2013;</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"/></td>
+            <td><button class="expand">&#x203A;</button> <span class="c-name">mxcj iOS US D7 ROAS</span></td>
+            <td><span class="s-badge s-live"><span class="dot"></span> Live</span></td>
+            <td>ROAS optimization</td><td>In-app purchase ROAS</td><td class="muted">&#x2013;</td><td>CPI</td><td>2026-01-15</td><td>41,200</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox"/></td>
+            <td><button class="expand">&#x203A;</button> <span class="c-name">TK iOS Global CPI</span></td>
+            <td><span class="s-badge s-live"><span class="dot"></span> Live</span></td>
+            <td>Event optimization</td><td>In-app purchase</td><td>Auto</td><td>CPI</td><td>2026-02-01</td><td>28,300</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+</div>
+
+<!-- Ask Vector overlay + panel -->
+<div class="av-overlay" id="av-overlay" onclick="closeAskVector()"></div>
+
+<div class="av-panel" id="av-panel">
+  <div class="av-panel-hd">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#93c5fd" stroke-width="2" style="flex-shrink:0"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    <span class="av-panel-title">Ask Vector</span>
+    <span class="av-panel-badge">Preview</span>
+    <button class="av-close" onclick="closeAskVector()">&#x2715;</button>
+  </div>
+  <div class="av-ctx">
+    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+    Context: <strong>Block Blast!</strong> &nbsp;&#xb7;&nbsp; Game ID: <strong>500205758</strong>
+  </div>
+
+  <div class="av-msgs" id="av-msgs">
+    <div id="av-wlc" class="av-welcome">
+      <div style="width:42px;height:42px;background:#0c0c14;border-radius:12px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#93c5fd" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      </div>
+      <h2>Ask Vector</h2>
+      <p>AI-powered spend &amp; scale diagnostics<br>Block Blast! &#xb7; Game 500205758</p>
+      <div class="av-chips">
+        <div class="av-chip" onclick="panelFirePreset(0)">What're the top issues that require my attention? <span class="av-chip-arr">&#x203A;</span></div>
+        <div class="av-chip" onclick="panelFirePreset(1)">How are my campaigns performing overall? <span class="av-chip-arr">&#x203A;</span></div>
+        <div class="av-chip" onclick="panelFirePreset(2)">What are the week-over-week (WoW) performance changes? <span class="av-chip-arr">&#x203A;</span></div>
+        <div class="av-chip" onclick="panelFirePreset(3)">What're my top-performing/under-performing campaigns? <span class="av-chip-arr">&#x203A;</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="av-input-area">
+    <div class="av-input-row">
+      <textarea id="av-qi" rows="1" placeholder="Ask about your campaigns, spend, or scale issues…" onkeydown="onKey(event)" oninput="resize(this)"></textarea>
+      <button class="av-send" id="av-sbtn" onclick="send()">
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M14 8L2 2L5 8L2 14L14 8Z" fill="white"/></svg>
+      </button>
+    </div>
+    <div class="av-hint">Enter to send · Shift+Enter for new line</div>
+  </div>
+</div>
+
+<script>
+// Panel open/close
+function openAskVector() {
+  document.getElementById('av-panel').classList.add('open');
+  document.getElementById('av-overlay').classList.add('open');
+  setTimeout(()=>{ const qi=document.getElementById('av-qi'); if(qi) qi.focus(); }, 300);
+}
+function closeAskVector() {
+  document.getElementById('av-panel').classList.remove('open');
+  document.getElementById('av-overlay').classList.remove('open');
+}
+// Preset handler
+const PANEL_PRESETS = [
+  "What're the top issues that require my attention?",
+  "How are my campaigns performing overall?",
+  "What are the week-over-week (WoW) performance changes?",
+  "What're my top-performing/under-performing campaigns?",
+];
+function panelFirePreset(idx) { fillAndSend(PANEL_PRESETS[idx]); }
+</script>
+
+<script>
+
+// ═══════════════════════════════════════════
+//  MOCK DATA
+// ═══════════════════════════════════════════
+const MOCK = {
+  portfolio: {
+    period: "Mar 25–31 vs Mar 18–24",
+    total_spend_cur: 2847320,
+    total_spend_ref: 3124580,
+    pct_change: -8.9,
+    campaigns: [
+      {id:"6971dcad477ae8984b4a6dfa", name:"TK iOS US ROAS-H5",   game:"Take a kiss",       spend_cur:18240,   spend_ref:28150,  pct:-35.2, roas_cur:1.8,  roas_ref:3.1,  installs:12400, cvr:"2.1%", status:"under"},
+      {id:"69a79f0d72f827702923b52e", name:"mglb KR Android ROAS", game:"Last Asylum",       spend_cur:33946,   spend_ref:70811,  pct:-52.1, roas_cur:2.1,  roas_ref:2.3,  installs:9800,  cvr:"3.4%", status:"under"},
+      {id:"68b8fcaebf3c3cd17be15591", name:"mxcj iOS US D7 ROAS",  game:"Block Blast!",      spend_cur:193079,  spend_ref:178430, pct:+8.2,  roas_cur:3.8,  roas_ref:3.6,  installs:41200, cvr:"5.2%", status:"top"},
+      {id:"69b7da5b93de010234abc123", name:"mglb JP Android CPE",  game:"Last Asylum",       spend_cur:25820,   spend_ref:27682,  pct:-6.7,  roas_cur:2.9,  roas_ref:3.0,  installs:6100,  cvr:"4.1%", status:"avg"},
+      {id:"696e4038a7d1a35d95ffd9ee", name:"TK iOS Global CPI",   game:"Take a kiss",       spend_cur:44210,   spend_ref:38900,  pct:+13.7, roas_cur:4.1,  roas_ref:3.7,  installs:28300, cvr:"6.3%", status:"top"},
+      {id:"69aaa69184201b99ebd46979", name:"mglb JP ROAS-H5 c04",  game:"Last Asylum",       spend_cur:4810,    spend_ref:29289,  pct:-83.6, roas_cur:0.9,  roas_ref:2.2,  installs:1200,  cvr:"1.8%", status:"under"},
+    ],
+  },
+  attention: [
+    {
+      type: "mmp_validation",
+      severity: "crit",
+      title: "MMP validation",
+      subtitle: "Required MMP integration fixes",
+      campaigns_affected: 3,
+      description: "Integration-blocking issues detected for one or more campaigns. These issues can severely impact performance. Resolve issues to ensure accurate tracking and delivery. We recommend that you update your MMP settings as soon as possible. Starting April 9, unresolved required integration fixes can prevent newly created or paused campaigns from going live.",
+      cta: "Review MMP Settings",
+    },
+    {
+      type: "spend_decline_region",
+      severity: "crit",
+      campaign_id: "7847818",
+      campaign_name: "PP-ROAS-APAC-O-MED-PL",
+      spend_change: -56,
+      window: "past 7 days",
+      filter_reason_pct: 78,
+      filter_reason: "region targeting",
+      root_cause_detail: "78% of rejected candidates are blocked by region targeting. Campaign eligible in only 3 markets, severely limiting auction participation.",
+      current_regions: ["US","UK","DE"],
+      missed_regions: [{c:"JP",lift:"+18%"},{c:"KR",lift:"+12%"},{c:"BR",lift:"+9%"},{c:"CA",lift:null},{c:"AU",lift:null}],
+      recommendation: "Expand targeting to JP, KR, and BR. These markets show high auction demand matching your campaign goals. Adding 3 regions could increase eligible impressions by up to +35%.",
+      estimated_impact: "+35% scale with JP, KR, BR · CPI impact neutral",
+      cta: "Expand Region Targeting",
+    },
+    {
+      type: "spend_decline_budget",
+      severity: "warn",
+      campaign_id: "5934102",
+      campaign_name: "TK-CPI-US-IOS-SCALE",
+      spend_change: -60,
+      window: "past 7 days",
+      filter_reason_pct: 60,
+      filter_reason: "budget cap / pacing",
+      root_cause_detail: "60% of rejected candidates are filtered due to daily budget cap. Daily budget ($200) exhausted by 13:30 local time, blocking all afternoon and evening delivery.",
+      budget_daily: "$200",
+      budget_utilization: "99.8%",
+      exhaustion_time: "~13:30 local",
+      delivery_blocked: "~10.5 hrs/day",
+      recommendation: "Increase daily budget from $200 to $350 to extend delivery into afternoon and evening windows. Current budget cap is the primary constraint on spend scale.",
+      estimated_impact: "+60% scale with $350/day · eCPI remains stable",
+      cta: "Adjust Campaign Budget",
+    },
+  ],
+  network_incident: {
+    id:"INC-2026-0325-001",
+    title:"Ad Exchange Publisher Platform Slowdown",
+    severity:"P2 — High",
+    status:" Monitoring",
+    start:"2026-03-25 09:14 UTC",
+    updated:"2026-03-31 18:00 UTC",
+    affected_campaigns:"~7,519 campaigns (~50% of active demand)",
+    description:"A major ad exchange publisher experienced reduced ad request volume due to infrastructure maintenance overrun. This caused widespread delivery slowdown across Unity Ads demand campaigns globally.",
+    impact:"Average spend decline of 35–45% for affected advertisers. Campaigns targeting T1 markets (US, JP, KR, EU) most impacted.",
+    mitigation:"Unity engineering is coordinating with publisher partners on traffic recovery. Partial recovery observed from Mar 30.",
+    expected_resolution:"2026-04-02",
+    advertiser_action:"No action required. This is a supply-side infrastructure issue. Campaign settings remain optimal; spend will recover automatically as publisher traffic restores.",
+  },
+  isolated: {
+    campaign_id:"6971dcad477ae8984b4a6dfa",
+    campaign_name:"TK iOS US ROAS-H5",
+    game:"Take a kiss",
+    spend_cur:18240, spend_ref:28150, pct:-35.2,
+    network_pct:22.3,
+    step2:[
+      {
+        type:"roas_target_increase", severity:"warn",
+        title:"tROAS Target Raised",
+        detail:"tROAS increased from 2.50 → 3.20 (+28%) across 12 countries",
+        date:"2026-03-22", countries:"US, JP, KR, GB, DE, FR, CA, AU, SG, TW, HK, TH",
+        impact:"Higher tROAS restricts eligible inventory — campaigns only compete for high-ROAS placements, significantly reducing available auctions.",
+        recommendation:"Lower tROAS back to 2.50 if scale is the priority. The +28% increase reduced eligible auctions by an estimated 35%.",
+      },
+      {
+        type:"bid_decrease", severity:"crit",
+        title:"Base Bid Decreased — JP Market",
+        detail:"Base bid decreased from $1.20 → $0.95 (−20.8%) for country: JP",
+        date:"2026-03-20", countries:"JP",
+        impact:"JP bid ($0.95) fell below JP floor price range ($1.20–$1.80). Campaign effectively excluded from JP inventory.",
+        recommendation:"Restore JP base bid to ≥$1.20 to re-enter JP auctions. JP represents ~18% of this campaign's prior spend.",
+      },
+    ],
+    step3:{
+      filter:{
+        pass_rate:0.42, benchmark:0.68,
+        reasons:[
+          {
+            taxonomy:"Creative Does Not Fit Placement", pct:45, severity:"crit",
+            detail:"Campaign lacks vertical video format (9:16, 15–30s) required by rewarded video and fullscreen interstitial placements.",
+            show_detail:"Impacted placement types: Rewarded Video (fullscreen), Interstitial (fullscreen)\nEligible creatives: 2 horizontal video (16:9) only\nRecommended format: Vertical video 9:16 · 15–30s",
+            recommendation:"Add vertical video creative (9:16 aspect ratio, 15–30s) to unlock rewarded video and fullscreen inventory, unlocking ~45% of currently rejected candidates.",
+          },
+          {
+            taxonomy:"Bid Lower Than Floor Price", pct:32, severity:"crit",
+            detail:"Current JP bid ($0.95) is below JP floor price range $1.20–$1.80. 32% of candidates rejected before auction.",
+            show_detail:"Current bid: $0.95\nFloor price range (JP): $1.20 – $1.80\nRejections due to floor mismatch: 32%",
+            recommendation:"Increase JP country bid to at least $1.20 to clear floor price and access JP inventory.",
+          },
+          {
+            taxonomy:"Filtered by Pacing (Budget)", pct:15, severity:"warn",
+            detail:"Daily budget ($500) exhausted by midday. 15% of candidates filtered due to budget cap.",
+            show_detail:"Daily budget: $500\nBudget utilization: 99.6% (by 14:00 local)\nEstimated delivery lost to pacing: 15%",
+            recommendation:"Increase daily budget to $700+ or enable smart budget auto-adjustment to reduce pacing-based filtering.",
+          },
+          {taxonomy:"Other Filters", pct:8, severity:"info", detail:"Minor contributions from category targeting, OS version targeting, etc.", recommendation:"Review campaign targeting settings for further optimization."},
+        ],
+      },
+      ranking:{
+        win_rate:0.28, benchmark:0.52,
+        bbb:{discount:0.08, threshold:0.15, ok:true, detail:"BBB discount factor 8% — below 15% threshold. Not a primary issue."},
+        bid:{
+          status:"crit", campaign_bid:0.95, avg_winning:1.42, gap:-33,
+          detail:"Campaign adjusted bid ($0.95) is 33% below average winning bid ($1.42). Campaign loses majority of auctions to higher-bidding competitors.",
+          recommendation:"Increase target bid to ≥$1.40 to reach median auction competitiveness. A $0.45 bid increase is estimated to recover ~30% win rate.",
+        },
+        cvr:{
+          status:"warn", campaign_cvr:2.1, benchmark_cvr:3.8, gap:-44.7,
+          detail:"Campaign observed CVR (2.1%) is 44.7% below category benchmark (3.8%). Lower install rate reduces campaign value score in ranking.",
+          recommendation:"Refresh creatives with higher-performing formats. A/B test new creatives targeting CTR improvement to lift CVR toward benchmark.",
+        },
+        prediction_bias:{
+          predicted:3.5, observed:2.1, deviation:-40,
+          detail:"[Internal] Predicted CVR (3.5%) overestimates observed CVR (2.1%) by 40%. CVR model may need recalibration for this campaign type.",
+        },
+      },
+      mediation:{
+        winnable_rate:0.38, benchmark_wr:0.61,
+        winnable_win_rate:0.71, benchmark_wwr:0.65,
+        low_wr:{
+          status:"crit", ecpm:1.85, market_bid:2.40,
+          detail:"Campaign eCPM ($1.85) is below median market bid ($2.40). Only 38% of submitted auctions are considered winnable externally.",
+          recommendation:"Increase bid to improve eCPM above $2.40 median. This will expand the winnable auction pool and directly improve delivery scale.",
+        },
+        underbidding:{
+          status:"ok",
+          detail:"Winnable Win Rate (71%) is above benchmark (65%). Within winnable auctions, the campaign is bidding competitively. No underbidding issue in winnable space.",
+        },
+      },
+    },
+  },
+  // ── Q2: top 3 campaigns with >15% spend decline ──
+  topDeclining: [
+    {
+      id:"69aaa69184201b99ebd46979", name:"mglb JP ROAS-H5 c04", game:"Last Asylum",
+      spend_cur:4810, spend_ref:29289, pct:-83.6,
+      root_cause_type:"bid",
+      root_cause:"Base bid dropped below floor price — campaign excluded from JP auctions",
+      root_cause_detail:"Base bid reduced from $1.20 → $0.95 in JP. JP floor price range is $1.05–$1.80. Campaign is now ineligible in 82% of JP auctions, which represented the majority of prior delivery.",
+      bars:[
+        {label:"Bid Below Floor Price",  pct:82, c:"#dc2626"},
+        {label:"Creative Format Mismatch",pct:12,c:"#f97316"},
+        {label:"Filtered by Pacing",     pct:6,  c:"#9ca3af"},
+      ],
+      recommendation:"Restore base bid to ≥$1.10 in JP to regain auction eligibility. Consider A/B testing $1.10 vs $1.20 to find the optimal balance between scale and efficiency.",
+      impact:"+75% spend recovery in JP · estimated eCPI $2.1–2.4",
+    },
+    {
+      id:"69a79f0d72f827702923b52e", name:"mglb KR Android ROAS", game:"Last Asylum",
+      spend_cur:33946, spend_ref:70811, pct:-52.1,
+      root_cause_type:"filter",
+      root_cause:"Region targeting too narrow — 78% of candidates blocked before auction",
+      root_cause_detail:"Campaign eligible in only 3 markets (US, UK, DE). High-demand regions KR, JP, BR, AU excluded, representing 68% of available auction volume for this audience profile.",
+      bars:[
+        {label:"Excluded by Region Targeting",pct:78,c:"#dc2626"},
+        {label:"Creative Does Not Fit",       pct:14,c:"#f97316"},
+        {label:"Bid Below Floor",             pct:8, c:"#9ca3af"},
+      ],
+      recommendation:"Expand region targeting to include KR, JP, and BR. These markets show strong demand signal matching this campaign's audience. Estimated +45% scale recovery.",
+      impact:"+45% scale with KR, JP, BR · CPI impact neutral",
+    },
+    {
+      id:"6971dcad477ae8984b4a6dfa", name:"TK iOS US ROAS-H5", game:"Take a kiss",
+      spend_cur:18240, spend_ref:44850, pct:-59.3,
+      root_cause_type:"budget",
+      root_cause:"Daily budget cap exhausted by midday — blocking 10+ hrs of delivery per day",
+      root_cause_detail:"Daily budget ($150) reaches 99.6% utilization by ~12:45 local time. The 13:00–23:00 delivery window is entirely blocked, representing the highest-volume hours for this audience segment.",
+      bars:[
+        {label:"Filtered by Pacing (Budget Cap)",pct:72,c:"#d97706"},
+        {label:"Bid Below Floor Price",           pct:18,c:"#f97316"},
+        {label:"Creative Mismatch",               pct:10,c:"#9ca3af"},
+      ],
+      recommendation:"Increase daily budget from $150 to $280 to restore afternoon/evening delivery. Alternatively, adjust pacing to spread delivery more evenly throughout the day.",
+      impact:"+50% scale with $280/day · eCPI stable at $2.85",
+    },
+  ],
+  // ── Q3: game-level WoW KPI table ──
+  wowMetrics: {
+    period:"Mar 25–31 vs Mar 18–24",
+    rows:[
+      {metric:"Total Spend",       icon:"", cur:"$196,986", ref:"$333,880", pct:-41.0, good_dir:"up",   note:"Significant spend drop driven by delivery issues"},
+      {metric:"CPI",               icon:"", cur:"$2.85",    ref:"$2.40",    pct:+18.8, good_dir:"down", note:"Higher CPI = less efficient delivery mix"},
+      {metric:"Cost Per Install",  icon:"", cur:"$2.85",    ref:"$2.40",    pct:+18.8, good_dir:"down", note:"Same as CPI — blended average across all campaigns"},
+      {metric:"CVR",               icon:"", cur:"2.1%",     ref:"3.8%",     pct:-44.7, good_dir:"up",   note:"Low CVR weakens bid competitiveness and reduces scale"},
+      {metric:"D7 Retention Rate", icon:"", cur:"28.3%",    ref:"31.0%",    pct:-8.7,  good_dir:"up",   note:"Slight decline; monitor for further movement"},
+      {metric:"D7 ROAS",           icon:"", cur:"1.2x",     ref:"1.8x",     pct:-33.3, good_dir:"up",   note:"Full D7 ROAS reporting coming soon"},
+    ],
+    summary:"Spend dropped −41% WoW. The primary drivers are CVR deterioration (−44.7%) and bid-floor mismatches reducing auction participation. Rising CPI (+18.8%) signals efficiency loss. D7 ROAS shows downstream quality impact.",
+  },
+  // ── Q4: campaign ranking by selectable metric ──
+  rankingMetrics:[
+    {key:"Spend Growth",   desc:"WoW spend change (scale momentum)",
+     top:   {id:"68b8fcaebf3c3cd17be15591", name:"mxcj iOS US D7 ROAS",  val:"+8.2%",       abs:"+$14.6K",  detail:"Best-scaling campaign; broad US iOS market reach"},
+     under: {id:"69aaa69184201b99ebd46979", name:"mglb JP ROAS-H5 c04",  val:"−83.6%",      abs:"−$24.5K",  detail:"Near-zero delivery due to bid below floor in JP"}},
+    {key:"CPI Efficiency", desc:"Cost per install (lower = better)",
+     top:   {id:"68b8fcaebf3c3cd17be15591", name:"mxcj iOS US D7 ROAS",  val:"$1.85 CPI",   abs:null,       detail:"35% below portfolio average; efficient inventory mix"},
+     under: {id:"69aaa69184201b99ebd46979", name:"mglb JP ROAS-H5 c04",  val:"$5.20 CPI",   abs:null,       detail:"4× above portfolio avg; driven by bid floor mismatch in JP"}},
+    {key:"CVR",            desc:"Click-to-install conversion rate",
+     top:   {id:"696e4038a7d1a35d95ffd9ee", name:"TK iOS Global CPI",    val:"6.3% CVR",    abs:null,       detail:"Strongest creative-audience fit in portfolio"},
+     under: {id:"69aaa69184201b99ebd46979", name:"mglb JP ROAS-H5 c04",  val:"1.8% CVR",    abs:null,       detail:"Low CVR weakens bid competitiveness; below 2% threshold"}},
+    {key:"D7 ROAS",        desc:"7-day return on ad spend",
+     top:   {id:"696e4038a7d1a35d95ffd9ee", name:"TK iOS Global CPI",    val:"4.1× D7 ROAS",abs:null,       detail:"Highest quality users in portfolio; tier-1 market focus"},
+     under: {id:"69aaa69184201b99ebd46979", name:"mglb JP ROAS-H5 c04",  val:"0.9× D7 ROAS",abs:null,       detail:"Below 1× — campaign spending more than it earns in 7 days"}},
+    {key:"Install Volume", desc:"Total installs this week",
+     top:   {id:"68b8fcaebf3c3cd17be15591", name:"mxcj iOS US D7 ROAS",  val:"41,200",      abs:null,       detail:"Highest volume; broad reach in US market"},
+     under: {id:"69aaa69184201b99ebd46979", name:"mglb JP ROAS-H5 c04",  val:"1,200",        abs:null,       detail:"Near-zero installs; delivery almost fully blocked"}},
+  ],
+};
+
+// ═══════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════
+let state = {
+  pending: null,           // waiting for entity clarification (legacy)
+  pendingMetricFor: null,  // 'ranking' → waiting for metric selection in Q4
+};
+
+// Simulates the game_id known from the user's logged-in dashboard session
+const SESSION_GAME_ID = "500205758";
+const SESSION_GAME_NAME = "Block Blast!";
+
+// ═══════════════════════════════════════════
+//  INTENT PARSER
+// ═══════════════════════════════════════════
+function parseIntent(q) {
+  const ql = q.toLowerCase();
+  const intent = {
+    raw: q,
+    analysis_type: null,
+    entity_type: null,
+    entity_id: null,
+    metrics: [],
+    time_range: "WoW (this week vs last week)",
+    missing: [],
+  };
+
+  // Entity — always resolved: explicit in query or falls back to session (logged-in user)
+  const gmatch = ql.match(/game[_ ]?id[:\s]+(\d+)/);
+  const cmatch = ql.match(/campaign[_ ]?id[:\s]+([a-f0-9]{20,})/);
+  if (gmatch)      { intent.entity_type="game";     intent.entity_id=gmatch[1]; intent.entity_source="query"; }
+  else if (cmatch) { intent.entity_type="campaign";  intent.entity_id=cmatch[1]; intent.entity_source="query"; }
+  else             { intent.entity_type="game";     intent.entity_id=SESSION_GAME_ID; intent.entity_source="session"; }
+
+  // Time range
+  if (/last\s+(\d+)\s+day/.test(ql)) {
+    const d = ql.match(/last\s+(\d+)\s+day/)[1];
+    intent.time_range = `Last ${d} days`;
+  } else if (/wow|week.over.week/i.test(ql)) {
+    intent.time_range = "WoW (this week vs last week)";
+  }
+
+  // Analysis type + metrics (only spend/scale supported now)
+  if (/top issue|attention|problem|alert/i.test(ql)) {
+    intent.analysis_type = "Top issues & alerts";
+    intent.metrics = ["spend","scale"];
+  } else if (/performing overall|overall perf|how are my campaign/i.test(ql)) {
+    intent.analysis_type = "Campaign performance overview";
+    intent.metrics = ["spend","scale"];
+  } else if (/wow|week.over.week|weekly change|performance change/i.test(ql)) {
+    intent.analysis_type = "Week-over-week performance changes";
+    intent.metrics = ["spend","scale"];
+  } else if (/top.performing|under.perform|ranking|best|worst/i.test(ql)) {
+    intent.analysis_type = "Campaign performance ranking";
+    intent.metrics = ["spend","scale"];
+  } else if (/spend.*declin|scale.*declin|spend.*drop|why.*spend|why.*scale/i.test(ql)) {
+    intent.analysis_type = "Spend / scale decline diagnosis";
+    intent.metrics = ["spend","scale"];
+  } else {
+    intent.analysis_type = "General campaign inquiry";
+    intent.metrics = ["spend","scale"];
+  }
+
+  return intent;
+}
+
+// ═══════════════════════════════════════════
+//  UI HELPERS
+// ═══════════════════════════════════════════
+const msgs = () => document.getElementById("av-msgs");
+
+function esc(s) {
+  return String(s)
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;").replace(/\n/g,"<br>");
+}
+
+function scrollBot() { msgs().scrollTop = msgs().scrollHeight; }
+
+function hideWelcome() { const w=document.getElementById("av-wlc"); if(w) w.remove(); }
+
+function addUserMsg(text) {
+  hideWelcome();
+  const d = document.createElement("div");
+  d.className = "msg user";
+  d.innerHTML = `<div class="bubble">${esc(text)}</div>`;
+  msgs().appendChild(d); scrollBot();
+}
+
+function addLoading(steps) {
+  const d = document.createElement("div");
+  d.className = "msg assistant"; d.id = "loading-el";
+  const rows = steps.map((s,i)=>`<div class="lstep ${i===0?'active':''}" id="ls${i}"><span class="lstep-dot"></span>${esc(s)}</div>`).join("");
+  d.innerHTML = `<div class="bubble"><div class="loading-wrap"><div class="spinner"></div><div class="loading-steps"><div style="font-weight:600;font-size:13px;margin-bottom:6px;color:#374151">Analyzing…</div>${rows}</div></div></div>`;
+  msgs().appendChild(d); scrollBot();
+  let idx=0;
+  const iv = setInterval(()=>{
+    const prev=document.getElementById(`ls${idx}`);
+    if(prev){prev.classList.remove("active");prev.classList.add("done");}
+    idx++;
+    const cur=document.getElementById(`ls${idx}`);
+    if(cur) cur.classList.add("active"); else clearInterval(iv);
+  }, 2200);
+  d._iv = iv;
+  return d;
+}
+
+function removeLoading() {
+  const el = document.getElementById("av-loading-el");
+  if(el){ clearInterval(el._iv); el.remove(); }
+}
+
+function addAssistant(html) {
+  removeLoading();
+  const d = document.createElement("div");
+  d.className = "msg assistant";
+  d.innerHTML = `<div class="bubble">${html}</div>`;
+  msgs().appendChild(d); scrollBot();
+}
+
+// ═══════════════════════════════════════════
+//  INTENT CARD HTML
+// ═══════════════════════════════════════════
+function intentHtml(intent) {
+  const sessionNote = intent.entity_source === "session"
+    ? `<span style="font-size:10px;color:var(--muted);margin-left:6px;background:#f1f5f9;padding:1px 6px;border-radius:10px;border:1px solid var(--border)">from session</span>`
+    : `<span style="font-size:10px;color:var(--muted);margin-left:6px;background:#f0fdf4;padding:1px 6px;border-radius:10px;border:1px solid #bbf7d0">from query</span>`;
+
+  const entityRow = `<div class="intent-label">Entity</div><div class="intent-value">
+    <span class="ok-tag">✓</span> ${intent.entity_type} · <strong>${intent.entity_id}</strong>${sessionNote}
+  </div>`;
+
+  const metricChips = intent.metrics.map(m=>`<code style="background:#eff6ff;color:#1e40af;padding:2px 7px;border-radius:4px;font-size:11px;border:1px solid #bfdbfe">${m}</code>`).join(" ");
+  const comingSoon = `<span style="font-size:11px;color:var(--muted);margin-left:6px">· ROAS · CPI · CVR <span style="font-size:10px;background:#f8f0ff;color:#7c3aed;padding:1px 6px;border-radius:10px;border:1px solid #e9d5ff">coming soon</span></span>`;
+
+  return `<div class="intent-card">
+    <div class="intent-header"> Query Understanding</div>
+    <div class="intent-body">
+      <div class="intent-label">Analysis Type</div><div class="intent-value">${esc(intent.analysis_type)}</div>
+      ${entityRow}
+      <div class="intent-label">Metrics</div><div class="intent-value">${metricChips}${comingSoon}</div>
+      <div class="intent-label">Time Range</div><div class="intent-value"><strong>${esc(intent.time_range)}</strong></div>
+    </div>
+  </div>`;
+}
+
+function clarifyHtml(missing) {
+  return `<div class="clarify-card">
+    <div class="clarify-header"> Missing Information</div>
+    <div class="clarify-body">
+      To complete this analysis, please provide: <strong>${missing.join(", ")}</strong><br>
+      <div class="clarify-examples">
+        <span class="clarify-eg" onclick="fillQ('gameid:500232905')">gameid:500232905</span>
+        <span class="clarify-eg" onclick="fillQ('campaignid:6971dcad477ae8984b4a6dfa')">campaignid:6971dcad477ae8984b4a6dfa</span>
+      </div>
+    </div>
+  </div>`;
+}
+
+// ═══════════════════════════════════════════
+//  RESPONSE GENERATORS
+// ═══════════════════════════════════════════
+
+function genTopIssues() {
+  const cards = MOCK.attention.map((a,i) => renderAttentionCard(a, i+1)).join("");
+  return `<div class="res-header"><span>Top issues requiring your attention · Rolling 7-day window</span></div>
+  <div class="res-body">
+    <div style="font-size:13px;color:var(--muted);margin-bottom:4px">Found <strong style="color:var(--text)">3 issues</strong> requiring your attention:</div>
+    ${cards}
+  </div>`;
+}
+
+function renderAttentionCard(a, rank) {
+  // ── Issue 1: MMP Validation ──
+  if (a.type === "mmp_validation") {
+    return `<div style="border:1px solid #fecaca;border-radius:8px;overflow:hidden;background:#fff;margin-bottom:2px">
+      <div style="background:#fef2f2;border-bottom:1px solid #fecaca;padding:10px 14px;display:flex;align-items:center;justify-content:space-between">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="background:#dc2626;color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px">REQUIRED ACTION</span>
+          <span style="font-weight:700;font-size:13.5px">${esc(a.title)}</span>
+          <span style="color:var(--muted);font-size:12px">${esc(a.subtitle)}</span>
+        </div>
+        <span style="font-size:11px;color:var(--muted)">${a.campaigns_affected} campaigns affected</span>
+      </div>
+      <div style="padding:14px 16px">
+        <div style="font-size:13px;line-height:1.65;color:var(--text)">${esc(a.description)}</div>
+      </div>
+      <div style="border-top:1px solid #fecaca;padding:0">
+        <button onclick="void(0)" style="width:100%;padding:10px;background:#dc2626;color:#fff;border:none;font-size:13px;font-weight:600;cursor:pointer;letter-spacing:.02em">${esc(a.cta)} →</button>
+      </div>
+      <div style="padding:7px 14px;font-size:11px;color:var(--muted);background:#fafafa;border-top:1px solid #fecaca">Generated by Unity Ads Intelligence · Updated 2 hours ago · Rolling 7-day window</div>
+    </div>`;
+  }
+
+  // ── Issues 2 & 3: Spend Decline cards (matching screenshot layout) ──
+  const isRegion = a.type === "spend_decline_region";
+  const isBudget = a.type === "spend_decline_budget";
+  const sevColor = a.severity === "crit" ? "#dc2626" : "#d97706";
+  const sevBg    = a.severity === "crit" ? "#fef2f2" : "#fffbeb";
+  const sevBorder= a.severity === "crit" ? "#fecaca" : "#fde68a";
+
+  // Left column
+  let leftExtra = "";
+  if (isRegion) {
+    const regionChips = a.current_regions.map(r=>`<span style="display:inline-block;padding:2px 8px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:4px;font-size:11.5px;font-weight:600;color:#1e40af;margin:2px">${r}</span>`).join("");
+    const missedChips = a.missed_regions.map(r=>`<span style="display:inline-block;padding:2px 8px;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:4px;font-size:11.5px;font-weight:600;color:#166534;margin:2px">${r.c}${r.lift?` <span style="font-weight:400">${r.lift}</span>`:""}</span>`).join("");
+    leftExtra = `
+      <div style="margin-top:10px">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:4px">Current Targeted Regions</div>
+        <div>${regionChips}</div>
+      </div>
+      <div style="margin-top:8px">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:4px">Top Missed Regions</div>
+        <div>${missedChips}</div>
+      </div>`;
+  } else if (isBudget) {
+    leftExtra = `
+      <div style="margin-top:10px;display:grid;grid-template-columns:1fr 1fr;gap:6px">
+        <div style="background:#fff8f1;border:1px solid #fed7aa;border-radius:6px;padding:8px 10px">
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px">Daily Budget</div>
+          <div style="font-size:16px;font-weight:700;color:var(--text)">${a.budget_daily}</div>
+        </div>
+        <div style="background:#fff8f1;border:1px solid #fed7aa;border-radius:6px;padding:8px 10px">
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px">Utilization</div>
+          <div style="font-size:16px;font-weight:700;color:var(--critical)">${a.budget_utilization}</div>
+        </div>
+        <div style="background:#fff8f1;border:1px solid #fed7aa;border-radius:6px;padding:8px 10px">
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px">Budget Exhausted By</div>
+          <div style="font-size:16px;font-weight:700;color:var(--warn)">${a.exhaustion_time}</div>
+        </div>
+        <div style="background:#fff8f1;border:1px solid #fed7aa;border-radius:6px;padding:8px 10px">
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px">Delivery Blocked</div>
+          <div style="font-size:16px;font-weight:700;color:var(--critical)">${a.delivery_blocked}</div>
+        </div>
+      </div>`;
+  }
+
+  // Filter reason bar
+  const filterBar = `<div style="margin-top:10px">
+    <div style="display:flex;align-items:center;justify-content:space-between;font-size:12px;margin-bottom:4px">
+      <span style="color:var(--muted)">Rejected candidates blocked by ${esc(a.filter_reason)}</span>
+      <span style="font-weight:700;color:${sevColor}">${a.filter_reason_pct}%</span>
+    </div>
+    <div style="height:7px;background:#e5e7eb;border-radius:4px;overflow:hidden">
+      <div style="width:${a.filter_reason_pct}%;height:100%;background:${sevColor};border-radius:4px"></div>
+    </div>
+  </div>`;
+
+  return `<div style="border:1px solid ${sevBorder};border-radius:8px;overflow:hidden;background:#fff;margin-bottom:2px">
+    <!-- Header -->
+    <div style="background:${sevBg};border-bottom:1px solid ${sevBorder};padding:9px 14px;display:flex;align-items:center;gap:8px;justify-content:space-between">
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-family:monospace;font-size:11px;color:var(--muted);background:#fff;border:1px solid var(--border);padding:1px 7px;border-radius:4px">ID: ${a.campaign_id}</span>
+        <span style="background:${sevColor};color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px">Spend Decline</span>
+        <span style="font-weight:700;font-size:13px">${esc(a.campaign_name)}</span>
+      </div>
+      <span style="font-size:20px;font-weight:800;color:${sevColor}">${a.spend_change}%</span>
+    </div>
+    <!-- Sub-header -->
+    <div style="padding:7px 14px;background:${sevBg};border-bottom:1px solid ${sevBorder};font-size:12px;color:var(--muted)">
+      Spend dropped <strong style="color:${sevColor}">${Math.abs(a.spend_change)}%</strong> in the ${esc(a.window)} · ${a.filter_reason_pct}% of rejected candidates blocked by ${esc(a.filter_reason)}
+    </div>
+    <!-- Body: two columns -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:0;border-bottom:1px solid ${sevBorder}">
+      <!-- Left: Root Cause -->
+      <div style="padding:14px;border-right:1px solid ${sevBorder}">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:6px">Root Cause</div>
+        <div style="font-size:13px;line-height:1.6;color:var(--text)">${esc(a.root_cause_detail)}</div>
+        ${filterBar}
+        ${leftExtra}
+      </div>
+      <!-- Right: Recommendation -->
+      <div style="padding:14px">
+        <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:6px">Recommendation</div>
+        <div style="font-size:13px;line-height:1.6;color:var(--text);margin-bottom:12px">${esc(a.recommendation)}</div>
+        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:8px 11px;font-size:12px;color:#166534;margin-bottom:12px">
+          <strong>Estimated:</strong> ${esc(a.estimated_impact)}
+        </div>
+        <button onclick="void(0)" style="width:100%;padding:9px;background:var(--accent);color:#fff;border:none;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer">${esc(a.cta)} →</button>
+      </div>
+    </div>
+    <div style="padding:7px 14px;font-size:11px;color:var(--muted);background:#fafafa">Generated by Unity Ads Intelligence · Updated 2 hours ago · Rolling 7-day window</div>
+  </div>`;
+}
+
+function genOverallPerf(entity_type, entity_id) {
+  const p = MOCK.portfolio;
+  const declining = MOCK.topDeclining;
+  const totalCampaigns = p.campaigns.length;
+  const declCount = p.campaigns.filter(c => c.pct < -15).length;
+
+  const diagCards = declining.map((c, i) => {
+    const sevColor = c.pct < -50 ? "#dc2626" : "#d97706";
+    const sevBg    = c.pct < -50 ? "#fef2f2" : "#fffbeb";
+    const sevBorder= c.pct < -50 ? "#fecaca" : "#fde68a";
+    const rcIcon = "";
+    const bars = c.bars.map(b => `
+      <div style="margin-bottom:6px">
+        <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px">
+          <span style="color:var(--text)">${b.label}</span>
+          <span style="font-weight:700;color:${b.c}">${b.pct}%</span>
+        </div>
+        <div style="height:6px;background:#f3f4f6;border-radius:3px;overflow:hidden">
+          <div style="width:${b.pct}%;height:100%;background:${b.c};border-radius:3px"></div>
+        </div>
+      </div>`).join("");
+
+    return `<div style="border:1px solid ${sevBorder};border-radius:8px;overflow:hidden;background:#fff;margin-top:10px">
+      <!-- Header -->
+      <div style="background:${sevBg};border-bottom:1px solid ${sevBorder};padding:9px 14px;display:flex;align-items:center;justify-content:space-between">
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+          <span style="font-size:12px;font-weight:700;color:#374151">#${i+1}</span>
+          <span style="font-family:monospace;font-size:11px;color:var(--muted);background:#fff;border:1px solid var(--border);padding:1px 7px;border-radius:4px">${c.id.substring(0,14)}…</span>
+          <span style="background:${sevColor};color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px">Spend Decline</span>
+          <span style="font-weight:700;font-size:13px">${esc(c.name)}</span>
+        </div>
+        <span style="font-size:20px;font-weight:800;color:${sevColor}">${c.pct}%</span>
+      </div>
+      <!-- Body: two columns -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:0">
+        <!-- Root Cause -->
+        <div style="padding:13px 14px;border-right:1px solid ${sevBorder}">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:6px">Root Cause</div>
+          <div style="font-size:12.5px;font-weight:600;color:${sevColor};margin-bottom:6px">${rcIcon} ${esc(c.root_cause)}</div>
+          <div style="font-size:12px;color:var(--muted);line-height:1.6;margin-bottom:10px">${esc(c.root_cause_detail)}</div>
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:6px">Rejection Breakdown</div>
+          ${bars}
+        </div>
+        <!-- Recommendation -->
+        <div style="padding:13px 14px">
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:6px">Recommendation</div>
+          <div style="font-size:12.5px;line-height:1.65;color:var(--text);margin-bottom:10px">${esc(c.recommendation)}</div>
+          <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:8px 11px;font-size:12px;color:#166534;margin-bottom:12px">
+            <strong>Estimated impact:</strong> ${esc(c.impact)}
+          </div>
+          <button onclick="startDiagnose('campaign','${c.id}')" style="width:100%;padding:9px;background:var(--accent);color:#fff;border:none;border-radius:7px;font-size:12.5px;font-weight:600;cursor:pointer">Run full step-by-step diagnosis →</button>
+        </div>
+      </div>
+    </div>`;
+  }).join("");
+
+  return `<div class="res-header"><span>Campaign spend diagnosis · ${p.period}</span></div>
+  <div class="res-body">
+    <div class="overview-card">
+      <div class="ov-metrics">
+        <div class="ov-metric"><div class="lbl">Active Campaigns</div><div class="val neu">${totalCampaigns}</div></div>
+        <div class="ov-metric"><div class="lbl">Total Spend (This Week)</div><div class="val neu">$${(p.total_spend_cur/1e6).toFixed(2)}M</div></div>
+        <div class="ov-metric"><div class="lbl">WoW Spend Change</div><div class="val red">${p.pct_change}%</div></div>
+        <div class="ov-metric"><div class="lbl">Campaigns Declining &gt;15%</div><div class="val red">${declCount}</div></div>
+      </div>
+    </div>
+    <div style="font-size:13px;color:var(--text);margin-bottom:2px">
+      Automatically diagnosed all <strong>${totalCampaigns}</strong> campaigns. Found <strong style="color:var(--critical)">${declCount} campaigns</strong> with spend decline &gt;15% WoW. Showing top 3 by severity:
+    </div>
+    ${diagCards}
+    <div style="font-size:12px;color:var(--muted);margin-top:8px">Generated by Unity Ads Intelligence · Updated 2 hours ago · Rolling 7-day window</div>
+  </div>`;
+}
+
+function genWoW(entity_type, entity_id) {
+  const wm = MOCK.wowMetrics;
+  const rows = wm.rows.map(r => {
+    const isGood = r.good_dir === "up" ? r.pct >= 0 : r.pct <= 0;
+    const pctColor = isGood ? "var(--ok)" : (Math.abs(r.pct) > 20 ? "var(--critical)" : "var(--warn)");
+    const pctBg    = isGood ? "#f0fdf4" : (Math.abs(r.pct) > 20 ? "#fef2f2" : "#fffbeb");
+    const arrow    = r.pct > 0 ? "▲" : "▼";
+    const barW     = Math.min(Math.abs(r.pct), 100);
+    return `<tr>
+      <td>
+        <div style="font-weight:600;font-size:13px">${esc(r.metric)}</div>
+        ${r.note ? `<div style="font-size:11px;color:var(--muted);margin-top:2px">${esc(r.note)}</div>` : ''}
+      </td>
+      <td style="font-weight:700;font-size:13px">${esc(r.cur)}</td>
+      <td style="color:var(--muted)">${esc(r.ref)}</td>
+      <td>
+        <div style="display:flex;align-items:center;gap:6px">
+          <span style="background:${pctBg};color:${pctColor};font-weight:700;font-size:12px;padding:3px 9px;border-radius:20px;white-space:nowrap">${arrow} ${r.pct > 0 ? '+' : ''}${r.pct}%</span>
+        </div>
+        <div style="height:4px;background:#f3f4f6;border-radius:2px;margin-top:5px;overflow:hidden">
+          <div style="width:${barW}%;height:100%;background:${pctColor};border-radius:2px"></div>
+        </div>
+      </td>
+      <td style="font-size:11px;color:var(--muted);max-width:160px">${isGood ? 'On track' : (Math.abs(r.pct)>20?'Needs attention':'Monitor')}</td>
+    </tr>`;
+  }).join("");
+
+  return `<div class="res-header"><span>Week-over-week performance changes · Game ID: ${SESSION_GAME_ID} · ${wm.period}</span></div>
+  <div class="res-body">
+    <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:13px;line-height:1.65">
+      <strong>Summary:</strong> ${esc(wm.summary)}
+    </div>
+    <table class="perf-table">
+      <thead>
+        <tr>
+          <th>Metric</th>
+          <th>This Week<br><span style="font-weight:400;color:var(--muted);font-size:10px">Mar 25–31</span></th>
+          <th>Last Week<br><span style="font-weight:400;color:var(--muted);font-size:10px">Mar 18–24</span></th>
+          <th>WoW Change</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <div style="font-size:12px;color:var(--muted);margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
+      <strong>Spend/scale metrics</strong> are fully supported. ROAS · CPI · CVR diagnosis support <span style="background:#f8f0ff;color:#7c3aed;padding:1px 6px;border-radius:10px;border:1px solid #e9d5ff;font-size:10px">coming soon</span>
+    </div>
+  </div>`;
+}
+
+function genRanking(entity_type, entity_id) {
+  // Step 1: Show metric selection prompt
+  state.pendingMetricFor = 'ranking';
+  const metricChips = MOCK.rankingMetrics.map(m =>
+    `<div onclick="selectMetric('${m.key}')" style="cursor:pointer;border:1px solid var(--border);border-radius:8px;padding:10px 14px;background:#fff;transition:all .15s;hover:background:#eff6ff" onmouseover="this.style.borderColor='#2563eb';this.style.background='#eff6ff'" onmouseout="this.style.borderColor='#e5e7eb';this.style.background='#fff'">
+      <div style="font-weight:700;font-size:13px;color:var(--text)">${m.key}</div>
+      <div style="font-size:11px;color:var(--muted);margin-top:2px">${m.desc}</div>
+    </div>`
+  ).join("");
+
+  return `<div class="res-header"><span>Campaign ranking · Select performance metric</span></div>
+  <div class="res-body">
+    <div style="font-size:13px;color:var(--text);margin-bottom:12px">
+      To rank your campaigns, which metric would you like to use to evaluate performance?
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px">
+      ${metricChips}
+    </div>
+    <div style="font-size:12px;color:var(--muted)">Click a metric above or type your choice below (e.g. "CVR" or "D7 ROAS")</div>
+  </div>`;
+}
+
+function selectMetric(metricKey) {
+  state.pendingMetricFor = null;
+  addUserMsg(metricKey);
+  addLoading(["Loading campaign data…","Ranking by " + metricKey + "…","Identifying top and underperforming campaigns…"]);
+  setTimeout(() => {
+    removeLoading();
+    const m = MOCK.rankingMetrics.find(r => r.key === metricKey) || MOCK.rankingMetrics[0];
+    addAssistant(genRankingByMetric(m));
+  }, 2500);
+}
+
+function genRankingByMetric(m) {
+  const topCard = `<div style="border:1px solid #bbf7d0;border-radius:8px;overflow:hidden;background:#fff">
+    <div style="background:#f0fdf4;border-bottom:1px solid #bbf7d0;padding:9px 14px;display:flex;align-items:center;gap:8px">
+      
+      <span style="font-weight:700;color:#166534">Top Performing</span>
+      <span style="font-size:11px;color:var(--muted)">by ${m.key}</span>
+    </div>
+    <div style="padding:14px">
+      <div style="display:flex;align-items:start;justify-content:space-between;margin-bottom:8px">
+        <div>
+          <div style="font-weight:700;font-size:14px">${esc(m.top.name)}</div>
+          <div style="font-family:monospace;font-size:11px;color:var(--muted);margin-top:2px">${m.top.id.substring(0,14)}…</div>
+        </div>
+        <div style="background:#f0fdf4;color:#166534;font-weight:800;font-size:18px;padding:6px 14px;border-radius:8px;border:1px solid #bbf7d0">${esc(m.top.val)}</div>
+      </div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.6">${esc(m.top.detail)}</div>
+      ${m.top.abs ? `<div style="margin-top:6px;font-size:12px;color:#166534;font-weight:600">${esc(m.top.abs)} this period</div>` : ''}
+    </div>
+  </div>`;
+
+  const underCard = `<div style="border:1px solid #fecaca;border-radius:8px;overflow:hidden;background:#fff">
+    <div style="background:#fef2f2;border-bottom:1px solid #fecaca;padding:9px 14px;display:flex;align-items:center;gap:8px">
+      
+      <span style="font-weight:700;color:#991b1b">Underperforming</span>
+      <span style="font-size:11px;color:var(--muted)">by ${m.key}</span>
+    </div>
+    <div style="padding:14px">
+      <div style="display:flex;align-items:start;justify-content:space-between;margin-bottom:8px">
+        <div>
+          <div style="font-weight:700;font-size:14px">${esc(m.under.name)}</div>
+          <div style="font-family:monospace;font-size:11px;color:var(--muted);margin-top:2px">${m.under.id.substring(0,14)}…</div>
+        </div>
+        <div style="background:#fef2f2;color:#dc2626;font-weight:800;font-size:18px;padding:6px 14px;border-radius:8px;border:1px solid #fecaca">${esc(m.under.val)}</div>
+      </div>
+      <div style="font-size:12px;color:var(--muted);line-height:1.6">${esc(m.under.detail)}</div>
+      ${m.under.abs ? `<div style="margin-top:6px;font-size:12px;color:#dc2626;font-weight:600">${esc(m.under.abs)} this period</div>` : ''}
+    </div>
+    <div style="border-top:1px solid #fecaca;padding:10px 14px;background:#fef9f9">
+      <div style="font-size:12px;color:var(--muted);margin-bottom:8px">
+        Would you like to diagnose <strong>${esc(m.under.name)}</strong> to find the root cause of its underperformance and get recommendations?
+      </div>
+      <button onclick="startDiagnose('campaign','${m.under.id}')" style="padding:8px 18px;background:var(--accent);color:#fff;border:none;border-radius:7px;font-size:12.5px;font-weight:600;cursor:pointer">
+        Diagnose underperforming campaign →
+      </button>
+    </div>
+  </div>`;
+
+  return `<div class="res-header"><span>Campaign ranking by ${esc(m.key)} · Mar 25–31</span></div>
+  <div class="res-body">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      ${topCard}
+      ${underCard}
+    </div>
+    <div style="margin-top:10px;font-size:12px;color:var(--muted)">
+      Ranked across ${MOCK.portfolio.campaigns.length} active campaigns under game ID: ${SESSION_GAME_ID} · Generated by Unity Ads Intelligence
+    </div>
+  </div>`;
+}
+
+// ═══════════════════════════════════════════
+//  DIAGNOSE FLOW
+// ═══════════════════════════════════════════
+function genDiagnose(entity_type, entity_id) {
+  // Determine scenario
+  const isNetwork = (entity_type==='game' && entity_id==='500253218');
+  const d = MOCK.isolated;
+  const inc = MOCK.network_incident;
+
+  // Spend overview (same for both paths)
+  const spend_cur = isNetwork ? 196986 : d.spend_cur;
+  const spend_ref = isNetwork ? 333880 : d.spend_ref;
+  const pct = isNetwork ? -41.0 : d.pct;
+  const eName = isNetwork ? 'Last Asylum: Plague' : d.campaign_name;
+
+  let html = `<div class="res-header"><span>Spend/Scale Decline Diagnosis · ${entity_type} ${entity_id.substring(0,16)}… · WoW</span></div>
+  <div class="res-body">`;
+
+  // Overview
+  html += `<div class="overview-card">
+    <div class="ov-metrics">
+      <div class="ov-metric"><div class="lbl">Campaign / Game</div><div class="val neu" style="font-size:14px">${esc(eName)}</div></div>
+      <div class="ov-metric"><div class="lbl">Current Spend</div><div class="val neu">$${(spend_cur/1000).toFixed(1)}K</div></div>
+      <div class="ov-metric"><div class="lbl">Prior Spend</div><div class="val neu">$${(spend_ref/1000).toFixed(1)}K</div></div>
+      <div class="ov-metric"><div class="lbl">WoW Change</div><div class="val red">${pct}%</div></div>
+    </div>
+    <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:5px;padding:7px 10px;font-size:12.5px;color:#991b1b;display:flex;gap:7px">
+      <span>Significant spend decline detected (${pct}%). Threshold: &lt;−10%. Initiating step-by-step diagnosis.</span>
+    </div>
+  </div>`;
+
+  // ── STEP 1 ──
+  const netPct = isNetwork ? 50.5 : d.network_pct;
+  const isNetIssue = netPct >= 30;
+  html += `<div class="step-card">
+    <div class="step-hd"><span class="step-num">1</span>Network-Level Check</div>
+    <div class="step-body">
+      <div class="metric-row">
+        <div class="mr-label">Active campaigns on platform</div><div class="mr-val">14,887</div>
+      </div>
+      <div class="metric-row">
+        <div class="mr-label">Platform-wide spend change</div>
+        <div class="mr-val">${isNetwork?'−5.9% (all advertisers)':'−1.2% (normal fluctuation)'}</div>
+        <div class="mr-badge ${isNetIssue?'badge-crit':'badge-ok'}">${isNetIssue?' PLATFORM-WIDE':'✓ NORMAL'}</div>
+      </div>
+      <div class="metric-row">
+        <div class="mr-label">Campaigns with &gt;10% decline</div>
+        <div class="mr-val">${isNetwork?'7,519':'3,312'} <span class="mr-bench">(${netPct}% of active)</span></div>
+        <div class="mr-badge ${isNetIssue?'badge-crit':'badge-ok'}">${isNetIssue?'≥30% threshold':'Below 30% threshold'}</div>
+      </div>
+      <div class="finding ${isNetIssue?'warn':'ok'}">
+        <span class="finding-icon">${isNetIssue?'':''}</span>
+        <div class="finding-content">
+          <div class="finding-title">${isNetIssue?`Network-Level Decline — ${netPct}% of all platform campaigns declining`:`Isolated Issue — Only ${netPct}% of campaigns declining platform-wide`}</div>
+          <div class="finding-detail">${isNetIssue?
+            'The spend decline is a <strong>platform-wide phenomenon</strong> — the entire Unity Ads ad delivery system is experiencing reduced output, affecting the majority of advertisers. This is NOT caused by this campaign\'s settings. Proceeding to check for an active incident.' :
+            'Platform-wide spend is stable. This campaign\'s decline is an <strong>isolated issue</strong> specific to its own settings or competitive position. Proceeding to campaign-level diagnosis.'}</div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+
+  if (isNetIssue) {
+    // Network path: show incident and STOP
+    html += `<div class="incident-card">
+      <div class="incident-hd">🚨 Active Incident: ${esc(inc.title)}</div>
+      <div class="incident-body">
+        <div class="incident-row"><div class="ir-label">Incident ID</div><div class="ir-val">${esc(inc.id)}</div></div>
+        <div class="incident-row"><div class="ir-label">Severity</div><div class="ir-val">${esc(inc.severity)}</div></div>
+        <div class="incident-row"><div class="ir-label">Status</div><div class="ir-val">${inc.status}</div></div>
+        <div class="incident-row"><div class="ir-label">Started</div><div class="ir-val">${esc(inc.start)}</div></div>
+        <div class="incident-row"><div class="ir-label">Last Updated</div><div class="ir-val">${esc(inc.updated)}</div></div>
+        <div class="incident-row"><div class="ir-label">Affected Campaigns</div><div class="ir-val">${esc(inc.affected_campaigns)}</div></div>
+        <div class="incident-row"><div class="ir-label">Description</div><div class="ir-val">${esc(inc.description)}</div></div>
+        <div class="incident-row"><div class="ir-label">Impact</div><div class="ir-val">${esc(inc.impact)}</div></div>
+        <div class="incident-row"><div class="ir-label">Mitigation</div><div class="ir-val">${esc(inc.mitigation)}</div></div>
+        <div class="incident-row"><div class="ir-label">Expected Recovery</div><div class="ir-val">${esc(inc.expected_resolution)}</div></div>
+        <div class="incident-no-action"><span>ℹ</span><span><strong>Advertiser Action:</strong> ${esc(inc.advertiser_action)}</span></div>
+      </div>
+    </div>`;
+
+    html += `<div class="summary-card">
+      <div class="summary-hd"> Diagnosis Summary</div>
+      <div class="summary-body">
+        <div class="si"><span class="si-icon"></span><span><strong>Root Cause:</strong> Network-level publisher platform slowdown (supply-side incident)</span></div>
+        <div class="si"><span class="si-icon">📅</span><span><strong>Duration:</strong> Mar 25–31, 2026 (ongoing mitigation)</span></div>
+        <div class="si"><span class="si-icon"></span><span><strong>Action Required:</strong> None. Campaign settings are correct. Spend will recover automatically once publisher traffic is restored.</span></div>
+        <div class="si"><span class="si-icon">📬</span><span><strong>Follow-up:</strong> Unity team will notify via dashboard when incident is resolved.</span></div>
+      </div>
+    </div>`;
+
+  } else {
+    // Isolated path: Step 2 + Step 3
+    // ── STEP 2 ──
+    html += `<div class="step-card">
+      <div class="step-hd"><span class="step-num">2</span>Campaign Setting Changes</div>
+      <div class="step-body">`;
+
+    for (const ch of d.step2) {
+      html += `<div class="finding ${ch.severity==='crit'?'crit':'warn'}">
+        <span class="finding-icon">${ch.severity==='crit'?'':''}</span>
+        <div class="finding-content">
+          <div class="finding-title">${esc(ch.title)}</div>
+          <div class="finding-detail">
+            <strong>Change:</strong> ${esc(ch.detail)}<br>
+            <strong>Date:</strong> ${esc(ch.date)} &nbsp;·&nbsp; <strong>Countries:</strong> ${esc(ch.countries)}<br>
+            <strong>Impact:</strong> ${esc(ch.impact)}
+          </div>
+          <div class="finding-rec">${esc(ch.recommendation)}</div>
+        </div>
+      </div>`;
+    }
+    html += `</div></div>`;
+
+    // ── STEP 3 ──
+    const f = d.step3.filter;
+    const r = d.step3.ranking;
+    const m = d.step3.mediation;
+
+    html += `<div class="step-card">
+      <div class="step-hd"><span class="step-num">3</span>Ads Flow Pipeline Diagnosis</div>
+      <div class="step-body">`;
+
+    // 3.1 Filter
+    html += `<div style="font-weight:600;font-size:12.5px;color:#1e40af;margin-bottom:6px">Step 3.1 · Candidate Filter</div>`;
+    html += `<div class="metric-row">
+      <div class="mr-label">Filter pass-through rate</div>
+      <div class="mr-val">${(f.pass_rate*100).toFixed(0)}%</div>
+      <div class="mr-bench">Benchmark (60th pct): ${(f.benchmark*100).toFixed(0)}%</div>
+      <div class="mr-badge badge-crit"> BELOW BENCHMARK</div>
+    </div>`;
+    html += `<div class="reason-bar-wrap">`;
+    for (const reason of f.reasons) {
+      const fillClass = reason.severity==='crit'?'':reason.severity==='warn'?'warn':'ok';
+      html += `<div class="reason-bar-row">
+        <div class="rb-label">${esc(reason.taxonomy)}</div>
+        <div class="rb-track"><div class="rb-fill ${fillClass}" style="width:${reason.pct}%"></div></div>
+        <div class="rb-pct ${reason.severity==='crit'?'pct-r':reason.severity==='warn'?'pct-w':''}">${reason.pct}%</div>
+      </div>`;
+    }
+    html += `</div>`;
+
+    for (const reason of f.reasons) {
+      if (reason.severity === 'info') continue;
+      html += `<div class="finding ${reason.severity==='crit'?'crit':'warn'}">
+        <span class="finding-icon">${reason.severity==='crit'?'':''}</span>
+        <div class="finding-content">
+          <div class="finding-title">[Filter] ${esc(reason.taxonomy)} — ${reason.pct}% of rejections</div>
+          <div class="finding-detail">${esc(reason.detail)}${reason.show_detail?'<br><span style="font-family:monospace;font-size:11px;white-space:pre-line;display:block;margin-top:4px;padding:5px 8px;background:#f8faff;border-radius:4px">'+esc(reason.show_detail)+'</span>':''}</div>
+          <div class="finding-rec">${esc(reason.recommendation)}</div>
+        </div>
+      </div>`;
+    }
+
+    // 3.3 Ranking
+    html += `<div class="divider-line"></div>
+    <div style="font-weight:600;font-size:12.5px;color:#1e40af;margin:6px 0">Step 3.3 · Ranking Stage</div>`;
+    html += `<div class="metric-row">
+      <div class="mr-label">Auction win rate</div>
+      <div class="mr-val">${(r.win_rate*100).toFixed(0)}%</div>
+      <div class="mr-bench">Benchmark (60th pct): ${(r.benchmark*100).toFixed(0)}%</div>
+      <div class="mr-badge badge-crit"> BELOW BENCHMARK</div>
+    </div>`;
+
+    // 3.3.1 BBB
+    html += `<div class="finding ok">
+      <span class="finding-icon"></span>
+      <div class="finding-content">
+        <div class="finding-title">[3.3.1] BBB Discount — Not a Primary Issue</div>
+        <div class="finding-detail">${esc(r.bbb.detail)}</div>
+      </div>
+    </div>`;
+
+    // 3.3.2 Bid
+    html += `<div class="finding crit">
+      <span class="finding-icon"></span>
+      <div class="finding-content">
+        <div class="finding-title">[3.3.2] Bid Below Average Winning Bid</div>
+        <div class="finding-detail">
+          Campaign adjusted bid: <strong>$${r.bid.campaign_bid.toFixed(2)}</strong><br>
+          Avg winning bid (50th pct of internal winners): <strong>$${r.bid.avg_winning.toFixed(2)}</strong><br>
+          Gap: <strong style="color:var(--critical)">${r.bid.gap}% BELOW benchmark</strong><br>
+          ${esc(r.bid.detail)}
+        </div>
+        <div class="finding-rec">${esc(r.bid.recommendation)}</div>
+      </div>
+    </div>`;
+
+    // 3.3.3 CVR
+    html += `<div class="finding warn">
+      <span class="finding-icon"></span>
+      <div class="finding-content">
+        <div class="finding-title">[3.3.3] CVR Below Benchmark</div>
+        <div class="finding-detail">
+          Campaign observed CVR: <strong>${r.cvr.campaign_cvr}%</strong><br>
+          Benchmark CVR (50th pct of winners): <strong>${r.cvr.benchmark_cvr}%</strong><br>
+          Gap: <strong style="color:var(--warn)">${r.cvr.gap}%</strong><br>
+          ${esc(r.cvr.detail)}
+        </div>
+        <div class="finding-rec">${esc(r.cvr.recommendation)}</div>
+      </div>
+    </div>`;
+
+    // 3.3.4 Prediction bias (internal)
+    html += `<div class="finding info">
+      <span class="finding-icon">ℹ</span>
+      <div class="finding-content">
+        <div class="finding-title">[3.3.4] CVR Prediction Bias (Internal)</div>
+        <div class="finding-detail">
+          Predicted CVR: ${r.prediction_bias.predicted}% &nbsp;·&nbsp; Observed CVR: ${r.prediction_bias.observed}% &nbsp;·&nbsp; Deviation: <strong>${r.prediction_bias.deviation}%</strong><br>
+          ${esc(r.prediction_bias.detail)}
+        </div>
+      </div>
+    </div>`;
+
+    // 3.4 Mediation
+    html += `<div class="divider-line"></div>
+    <div style="font-weight:600;font-size:12.5px;color:#1e40af;margin:6px 0">Step 3.4 · Mediation Auction</div>`;
+    html += `<div class="metric-row">
+      <div class="mr-label">Winnable Rate</div>
+      <div class="mr-val">${(m.winnable_rate*100).toFixed(0)}%</div>
+      <div class="mr-bench">Benchmark (50th pct): ${(m.benchmark_wr*100).toFixed(0)}%</div>
+      <div class="mr-badge badge-crit"> BELOW BENCHMARK</div>
+    </div>
+    <div class="metric-row">
+      <div class="mr-label">Winnable Win Rate</div>
+      <div class="mr-val">${(m.winnable_win_rate*100).toFixed(0)}%</div>
+      <div class="mr-bench">Benchmark: ${(m.benchmark_wwr*100).toFixed(0)}%</div>
+      <div class="mr-badge badge-ok">✓ HEALTHY</div>
+    </div>`;
+
+    html += `<div class="finding crit">
+      <span class="finding-icon"></span>
+      <div class="finding-content">
+        <div class="finding-title">[3.4.1] Low External Competitiveness — Winnable Rate Below Benchmark</div>
+        <div class="finding-detail">
+          Campaign eCPM: <strong>$${m.low_wr.ecpm.toFixed(2)}</strong><br>
+          Median market bid (MarketBid): <strong>$${m.low_wr.market_bid.toFixed(2)}</strong><br>
+          Only <strong>${(m.winnable_rate*100).toFixed(0)}%</strong> of submitted auctions have eCPM ≥ MarketBid (winnable)<br>
+          ${esc(m.low_wr.detail)}
+        </div>
+        <div class="finding-rec">${esc(m.low_wr.recommendation)}</div>
+      </div>
+    </div>
+    <div class="finding ok">
+      <span class="finding-icon"></span>
+      <div class="finding-content">
+        <div class="finding-title">[3.4.2] No Underbidding in Winnable Space</div>
+        <div class="finding-detail">${esc(m.underbidding.detail)}</div>
+      </div>
+    </div>`;
+
+    html += `</div></div>`; // close step-body, step-card
+
+    // Summary
+    html += `<div class="summary-card">
+      <div class="summary-hd"> Diagnosis Summary — Isolated Issue</div>
+      <div class="summary-body">
+        <div class="si"><span class="si-icon"></span><span><strong>Root Cause 1:</strong> Creative format mismatch — Missing vertical video (9:16) blocking 45% of candidates at filter stage</span></div>
+        <div class="si"><span class="si-icon"></span><span><strong>Root Cause 2:</strong> JP bid ($0.95) below floor price ($1.20–$1.80) — 32% of JP inventory inaccessible</span></div>
+        <div class="si"><span class="si-icon"></span><span><strong>Contributing:</strong> tROAS raised +28% → reduced eligible inventory by ~35%</span></div>
+        <div class="si"><span class="si-icon"></span><span><strong>Contributing:</strong> Bid ($0.95) is 33% below avg winning bid ($1.42) → low win rate in ranking stage</span></div>
+        <div class="si"><span class="si-icon"></span><span><strong>Contributing:</strong> Low eCPM ($1.85 vs $2.40 market) → only 38% of auctions are winnable externally</span></div>
+        <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--net-b)">
+          <div style="font-weight:700;font-size:12px;color:#92400e;margin-bottom:5px">Recommended Actions (Priority Order):</div>
+          <div class="si"><span class="si-icon">1⃣</span><span>Add vertical video creative (9:16, 15–30s) to unlock rewarded video & fullscreen placements</span></div>
+          <div class="si"><span class="si-icon">2⃣</span><span>Restore JP base bid to ≥$1.20 to re-enter JP auctions</span></div>
+          <div class="si"><span class="si-icon">3⃣</span><span>Reduce tROAS from 3.20 back to 2.50 to restore eligible inventory</span></div>
+          <div class="si"><span class="si-icon">4⃣</span><span>Increase target bid to ≥$1.40 to improve auction win rate</span></div>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  html += `</div>`; // close res-body
+  return html;
+}
+
+// ═══════════════════════════════════════════
+//  MAIN DISPATCHER
+// ═══════════════════════════════════════════
+function startDiagnose(entity_type, entity_id) {
+  const q = entity_type==='game'
+    ? `Why did the spend of gameid:${entity_id} decline WoW?`
+    : `Why did the spend of campaignid:${entity_id} decline WoW?`;
+  fillAndSend(q);
+}
+
+function dispatch(question) {
+  const intent = parseIntent(question);
+
+  // If state has pending clarification, merge entity from new input
+  if (state.pending) {
+    const newIntent = parseIntent(question);
+    if (newIntent.entity_type) {
+      intent.entity_type = newIntent.entity_type;
+      intent.entity_id   = newIntent.entity_id;
+      intent.analysis_type = state.pending.analysis_type;
+      intent.missing = [];
+      state.pending = null;
+    }
+  }
+
+  // Show intent card
+  const intentCard = intentHtml(intent);
+
+  // ── Intercept metric selection for Q4 ranking ──
+  if (state.pendingMetricFor === 'ranking') {
+    state.pendingMetricFor = null;
+    const ql2 = question.toLowerCase();
+    const found = MOCK.rankingMetrics.find(r =>
+      ql2.includes(r.key.toLowerCase()) ||
+      (r.key === "CPI Efficiency" && ql2.includes("cpi")) ||
+      (r.key === "D7 ROAS" && (ql2.includes("roas") || ql2.includes("d7"))) ||
+      (r.key === "Install Volume" && (ql2.includes("install") || ql2.includes("volume"))) ||
+      (r.key === "Spend Growth" && ql2.includes("spend")) ||
+      (r.key === "CVR" && ql2.includes("cvr"))
+    ) || MOCK.rankingMetrics[0];
+    addLoading(["Loading campaign data…","Ranking by "+found.key+"…","Identifying top and underperforming campaigns…"]);
+    setTimeout(()=>{ removeLoading(); addAssistant(genRankingByMetric(found)); }, 2500);
+    return;
+  }
+
+  // Entity is always resolved from session or query — no clarification needed
+  state.pending = null;
+
+  // Dispatch by analysis type
+  const steps = {
+    "Top issues & alerts":                ["Scanning campaign portfolio…","Checking alert thresholds…","Ranking by severity…"],
+    "Campaign spend & scale overview":    ["Diagnosing all campaigns…","Detecting spend/scale declines…","Ranking by severity…"],
+    "Campaign performance overview":      ["Diagnosing all campaigns…","Detecting spend/scale declines…","Ranking by severity…"],
+    "Week-over-week spend changes":       ["Fetching game-level metrics…","Computing WoW changes…","Preparing metric comparison…"],
+    "Week-over-week performance changes": ["Fetching game-level metrics…","Computing WoW changes…","Preparing metric comparison…"],
+    "Campaign spend ranking":             ["Loading campaign data…","Awaiting metric selection…"],
+    "Campaign performance ranking":       ["Loading campaign data…","Awaiting metric selection…"],
+    "Spend / scale decline diagnosis":    ["Fetching spend data…","Step 1: Network-level check…","Step 2: Setting changes…","Step 3: Ads flow pipeline…","Generating root cause summary…"],
+  };
+  const loadingSteps = steps[intent.analysis_type] || ["Analyzing…","Preparing response…"];
+  addLoading(loadingSteps);
+
+  const delay = intent.analysis_type.includes('diagnosis') ? 14000 : 3000;
+
+  setTimeout(()=>{
+    let html = "";
+    const at = intent.analysis_type;
+    if (at === "Top issues & alerts") {
+      html = genTopIssues();
+    } else if (at === "Campaign spend & scale overview" || at === "Campaign performance overview") {
+      html = genOverallPerf(intent.entity_type, intent.entity_id);
+    } else if (at === "Week-over-week spend changes" || at === "Week-over-week performance changes") {
+      html = genWoW(intent.entity_type, intent.entity_id);
+    } else if (at === "Campaign spend ranking" || at === "Campaign performance ranking") {
+      html = genRanking(intent.entity_type, intent.entity_id);
+    } else if (at === "Spend / scale decline diagnosis") {
+      html = genDiagnose(intent.entity_type, intent.entity_id);
+    } else {
+      html = `<div class="res-body">${intentCard}<div class="clarify-card"><div class="clarify-header"> Try one of these</div><div class="clarify-body">I can help with:<br>• Spend/scale decline diagnosis<br>• Auto-diagnosis of all campaigns<br>• WoW metric changes<br>• Top/underperforming campaigns by metric</div></div></div>`;
+    }
+    addAssistant(`<div class="res-body">${intentCard}</div>` + html);
+  }, delay);
+}
+
+// ═══════════════════════════════════════════
+//  INPUT HANDLING
+// ═══════════════════════════════════════════
+const PRESETS = [
+  "What're the top issues that require my attention?",
+  "How are my campaigns performing overall?",
+  "What are the week-over-week (WoW) performance changes?",
+  "What're my top-performing/under-performing campaigns?",
+];
+
+function firePreset(idx, btn) {
+  document.querySelectorAll(".sb-btn").forEach(b=>b.classList.remove("active"));
+  if(btn) btn.classList.add("active");
+  fillAndSend(PRESETS[idx]);
+}
+
+function fillQ(q) {
+  document.getElementById("av-qi").value = q;
+  resize(document.getElementById("av-qi"));
+  document.getElementById("av-qi").focus();
+}
+
+function fillAndSend(q) {
+  document.getElementById("av-qi").value = q;
+  send();
+}
+
+function send() {
+  const q = document.getElementById("av-qi").value.trim();
+  if(!q) return;
+  document.getElementById("av-qi").value = "";
+  resize(document.getElementById("av-qi"));
+  document.getElementById("av-sbtn").disabled = true;
+  addUserMsg(q);
+  dispatch(q);
+  setTimeout(()=>{ document.getElementById("av-sbtn").disabled = false; }, 500);
+}
+
+function onKey(e) {
+  if(e.key==="Enter"&&!e.shiftKey){ e.preventDefault(); send(); }
+}
+
+function resize(el) {
+  el.style.height="auto";
+  el.style.height=Math.min(el.scrollHeight,100)+"px";
+}
+
+</script>
+</body>
+</html>
