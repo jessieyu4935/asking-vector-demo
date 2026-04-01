@@ -1680,9 +1680,9 @@ function genRootCauseCard(d) {
   </div>`;
 }
 function causeTypeLabel(type){return{troas_bid:"tROAS / bid floor mismatch",budget_cap:"budget cap / pacing",region_targeting:"region targeting",creative_mismatch:"creative format mismatch",bid_stale:"bid below floor price"}[type]||type;}
-const _ss={};let _ssk=0;
-function _ssAdd(type,data){const k=++_ssk;_ss[k]={type,data};return k;}
-function openSK(k){const e=_ss[k];if(!e)return;let html='';if(e.type==='budget_settings')html=genBudgetSettings(e.data);if(e.type==='region_settings')html=genRegionSettings(e.data);if(e.type==='bid_settings')html=genBidSettings(e.data);if(e.type==='creative_settings')html=genCreativeSettings(e.data);if(!html)return;document.getElementById('sm-body-content').innerHTML=html;document.getElementById('sm-overlay').style.display='flex';}
+window._ss={};window._ssk=0;
+function _ssAdd(type,data){const k=++window._ssk;window._ss[k]={type,data};return k;}
+function openSK(k){const e=window._ss[k];if(!e){console.error('openSK: key not found',k,window._ss);return;}let html='';if(e.type==='budget_settings')html=genBudgetSettings(e.data);if(e.type==='region_settings')html=genRegionSettings(e.data);if(e.type==='bid_settings')html=genBidSettings(e.data);if(e.type==='creative_settings')html=genCreativeSettings(e.data);if(!html){console.error('openSK: no html for type',e.type);return;}document.getElementById('sm-body-content').innerHTML=html;document.getElementById('sm-overlay').style.display='flex';}
 function closeSettings(){document.getElementById('sm-overlay').style.display='none';}
 function smHeader(title,subtitle){return`<div class="sm-mhd"><div class="sm-mhd-row"><div><div class="sm-title">${title}</div><div class="sm-subtitle">${subtitle}</div></div><div style="display:flex;align-items:center;gap:6px"><button class="sm-search-btn"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></button><button class="sm-close" onclick="closeSettings()">&#x2715;</button></div></div></div>`;}
 function smFooter(toggleLabel,saveLabel){return`<div class="sm-mfooter"><div class="sm-footer-left"><button class="sm-toggle-pill"></button><span>${toggleLabel}</span></div><div class="sm-footer-btns"><button class="sm-btn-cancel" onclick="closeSettings()">Cancel</button><button class="sm-btn-primary" onclick="closeSettings()">${saveLabel}</button></div></div>`;}

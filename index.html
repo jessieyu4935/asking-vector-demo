@@ -1795,24 +1795,24 @@ function causeTypeLabel(type) {
 }
 
 // ─────────────────────────────────────────────────────
-//  SETTINGS MODAL  (key-based store — no JSON in HTML)
+//  SETTINGS MODAL  (key-based store — window-global for reliable inline onclick)
 // ─────────────────────────────────────────────────────
-const _ss = {};   // settings store: key → {type, data}
-let _ssk = 0;     // counter
+window._ss = {};   // settings store: key → {type, data}
+window._ssk = 0;   // counter
 function _ssAdd(type, data) {
-  const k = ++_ssk;
-  _ss[k] = {type, data};
+  const k = ++window._ssk;
+  window._ss[k] = {type, data};
   return k;
 }
 function openSK(k) {
-  const e = _ss[k];
-  if (!e) return;
+  const e = window._ss[k];
+  if (!e) { console.error('openSK: key not found', k, window._ss); return; }
   let html = '';
   if (e.type === 'budget_settings')   html = genBudgetSettings(e.data);
   if (e.type === 'region_settings')   html = genRegionSettings(e.data);
   if (e.type === 'bid_settings')      html = genBidSettings(e.data);
   if (e.type === 'creative_settings') html = genCreativeSettings(e.data);
-  if (!html) return;
+  if (!html) { console.error('openSK: no html for type', e.type); return; }
   document.getElementById('sm-body-content').innerHTML = html;
   document.getElementById('sm-overlay').style.display = 'flex';
 }
