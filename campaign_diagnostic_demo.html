@@ -1,0 +1,1512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Campaigns — Unity Ads</title>
+<style>
+/* System font stack - works offline, no CDN dependency */
+</style>
+<style>
+:root {
+  --blue: #1A73E8;
+  --blue-light: #EBF1FB;
+  --blue-dark: #1557B0;
+  --green: #188038;
+  --green-light: #E6F4EA;
+  --red: #C5221F;
+  --red-light: #FCE8E6;
+  --orange: #E37400;
+  --orange-light: #FEF0CD;
+  --amber: #B06000;
+  --gray-50: #F8F9FA;
+  --gray-100: #F1F3F4;
+  --gray-200: #E8EAED;
+  --gray-300: #DADCE0;
+  --gray-400: #BDC1C6;
+  --gray-500: #9AA0A6;
+  --gray-600: #80868B;
+  --gray-700: #5F6368;
+  --gray-800: #3C4043;
+  --gray-900: #202124;
+  --nav-bg: #1E1E2E;
+  --sidebar-w: 164px;
+  --topbar-h: 48px;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  background: #F8F9FA;
+  color: var(--gray-900);
+  font-size: 13px;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* ── Top Bar ── */
+.topbar {
+  height: var(--topbar-h);
+  background: var(--nav-bg);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 0;
+  flex-shrink: 0;
+  z-index: 50;
+}
+.topbar-logo {
+  display: flex; align-items: center; gap: 8px;
+  color: #fff; font-size: 15px; font-weight: 600;
+  letter-spacing: -0.2px; padding-right: 20px;
+}
+.topbar-logo-icon {
+  width: 26px; height: 26px;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 2px;
+}
+.topbar-logo-icon span {
+  background: white; border-radius: 50%;
+  display: block;
+}
+.topbar-logo-icon span:nth-child(3) { opacity: 0.5; }
+.topbar-logo-icon span:nth-child(4) { opacity: 0.3; }
+.topbar-spacer { flex: 1; }
+.topbar-actions {
+  display: flex; align-items: center; gap: 4px;
+}
+.topbar-icon-btn {
+  width: 32px; height: 32px;
+  border-radius: 50%; background: transparent;
+  border: none; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: rgba(255,255,255,0.7);
+  transition: background .15s;
+}
+.topbar-icon-btn:hover { background: rgba(255,255,255,0.1); }
+.topbar-avatar {
+  width: 30px; height: 30px;
+  background: #1A73E8; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; color: #fff;
+  margin-left: 4px; cursor: pointer;
+}
+.topbar-orgname {
+  font-size: 12px; color: rgba(255,255,255,0.8);
+  margin-right: 4px; cursor: pointer;
+}
+
+/* ── Body Layout ── */
+.body-layout {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ── Sidebar ── */
+.sidebar {
+  width: var(--sidebar-w);
+  background: #fff;
+  border-right: 1px solid var(--gray-200);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  flex-shrink: 0;
+  padding: 8px 0;
+}
+.nav-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 8px 16px;
+  font-size: 13px; color: var(--gray-700);
+  cursor: pointer; border-radius: 0;
+  transition: background .1s;
+  white-space: nowrap;
+}
+.nav-item:hover { background: var(--gray-100); }
+.nav-item.active { color: var(--blue); background: var(--blue-light); }
+.nav-item.section {
+  color: var(--gray-900); font-weight: 500;
+  border-left: 3px solid var(--blue);
+  padding-left: 13px;
+}
+.nav-item.sub {
+  padding-left: 36px;
+  font-size: 13px;
+}
+.nav-item.sub.selected {
+  color: var(--blue); font-weight: 500;
+}
+.nav-icon { width: 16px; height: 16px; flex-shrink: 0; opacity: 0.7; }
+.nav-item.active .nav-icon, .nav-item.section .nav-icon { opacity: 1; }
+.nav-divider { height: 1px; background: var(--gray-200); margin: 6px 0; }
+.nav-spacer { flex: 1; }
+.nav-bottom { margin-top: auto; }
+
+/* ── Main Content ── */
+.main {
+  flex: 1;
+  overflow-y: auto;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Page Header ── */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px 16px;
+  border-bottom: 1px solid var(--gray-200);
+  background: #fff;
+  flex-shrink: 0;
+}
+.page-title { font-size: 22px; font-weight: 500; color: var(--gray-900); letter-spacing: -0.3px; }
+.btn-create {
+  background: var(--blue); color: #fff;
+  border: none; border-radius: 6px;
+  padding: 8px 18px; font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: background .15s;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+}
+.btn-create:hover { background: var(--blue-dark); }
+
+/* ── Diagnostic Section ── */
+.diag-section {
+  padding: 16px 24px 0;
+  background: #fff;
+}
+.diag-section-header {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 11px; font-weight: 600; color: #B91C1C;
+  text-transform: uppercase; letter-spacing: 0.6px;
+  margin-bottom: 10px;
+}
+.pulse-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #DC2626; flex-shrink: 0;
+  box-shadow: 0 0 0 3px rgba(220,38,38,0.18);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%,100% { box-shadow: 0 0 0 3px rgba(220,38,38,0.18); }
+  50%      { box-shadow: 0 0 0 6px rgba(220,38,38,0.05); }
+}
+
+/* ── Diagnostic Card ── */
+.diag-card {
+  border: 1px solid #FECACA;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 8px;
+  background: #fff;
+  transition: border-color .15s, box-shadow .15s;
+}
+.diag-card:hover { border-color: #FCA5A5; box-shadow: 0 2px 8px rgba(220,38,38,0.08); }
+.diag-card.warn-card { border-color: #FED7AA; }
+.diag-card.warn-card:hover { border-color: #FDBA74; box-shadow: 0 2px 8px rgba(234,88,12,0.08); }
+
+.diag-card-top {
+  display: flex; align-items: center;
+  padding: 12px 16px; cursor: pointer; gap: 12px;
+  user-select: none;
+}
+.diag-card-top:hover { background: #FFF5F5; }
+.diag-card.warn-card .diag-card-top:hover { background: #FFF7ED; }
+
+.sev-indicator {
+  width: 4px; align-self: stretch;
+  border-radius: 2px; flex-shrink: 0;
+  background: #DC2626;
+  min-height: 28px;
+}
+.sev-indicator.warn { background: #EA580C; }
+
+.diag-tag {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 2px 7px; border-radius: 4px;
+  font-size: 11px; font-weight: 600;
+  background: #FEE2E2; color: #B91C1C;
+  border: 1px solid #FECACA;
+}
+.diag-tag.warn { background: #FFEDD5; color: #C2410C; border-color: #FED7AA; }
+
+.diag-info { flex: 1; min-width: 0; }
+.diag-title-row { display: flex; align-items: center; gap: 8px; margin-bottom: 2px; flex-wrap: wrap; }
+.diag-campaign-label {
+  font-size: 13px; font-weight: 500; color: var(--gray-900);
+}
+.diag-cid {
+  font-family: 'SF Mono', 'Fira Code', monospace;
+  font-size: 10px; color: var(--gray-500);
+  background: var(--gray-100); padding: 1px 6px; border-radius: 3px;
+}
+.diag-desc { font-size: 12px; color: var(--gray-600); line-height: 1.4; }
+
+.diag-metric {
+  text-align: right; flex-shrink: 0;
+  margin-left: 12px;
+}
+.diag-metric-val { font-size: 20px; font-weight: 700; color: #DC2626; letter-spacing: -0.5px; }
+.diag-metric-val.warn { color: #EA580C; }
+.diag-metric-label { font-size: 10px; color: var(--gray-500); }
+
+.diag-chevron {
+  color: var(--gray-500); flex-shrink: 0;
+  transition: transform .2s;
+}
+.diag-card.open .diag-chevron { transform: rotate(180deg); }
+
+/* ── Diagnostic Body ── */
+.diag-body {
+  border-top: 1px solid var(--gray-200);
+  display: none;
+  animation: fadeIn .15s ease;
+}
+.diag-card.open .diag-body { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+
+.diag-body-cols {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+.diag-col {
+  padding: 16px;
+  border-right: 1px solid var(--gray-200);
+}
+.diag-col:last-child { border-right: none; }
+
+.diag-col-label {
+  font-size: 10px; font-weight: 600; color: var(--gray-500);
+  text-transform: uppercase; letter-spacing: 0.7px;
+  margin-bottom: 10px; display: flex; align-items: center; gap: 5px;
+}
+.diag-text { font-size: 12px; color: var(--gray-700); line-height: 1.6; margin-bottom: 10px; }
+.diag-text strong { color: var(--gray-900); }
+
+.region-row { margin-bottom: 6px; }
+.region-label { font-size: 10px; font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
+.chip-group { display: flex; flex-wrap: wrap; gap: 4px; }
+.chip {
+  padding: 2px 8px; border-radius: 4px;
+  font-size: 11px; font-weight: 500;
+  border: 1px solid var(--gray-300);
+}
+.chip-blue { background: var(--gray-50); color: var(--gray-800); }
+.chip-gray { background: var(--gray-50); color: var(--gray-700); }
+.chip-amber { background: var(--gray-50); color: var(--gray-700); }
+.chip-red { background: var(--gray-50); color: var(--gray-700); }
+
+.bid-bars { margin: 8px 0; }
+.bid-bar-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+.bid-bar-label { font-size: 11px; color: var(--gray-600); width: 120px; flex-shrink: 0; }
+.bid-track { flex: 1; height: 6px; background: var(--gray-200); border-radius: 99px; overflow: hidden; }
+.bid-fill { height: 100%; border-radius: 99px; }
+.bid-val { font-size: 11px; font-family: monospace; color: var(--gray-700); width: 36px; text-align: right; flex-shrink: 0; }
+
+.impact-box {
+  background: #F0FDF4; border-radius: 4px;
+  border: 1px solid #BBF7D0;
+  padding: 8px 10px; margin-bottom: 12px;
+  font-size: 12px; color: #166534; line-height: 1.5;
+  display: flex; gap: 6px;
+}
+
+.diag-stats { display: flex; flex-direction: column; gap: 7px; }
+.stat-row { display: flex; justify-content: space-between; font-size: 12px; }
+.stat-label { color: var(--gray-600); }
+.stat-val { font-weight: 500; color: var(--gray-900); }
+.stat-val.green { color: var(--green); }
+.stat-val.red { color: var(--red); }
+
+.insight-box {
+  background: var(--gray-50); border-radius: 4px;
+  border: 1px solid var(--gray-200);
+  padding: 8px 10px; margin-top: 10px;
+  font-size: 11px; color: var(--gray-700); line-height: 1.5;
+}
+
+.warn-box {
+  background: var(--gray-50); border-radius: 4px;
+  border: 1px solid var(--gray-200);
+  padding: 8px 10px; margin-top: 10px;
+  font-size: 11px; color: var(--gray-700); line-height: 1.5;
+}
+
+.cta-group { display: flex; flex-direction: column; gap: 6px; }
+.cta-btn {
+  display: flex; align-items: center; justify-content: center; gap: 6px;
+  padding: 8px 14px; border-radius: 6px;
+  font-size: 12px; font-weight: 500; cursor: pointer;
+  transition: all .15s; border: 1px solid transparent;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; width: 100%;
+}
+.cta-primary { background: var(--blue); color: #fff; border-color: var(--blue); }
+.cta-primary:hover { background: var(--blue-dark); }
+.cta-secondary { background: #fff; color: var(--gray-700); border-color: var(--gray-300); }
+.cta-secondary:hover { background: var(--gray-50); }
+
+.diag-footer {
+  padding: 7px 16px;
+  border-top: 1px solid var(--gray-200);
+  background: var(--gray-50);
+  font-size: 11px; color: var(--gray-500);
+  display: flex; gap: 8px; align-items: center;
+}
+
+/* ── Toolbar / Filter Bar ── */
+.filter-bar {
+  display: flex; align-items: center; gap: 8px;
+  padding: 12px 24px;
+  background: #fff;
+  border-bottom: 1px solid var(--gray-200);
+  flex-shrink: 0;
+}
+.filter-dropdown {
+  display: flex; align-items: center; gap: 5px;
+  padding: 6px 10px; border-radius: 6px;
+  border: 1px solid var(--gray-300);
+  background: #fff; font-size: 12px; color: var(--gray-700);
+  cursor: pointer; white-space: nowrap;
+  transition: border-color .15s;
+}
+.filter-dropdown:hover { border-color: var(--gray-500); }
+.filter-dropdown svg { color: var(--gray-500); }
+.add-filters-btn {
+  display: flex; align-items: center; gap: 4px;
+  font-size: 12px; color: var(--blue); cursor: pointer;
+  padding: 6px 8px; border-radius: 4px;
+}
+.add-filters-btn:hover { background: var(--blue-light); }
+.filter-spacer { flex: 1; }
+.search-box {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 10px; border-radius: 6px;
+  border: 1px solid var(--gray-300); background: #fff;
+  font-size: 12px; color: var(--gray-500);
+  min-width: 180px;
+}
+.icon-btn {
+  width: 30px; height: 30px; border-radius: 6px;
+  border: 1px solid var(--gray-300); background: #fff;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; color: var(--gray-600);
+}
+.icon-btn:hover { background: var(--gray-100); }
+
+/* ── Table ── */
+.table-container {
+  flex: 1;
+  overflow-y: auto;
+}
+table {
+  width: 100%; border-collapse: collapse;
+  table-layout: fixed;
+}
+col.col-check { width: 36px; }
+col.col-expand { width: 28px; }
+col.col-campaign { width: 200px; }
+col.col-app { width: 160px; }
+col.col-status { width: 80px; }
+col.col-goal { width: 145px; }
+col.col-budget { width: 100px; }
+col.col-spend { width: 130px; }
+col.col-impress { width: 90px; }
+col.col-actions { width: 40px; }
+
+thead th {
+  padding: 9px 12px;
+  text-align: left;
+  font-size: 11px; font-weight: 500; color: var(--gray-600);
+  background: var(--gray-50);
+  border-bottom: 1px solid var(--gray-200);
+  white-space: nowrap; position: sticky; top: 0; z-index: 5;
+}
+thead th:first-child { padding-left: 16px; }
+thead th.sortable { cursor: pointer; }
+thead th.sortable:hover { color: var(--gray-900); }
+
+tbody tr {
+  border-bottom: 1px solid var(--gray-200);
+  transition: background .08s;
+}
+tbody tr:hover { background: var(--gray-50); }
+tbody tr.alert-row { background: #fff; }
+tbody tr.alert-row:hover { background: var(--gray-50); }
+tbody tr:last-child { border-bottom: none; }
+
+td {
+  padding: 10px 12px;
+  font-size: 13px; color: var(--gray-800);
+  vertical-align: middle;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+td:first-child { padding-left: 16px; }
+
+.expand-chevron {
+  color: var(--gray-400); font-size: 11px; cursor: pointer;
+  display: flex; align-items: center;
+}
+.expand-chevron:hover { color: var(--gray-700); }
+
+.campaign-name-cell .name { font-size: 13px; color: var(--gray-900); font-weight: 400; }
+.campaign-name-cell .alert-badge {
+  display: inline-flex; align-items: center; gap: 3px;
+  margin-left: 5px;
+  padding: 1px 6px; border-radius: 3px;
+  font-size: 10px; font-weight: 600;
+  background: #FEE2E2; color: #B91C1C;
+  border: 1px solid #FECACA;
+  cursor: pointer; vertical-align: middle;
+}
+.campaign-name-cell .alert-badge.warn {
+  background: #FFEDD5; color: #C2410C; border-color: #FED7AA;
+}
+
+.app-cell {
+  display: flex; align-items: center; gap: 7px;
+  overflow: hidden;
+}
+.app-icon {
+  width: 28px; height: 28px; border-radius: 5px;
+  flex-shrink: 0; display: flex; align-items: center;
+  justify-content: center; font-size: 10px; font-weight: 600;
+  border: 1px solid var(--gray-200);
+  overflow: hidden; background: var(--gray-100);
+  color: var(--gray-600); letter-spacing: 0;
+}
+.app-icon img { width: 100%; height: 100%; object-fit: cover; }
+.app-name {
+  font-size: 12px; color: var(--gray-800);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.platform-icon {
+  width: 12px; height: 12px; flex-shrink: 0;
+  color: var(--gray-500);
+}
+
+.status-live {
+  display: inline-flex; align-items: center;
+  padding: 3px 8px; border-radius: 4px;
+  font-size: 12px; font-weight: 400;
+  background: var(--gray-100); color: var(--gray-700);
+  border: 1px solid var(--gray-300);
+}
+
+.goal-cell .goal-type { font-size: 13px; color: var(--gray-900); }
+.goal-cell .goal-sub { font-size: 11px; color: var(--gray-600); }
+
+.spend-cell .spend-amount {
+  font-size: 12px; margin-bottom: 4px;
+}
+.spend-cell .spend-track {
+  height: 4px; background: var(--gray-200); border-radius: 99px; overflow: hidden;
+}
+.spend-cell .spend-fill { height: 100%; border-radius: 99px; }
+
+.actions-cell { color: var(--gray-500); letter-spacing: 2px; cursor: pointer; }
+
+.table-footer {
+  padding: 10px 24px;
+  border-top: 1px solid var(--gray-200);
+  font-size: 12px; color: var(--gray-600);
+  background: #fff;
+  flex-shrink: 0;
+}
+
+/* ── Modal ── */
+.overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.45);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 200; opacity: 0; pointer-events: none;
+  transition: opacity .2s;
+  backdrop-filter: blur(1px);
+}
+.overlay.open { opacity: 1; pointer-events: all; }
+.modal {
+  background: #fff; border-radius: 10px;
+  width: 620px; max-width: 94vw; max-height: 88vh;
+  display: flex; flex-direction: column;
+  box-shadow: 0 20px 48px rgba(0,0,0,0.18);
+  transform: translateY(10px);
+  transition: transform .2s cubic-bezier(0.34,1.2,0.64,1);
+}
+.overlay.open .modal { transform: none; }
+.modal-head {
+  padding: 18px 20px 0;
+  display: flex; justify-content: space-between; align-items: flex-start;
+}
+.modal-title { font-size: 16px; font-weight: 500; }
+.modal-sub { font-size: 12px; color: var(--gray-600); margin-top: 2px; }
+.modal-x {
+  width: 26px; height: 26px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer; border: none; background: transparent;
+  font-size: 16px; color: var(--gray-600);
+}
+.modal-x:hover { background: var(--gray-100); }
+
+.modal-ai-banner {
+  margin: 12px 20px 0;
+  background: var(--blue-light); border: 1px solid #A8C7FA;
+  border-radius: 6px; padding: 8px 12px;
+  font-size: 12px; color: #1557B0; display: flex; gap: 6px;
+}
+
+.modal-search {
+  margin: 12px 20px 0;
+  display: flex; align-items: center; gap: 6px;
+  border: 1px solid var(--gray-300); border-radius: 6px;
+  padding: 7px 10px; background: var(--gray-50);
+}
+.modal-search input {
+  flex: 1; border: none; background: none; outline: none;
+  font-size: 13px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+}
+.modal-scroll { overflow-y: auto; flex: 1; margin: 8px 0; }
+.modal-table { width: 100%; border-collapse: collapse; }
+.modal-table th {
+  padding: 7px 16px; font-size: 11px; font-weight: 500;
+  color: var(--gray-600); text-transform: uppercase; letter-spacing: 0.4px;
+  border-bottom: 1px solid var(--gray-200);
+  background: var(--gray-50); text-align: left;
+  position: sticky; top: 0;
+}
+.modal-table td {
+  padding: 9px 16px; font-size: 13px; color: var(--gray-800);
+  border-bottom: 1px solid var(--gray-200);
+}
+.modal-table tr:last-child td { border-bottom: none; }
+.modal-table tr:hover td { background: var(--gray-50); }
+.modal-table tr.presel td { background: #EEF4FE; }
+.country-name { font-weight: 400; color: var(--gray-900); display: flex; align-items: center; gap: 6px; }
+.suggested { font-size: 12px; color: var(--gray-600); }
+.roas-inp {
+  display: flex; align-items: center; gap: 2px;
+  border: 1px solid var(--gray-300); border-radius: 4px;
+  padding: 4px 7px; width: 80px; background: #fff;
+}
+.roas-inp.ai-prefill { border-color: var(--blue); background: var(--blue-light); }
+.roas-inp.ai-prefill input { color: #1557B0; }
+.roas-inp input {
+  width: 100%; border: none; background: none; outline: none;
+  font-size: 12px; text-align: right; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+}
+.pct { font-size: 11px; color: var(--gray-500); }
+.modal-foot {
+  padding: 12px 20px;
+  border-top: 1px solid var(--gray-200);
+  display: flex; justify-content: space-between; align-items: center;
+  border-radius: 0 0 10px 10px; background: var(--gray-50);
+}
+.foot-left { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--gray-600); }
+.toggle {
+  width: 34px; height: 18px; background: var(--gray-300);
+  border-radius: 99px; position: relative; cursor: pointer; transition: background .2s;
+}
+.toggle.on { background: var(--blue); }
+.toggle::after {
+  content: ''; position: absolute;
+  width: 14px; height: 14px; background: #fff;
+  border-radius: 50%; top: 2px; left: 2px;
+  transition: transform .2s; box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+}
+.toggle.on::after { transform: translateX(16px); }
+.foot-btns { display: flex; gap: 8px; }
+.btn-cancel {
+  padding: 7px 14px; border-radius: 6px;
+  border: 1px solid var(--gray-300); background: #fff;
+  font-size: 12px; color: var(--gray-700); cursor: pointer;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+}
+.btn-cancel:hover { background: var(--gray-100); }
+.btn-apply {
+  padding: 7px 16px; border-radius: 6px;
+  border: none; background: var(--blue);
+  font-size: 12px; color: #fff; cursor: pointer;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; font-weight: 500;
+}
+.btn-apply:hover { background: var(--blue-dark); }
+
+/* Bid modal */
+.bid-grid { padding: 18px 20px; display: flex; flex-direction: column; gap: 14px; }
+.bid-field { display: flex; flex-direction: column; gap: 5px; }
+.bid-field label { font-size: 11px; font-weight: 500; color: var(--gray-600); text-transform: uppercase; letter-spacing: 0.5px; }
+.bid-input-wrap {
+  display: flex; align-items: center;
+  border: 1px solid var(--gray-300); border-radius: 6px; overflow: hidden;
+  background: #fff;
+}
+.bid-input-wrap.highlight { border-color: var(--blue); }
+.bid-prefix {
+  padding: 8px 10px; background: var(--gray-100);
+  border-right: 1px solid var(--gray-300);
+  font-size: 13px; color: var(--gray-600);
+}
+.bid-input-wrap.highlight .bid-prefix { background: var(--blue-light); border-color: var(--blue); color: var(--blue); }
+.bid-input-wrap input {
+  flex: 1; padding: 8px 10px; border: none; outline: none;
+  font-size: 14px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif; color: var(--gray-900);
+}
+.bid-suffix { padding: 8px 10px; font-size: 12px; color: var(--gray-500); }
+.bid-alert {
+  background: var(--orange-light); border: 1px solid #FBCF33;
+  border-radius: 6px; padding: 10px 12px;
+  font-size: 12px; color: var(--amber); line-height: 1.6;
+  display: flex; gap: 8px;
+}
+.bid-chart { }
+.bid-chart-title { font-size: 11px; font-weight: 500; color: var(--gray-600); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+.bid-success {
+  margin-top: 10px; padding: 8px 10px;
+  background: var(--green-light); border-radius: 6px;
+  font-size: 12px; color: var(--green);
+}
+
+/* ── Modal2 (matches screenshot exactly) ── */
+.modal2 {
+  background: #fff;
+  border-radius: 10px;
+  width: 600px; max-width: 94vw; max-height: 88vh;
+  display: flex; flex-direction: column;
+  box-shadow: 0 20px 48px rgba(0,0,0,0.18);
+  transform: translateY(10px);
+  transition: transform .2s cubic-bezier(0.34,1.2,0.64,1);
+  overflow: hidden;
+}
+.overlay.open .modal2 { transform: none; }
+
+.modal2-head {
+  display: flex; justify-content: space-between; align-items: flex-start;
+  padding: 20px 20px 14px;
+  border-bottom: 1px solid var(--gray-200);
+}
+.modal2-head-left { flex: 1; }
+.modal2-title { font-size: 16px; font-weight: 500; color: var(--gray-900); }
+.modal2-sub { font-size: 13px; color: var(--gray-600); margin-top: 3px; line-height: 1.4; }
+.modal2-head-right { display: flex; align-items: center; gap: 8px; margin-left: 12px; flex-shrink: 0; }
+.modal2-search-icon {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: none; background: transparent; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--gray-600);
+}
+.modal2-search-icon:hover { background: var(--gray-100); }
+.modal2-close {
+  width: 28px; height: 28px; border-radius: 50%;
+  border: none; background: transparent; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--gray-600);
+}
+.modal2-close:hover { background: var(--gray-100); }
+
+.modal2-ai-banner {
+  margin: 0; padding: 9px 20px;
+  background: var(--gray-50); border-bottom: 1px solid var(--gray-200);
+  font-size: 12px; color: var(--gray-700);
+}
+
+.modal2-scroll { overflow-y: auto; flex: 1; }
+
+.modal2-table { width: 100%; border-collapse: collapse; }
+.modal2-table thead th {
+  padding: 9px 20px;
+  font-size: 12px; font-weight: 500; color: var(--gray-700);
+  background: var(--gray-50);
+  border-bottom: 1px solid var(--gray-200);
+  text-align: left; position: sticky; top: 0;
+}
+.modal2-table th.col-chk { width: 44px; }
+.modal2-table th.col-bid { text-align: right; width: 140px; }
+.th-info { color: var(--gray-400); font-size: 11px; }
+
+.modal2-table tbody tr { border-bottom: 1px solid var(--gray-200); }
+.modal2-table tbody tr:last-child { border-bottom: none; }
+.modal2-table tbody tr:hover td { background: var(--gray-50); }
+.modal2-table tbody tr.row-rec td { background: #fff; }
+.modal2-table tbody tr.row-rec:hover td { background: var(--gray-50); }
+
+.modal2-table td { padding: 14px 20px; font-size: 13px; color: var(--gray-800); vertical-align: middle; }
+.modal2-table td:first-child { width: 44px; padding-right: 0; }
+.modal2-table td input[type=checkbox] { width: 15px; height: 15px; cursor: pointer; accent-color: var(--blue); }
+
+.td-country { color: var(--gray-900); display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.rec-tag {
+  font-size: 10px; font-weight: 500;
+  padding: 1px 7px; border-radius: 3px;
+  background: var(--gray-100); color: var(--gray-600); border: 1px solid var(--gray-300);
+}
+
+.td-bid { text-align: right; }
+.bid-box {
+  display: inline-flex; align-items: center; gap: 0;
+  border: 1px solid var(--gray-300); border-radius: 5px;
+  background: #fff; overflow: hidden; width: 88px;
+  float: right;
+}
+.bid-box.filled { border-color: var(--gray-400); background: #fff; }
+.bid-box.filled .bid-dollar { color: var(--gray-600); background: var(--gray-100); border-right-color: var(--gray-300); }
+.bid-dollar {
+  padding: 5px 8px; font-size: 12px; color: var(--gray-500);
+  background: var(--gray-100); border-right: 1px solid var(--gray-300);
+  flex-shrink: 0;
+}
+.bid-box input {
+  width: 100%; padding: 5px 8px; border: none; outline: none;
+  font-size: 13px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  color: var(--gray-900); background: transparent; text-align: right;
+}
+.bid-box.filled input { color: var(--gray-900); font-weight: 500; }
+
+.modal2-foot {
+  display: flex; align-items: center; justify-content: flex-end; gap: 16px;
+  padding: 14px 20px;
+  border-top: 1px solid var(--gray-200);
+  background: #fff;
+}
+.modal2-cancel {
+  background: none; border: none; cursor: pointer;
+  font-size: 13px; color: var(--gray-700);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  padding: 6px 4px;
+}
+.modal2-cancel:hover { color: var(--gray-900); }
+.modal2-status {
+  font-size: 13px; color: var(--gray-500); font-weight: 400;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--gray-300); border-radius: 99px; }
+
+/* SVG icons helpers */
+.icon { display: inline-flex; align-items: center; justify-content: center; }
+</style>
+<script src="https://mcp.figma.com/mcp/html-to-design/capture.js" async></script>
+</head>
+<body>
+
+<!-- ── Top Bar ── -->
+<div class="topbar">
+  <div class="topbar-logo">
+    <div class="topbar-logo-icon">
+      <span></span><span></span><span></span><span></span>
+    </div>
+    Unity
+  </div>
+  <div class="topbar-spacer"></div>
+  <div class="topbar-actions">
+    <button class="topbar-icon-btn" title="Shield">
+      <svg width="16" height="16" viewBox="0 0 20 20" fill="none"><path d="M10 2l7 3v5c0 4.5-3 7.5-7 8-4-0.5-7-3.5-7-8V5l7-3z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+    </button>
+    <button class="topbar-icon-btn" title="Help">
+      <svg width="16" height="16" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="8" stroke="currentColor" stroke-width="1.5"/><path d="M10 14v.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M10 11c0-2 3-2 3-4a3 3 0 00-6 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </button>
+    <button class="topbar-icon-btn" title="Edit">
+      <svg width="16" height="16" viewBox="0 0 20 20" fill="none"><path d="M14 3l3 3-10 10H4v-3L14 3z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg>
+    </button>
+    <button class="topbar-icon-btn" title="Expand">
+      <svg width="16" height="16" viewBox="0 0 20 20" fill="none"><path d="M3 7V3h4M17 7V3h-4M3 13v4h4M17 13v4h-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+    <button class="topbar-icon-btn" title="Apps">
+      <svg width="16" height="16" viewBox="0 0 20 20" fill="none"><rect x="2" y="2" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="12" y="2" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="2" y="12" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/><rect x="12" y="12" width="6" height="6" rx="1.5" stroke="currentColor" stroke-width="1.5"/></svg>
+    </button>
+    <button class="topbar-icon-btn" title="Notifications">
+      <svg width="16" height="16" viewBox="0 0 20 20" fill="none"><path d="M10 2a7 7 0 017 7v3l1.5 2.5H1.5L3 12V9a7 7 0 017-7z" stroke="currentColor" stroke-width="1.5"/><path d="M8 16.5a2 2 0 004 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    </button>
+    <span class="topbar-orgname">Org name</span>
+    <div class="topbar-avatar">JK</div>
+  </div>
+</div>
+
+<!-- ── Body ── -->
+<div class="body-layout">
+
+  <!-- ── Sidebar ── -->
+  <nav class="sidebar">
+    <div class="nav-item" style="font-size:14px;font-weight:600;padding-bottom:12px;gap:8px;">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="4" fill="white" opacity="0.9"/><circle cx="4" cy="4" r="3" fill="white" opacity="0.6"/><circle cx="16" cy="4" r="3" fill="white" opacity="0.4"/><circle cx="4" cy="16" r="3" fill="white" opacity="0.3"/></svg>
+    </div>
+    <div class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M2 6l6-4 6 4v8H2V6z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/><rect x="5.5" y="9" width="5" height="5" rx="0.5" stroke="currentColor" stroke-width="1.3"/></svg>
+      Home
+    </div>
+    <div class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M5 10l-3-2 3-2M11 6l3 2-3 2M9 4l-2 8" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Development
+    </div>
+    <div class="nav-divider"></div>
+    <div class="nav-item section active">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.3"/><circle cx="8" cy="8" r="2.5" stroke="currentColor" stroke-width="1.3"/></svg>
+      User Acquisition
+    </div>
+    <div class="nav-item sub">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><rect x="2" y="4" width="12" height="9" rx="1" stroke="currentColor" stroke-width="1.3"/><path d="M5 2.5h6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/><path d="M5 8h6M5 11h3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+      Overview
+    </div>
+    <div class="nav-item sub selected">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none" style="color:#1A73E8"><path d="M2 3h12M2 6h12M2 9h8M2 12h5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+      Campaigns
+    </div>
+    <div class="nav-item sub">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><rect x="2" y="2" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="9" y="2" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="2" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="9" y="9" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.3"/></svg>
+      Creative library
+    </div>
+    <div class="nav-item sub">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><rect x="2" y="3" width="12" height="10" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M5 6.5h6M5 9.5h3" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+      Apps
+    </div>
+    <div class="nav-item sub">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M2 13V8M5.5 13V5M9 13V7M12.5 13V3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+      Performance
+    </div>
+    <div class="nav-divider"></div>
+    <div class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><path d="M2 8h12M5 5l-3 3 3 3M11 5l3 3-3 3" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Billing
+    </div>
+    <div class="nav-item">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2.5" stroke="currentColor" stroke-width="1.3"/><path d="M8 2v1.5M8 12.5V14M2 8h1.5M12.5 8H14M3.9 3.9l1.1 1.1M11 11l1.1 1.1M3.9 12.1l1.1-1.1M11 5l1.1-1.1" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+      Settings
+    </div>
+    <div class="nav-spacer"></div>
+    <div class="nav-divider"></div>
+    <div class="nav-item nav-bottom">
+      <svg class="nav-icon" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="7" r="4" stroke="currentColor" stroke-width="1.3"/><path d="M2 14c0-3 2.7-5 6-5s6 2 6 5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+      Monetization
+    </div>
+    <div class="nav-item" style="padding:6px 16px;font-size:11px;color:var(--gray-400);">
+      <svg width="10" height="10" viewBox="0 0 12 12" fill="none"><path d="M6 1l1.5 3L11 4.5l-2.5 2.5.5 3.5L6 8.5 2.5 10.5l.5-3.5L1 4.5l3.5-1L6 1z" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"/></svg>
+    </div>
+  </nav>
+
+  <!-- ── Main Content ── -->
+  <div class="main">
+
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="page-title">Campaigns</div>
+      <button class="btn-create">Create</button>
+    </div>
+
+    <!-- ── Diagnostic Section ── -->
+    <div class="diag-section">
+      <div class="diag-section-header">
+        <div class="pulse-dot"></div>
+        Performance Diagnostics — 2 campaigns need attention
+      </div>
+
+      <!-- Card 1: Region targeting -->
+      <div class="diag-card" id="dc1">
+        <div class="diag-card-top" onclick="toggleCard('dc1')">
+          <div class="sev-indicator"></div>
+          <div class="diag-info">
+            <div class="diag-title-row">
+              <span class="diag-cid">ID: 7842910</span>
+              <span class="diag-tag">Spend Decline</span>
+              <span class="diag-campaign-label">PP-ROAS-APAC-0-MED-PL</span>
+            </div>
+            <div class="diag-desc">
+              Spend dropped <strong>42%</strong> in the past 7 days &nbsp;·&nbsp; 78% of rejected candidates blocked by region targeting
+            </div>
+          </div>
+          <div class="diag-metric">
+            <div class="diag-metric-val">−42%</div>
+            <div class="diag-metric-label">7-day spend change</div>
+          </div>
+          <svg class="diag-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+
+        <div class="diag-body">
+          <div class="diag-body-cols">
+            <!-- Root Cause -->
+            <div class="diag-col">
+              <div class="diag-col-label">
+                <svg width="11" height="11" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.3"/><path d="M7 4.5v3.5M7 10v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                Root Cause
+              </div>
+              <div class="diag-text"><strong>78% of rejected candidates</strong> are blocked by region targeting. Campaign eligible in only 3 markets, severely limiting auction participation.</div>
+              <div class="region-row">
+                <div class="region-label">Current Targeted Regions</div>
+                <div class="chip-group">
+                  <span class="chip chip-blue">US</span>
+                  <span class="chip chip-blue">UK</span>
+                  <span class="chip chip-blue">DE</span>
+                </div>
+              </div>
+              <div class="region-row" style="margin-top:8px;">
+                <div class="region-label">Top Missed Regions</div>
+                <div class="chip-group">
+                  <span class="chip chip-amber">JP +18%</span>
+                  <span class="chip chip-amber">KR +12%</span>
+                  <span class="chip chip-amber">BR +9%</span>
+                  <span class="chip chip-gray">CA</span>
+                  <span class="chip chip-gray">AU</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Recommendation -->
+            <div class="diag-col">
+              <div class="diag-col-label">
+                <svg width="11" height="11" viewBox="0 0 14 14" fill="none"><path d="M7 1l1.5 3L12 4.5l-2.5 2.5.5 3.5L7 9.2l-3.5 1.8.5-3.5L1.5 4.5 5 4z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+                Recommendation
+              </div>
+              <div class="diag-text">Expand targeting to <strong>JP, KR, and BR</strong>. These markets show high auction demand matching your campaign goals. Adding 3 regions could increase eligible impressions by up to <strong>+35%</strong>.</div>
+              <div class="impact-box">
+                <span>Estimated: <strong>+35% scale</strong> with JP, KR, BR · CPI impact neutral</span>
+              </div>
+              <div class="cta-group">
+                <button class="cta-btn cta-primary" onclick="openModal('m-region')">
+                  <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="6" r="3" stroke="currentColor" stroke-width="1.4"/><path d="M2 13c0-2.5 2-4 5-4s5 1.5 5 4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+                  Expand Region Targeting →
+                </button>
+              </div>
+            </div>
+
+          </div>
+          <div class="diag-footer">
+            <svg width="12" height="12" viewBox="0 0 14 14" fill="none" style="color:var(--blue)"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.3"/><path d="M7 4.5v3.5M7 10v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            Generated by Unity Ads Intelligence · Updated 2 hours ago · Rolling 7-day window
+          </div>
+        </div>
+      </div>
+
+      <!-- Card 2: Bid Competitiveness -->
+      <div class="diag-card warn-card" id="dc2">
+        <div class="diag-card-top" onclick="toggleCard('dc2')">
+          <div class="sev-indicator warn"></div>
+          <div class="diag-info">
+            <div class="diag-title-row">
+              <span class="diag-cid">ID: 7203847</span>
+              <span class="diag-tag warn">Scale Decline</span>
+              <span class="diag-campaign-label">CB-ROAS-APA-01-MED-PL</span>
+            </div>
+            <div class="diag-desc">
+              Scale dropped <strong>31%</strong> in the past 14 days &nbsp;·&nbsp; Current bid is <strong>50% below</strong> the internal average winning bid
+            </div>
+          </div>
+          <div class="diag-metric">
+            <div class="diag-metric-val warn">−31%</div>
+            <div class="diag-metric-label">14-day scale change</div>
+          </div>
+          <svg class="diag-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </div>
+
+        <div class="diag-body">
+          <div class="diag-body-cols">
+            <!-- Root Cause -->
+            <div class="diag-col">
+              <div class="diag-col-label">
+                <svg width="11" height="11" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.3"/><path d="M7 4.5v3.5M7 10v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                Root Cause
+              </div>
+              <div class="diag-text">Current bid is <strong>50% lower</strong> than the internal average winning bid for Puzzle / ROAS category. Competition increased significantly over 2 weeks.</div>
+              <div class="bid-bars">
+                <div class="bid-bar-row">
+                  <div class="bid-bar-label">Your current bid</div>
+                  <div class="bid-track"><div class="bid-fill" style="width:38%;background:#DC2626;"></div></div>
+                  <div class="bid-val" style="color:#DC2626;font-weight:600;">$2.40</div>
+                </div>
+                <div class="bid-bar-row">
+                  <div class="bid-bar-label">Avg. winning bid</div>
+                  <div class="bid-track"><div class="bid-fill" style="width:75%;background:#16A34A;"></div></div>
+                  <div class="bid-val" style="color:#16A34A;font-weight:600;">$4.80</div>
+                </div>
+                <div class="bid-bar-row">
+                  <div class="bid-bar-label">Top-10% bid</div>
+                  <div class="bid-track"><div class="bid-fill" style="width:100%;background:#9AA0A6;"></div></div>
+                  <div class="bid-val">$6.40</div>
+                </div>
+              </div>
+              <div class="chip-group" style="margin-top:6px;">
+                <span class="chip chip-gray">Gap: −50% vs avg</span>
+                <span class="chip chip-gray">Puzzle / ROAS</span>
+              </div>
+            </div>
+
+            <!-- Recommendation -->
+            <div class="diag-col">
+              <div class="diag-col-label">
+                <svg width="11" height="11" viewBox="0 0 14 14" fill="none"><path d="M7 1l1.5 3L12 4.5l-2.5 2.5.5 3.5L7 9.2l-3.5 1.8.5-3.5L1.5 4.5 5 4z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/></svg>
+                Recommendation
+              </div>
+              <div class="diag-text">Increase target bid to <strong>$4.20–$5.10 range</strong> to restore auction competitiveness. This puts the campaign in the top 50% of active bidders without overspending.</div>
+              <div class="impact-box">
+                <span>Raising bid to $4.50 estimated to recover <strong>+25–30% impressions</strong> and reduce CPA by 8–12%</span>
+              </div>
+              <div class="cta-group">
+                <button class="cta-btn cta-primary" onclick="openModal('m-bid')">
+                  <svg width="12" height="12" viewBox="0 0 14 14" fill="none"><path d="M7 2v10M3 7l4-4 4 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  Update Bid Settings →
+                </button>
+              </div>
+            </div>
+
+          </div>
+          <div class="diag-footer">
+            <svg width="12" height="12" viewBox="0 0 14 14" fill="none" style="color:var(--blue)"><circle cx="7" cy="7" r="6" stroke="currentColor" stroke-width="1.3"/><path d="M7 4.5v3.5M7 10v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            Generated by Unity Ads Intelligence · Updated 1 hour ago · Rolling 14-day window
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Filter Bar ── -->
+    <div class="filter-bar">
+      <div class="filter-dropdown">
+        <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><rect x="1" y="2" width="12" height="11" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M1 5.5h12M4.5 2v3.5M9.5 2v3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+        Past 24 hours
+        <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      </div>
+      <div class="filter-dropdown">
+        App
+        <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      </div>
+      <div class="add-filters-btn">
+        <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 1v10M1 6h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Add filters
+      </div>
+      <div class="filter-spacer"></div>
+      <div class="search-box">
+        <svg width="13" height="13" viewBox="0 0 14 14" fill="none"><circle cx="6.5" cy="6.5" r="5" stroke="currentColor" stroke-width="1.3"/><path d="M10 10l2.5 2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Search
+      </div>
+      <div class="filter-dropdown">
+        Standard view
+        <svg width="11" height="11" viewBox="0 0 12 12" fill="none"><path d="M3 4.5l3 3 3-3" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+      </div>
+      <div class="icon-btn">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1" y="1" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="8" y="1" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="1" y="8" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="8" y="8" width="5" height="5" rx="1" stroke="currentColor" stroke-width="1.3"/></svg>
+      </div>
+      <div class="icon-btn">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M12 7v5H2V7M7 1v8M4.5 6.5L7 9l2.5-2.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+      <div class="icon-btn">
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 7v5h10V7M7 1v8M9.5 3.5L7 1 4.5 3.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+
+    <!-- ── Campaign Table ── -->
+    <div class="table-container">
+      <table>
+        <colgroup>
+          <col class="col-check"><col class="col-expand">
+          <col class="col-campaign"><col class="col-app">
+          <col class="col-status"><col class="col-goal">
+          <col class="col-budget"><col class="col-spend">
+          <col class="col-impress"><col class="col-actions">
+        </colgroup>
+        <thead>
+          <tr>
+            <th><input type="checkbox" style="cursor:pointer;"></th>
+            <th></th>
+            <th class="sortable">Campaign</th>
+            <th>App</th>
+            <th class="sortable">Status ↓</th>
+            <th>Goal &amp; Optimization type</th>
+            <th>Daily budget</th>
+            <th>Today's spend</th>
+            <th>Impressions</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Alert row 1 -->
+          <tr class="alert-row">
+            <td><input type="checkbox" style="cursor:pointer;"></td>
+            <td><div class="expand-chevron">›</div></td>
+            <td class="campaign-name-cell">
+              <div class="name">PP-ROAS-APAC-0-MED-PL
+                <span class="alert-badge" onclick="scrollAndOpen('dc1')">Diagnose</span>
+              </div>
+            </td>
+            <td>
+              <div class="app-cell">
+                <div class="app-icon">TK</div>
+                <span class="app-name">Take a kiss</span>
+              </div>
+            </td>
+            <td><span class="status-live">Live</span></td>
+            <td class="goal-cell"><div class="goal-type">ROAS</div><div class="goal-sub">In-app purchase</div></td>
+            <td>$1,500.00</td>
+            <td class="spend-cell">
+              <div class="spend-amount" style="color:var(--gray-800);font-weight:500;">$1,500/$1,500</div>
+              <div class="spend-track"><div class="spend-fill" style="width:100%;background:var(--gray-500);"></div></div>
+            </td>
+            <td>378,241</td>
+            <td class="actions-cell">···</td>
+          </tr>
+          <!-- Normal row -->
+          <tr>
+            <td><input type="checkbox" style="cursor:pointer;"></td>
+            <td><div class="expand-chevron">›</div></td>
+            <td class="campaign-name-cell"><div class="name">PP-ROAS-APAC-01-MED-PL</div></td>
+            <td>
+              <div class="app-cell">
+                <div class="app-icon">BF</div>
+                <span class="app-name">Bobbie &amp; Friends…</span>
+              </div>
+            </td>
+            <td><span class="status-live">Live</span></td>
+            <td class="goal-cell"><div class="goal-type">ROAS</div><div class="goal-sub">In-app purchase</div></td>
+            <td>$1,500.00</td>
+            <td class="spend-cell">
+              <div class="spend-amount" style="color:var(--gray-800);font-weight:500;">$1,300/$1,500</div>
+              <div class="spend-track"><div class="spend-fill" style="width:87%;background:var(--gray-400);"></div></div>
+            </td>
+            <td>178,542</td>
+            <td class="actions-cell">···</td>
+          </tr>
+          <!-- Normal row -->
+          <tr>
+            <td><input type="checkbox" style="cursor:pointer;"></td>
+            <td><div class="expand-chevron">›</div></td>
+            <td class="campaign-name-cell"><div class="name">CB-ROAS-APA-01-MED-PL</div></td>
+            <td>
+              <div class="app-cell">
+                <div class="app-icon">BF</div>
+                <span class="app-name">Bobbie &amp; Friends…</span>
+              </div>
+            </td>
+            <td><span class="status-live">Live</span></td>
+            <td class="goal-cell"><div class="goal-type">ROAS</div><div class="goal-sub">In-app purchase</div></td>
+            <td>$1,000.00</td>
+            <td class="spend-cell">
+              <div class="spend-amount">$50/$1,000</div>
+              <div class="spend-track"><div class="spend-fill" style="width:5%;background:#1A73E8;"></div></div>
+            </td>
+            <td>45,318</td>
+            <td class="actions-cell">···</td>
+          </tr>
+          <!-- Alert row 2 -->
+          <tr class="alert-row">
+            <td><input type="checkbox" style="cursor:pointer;"></td>
+            <td><div class="expand-chevron">›</div></td>
+            <td class="campaign-name-cell">
+              <div class="name">CB-ROAS-APA-01-MED-PL
+                <span class="alert-badge warn" onclick="scrollAndOpen('dc2')">Diagnose</span>
+              </div>
+            </td>
+            <td>
+              <div class="app-cell">
+                <div class="app-icon">CC</div>
+                <span class="app-name">Chocolate Chip…</span>
+              </div>
+            </td>
+            <td><span class="status-live">Live</span></td>
+            <td class="goal-cell"><div class="goal-type">ROAS</div><div class="goal-sub">In-app purchase</div></td>
+            <td>$500.00</td>
+            <td class="spend-cell">
+              <div class="spend-amount">$50/$500</div>
+              <div class="spend-track"><div class="spend-fill" style="width:10%;background:#1A73E8;"></div></div>
+            </td>
+            <td>39,487</td>
+            <td class="actions-cell">···</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" style="cursor:pointer;"></td>
+            <td><div class="expand-chevron">›</div></td>
+            <td class="campaign-name-cell"><div class="name">Play dating</div></td>
+            <td>
+              <div class="app-cell">
+                <div class="app-icon">PD</div>
+                <span class="app-name">Play Dating</span>
+              </div>
+            </td>
+            <td><span class="status-live">Live</span></td>
+            <td class="goal-cell"><div class="goal-type">ROAS</div><div class="goal-sub">In-app purchase</div></td>
+            <td>$500.00</td>
+            <td class="spend-cell">
+              <div class="spend-amount">$50/$500</div>
+              <div class="spend-track"><div class="spend-fill" style="width:10%;background:#1A73E8;"></div></div>
+            </td>
+            <td>84,512</td>
+            <td class="actions-cell">···</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" style="cursor:pointer;"></td>
+            <td><div class="expand-chevron">›</div></td>
+            <td class="campaign-name-cell"><div class="name">CB-ROAS-APAC-02-HIGH-PL</div></td>
+            <td>
+              <div class="app-cell">
+                <div class="app-icon">OR</div>
+                <span class="app-name">Off-Road Rider:…</span>
+              </div>
+            </td>
+            <td><span class="status-live">Live</span></td>
+            <td class="goal-cell"><div class="goal-type">Installs</div><div class="goal-sub">&nbsp;</div></td>
+            <td>$300.00</td>
+            <td class="spend-cell">
+              <div class="spend-amount">$50/$300</div>
+              <div class="spend-track"><div class="spend-fill" style="width:17%;background:#1A73E8;"></div></div>
+            </td>
+            <td>84,512</td>
+            <td class="actions-cell">···</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" style="cursor:pointer;"></td>
+            <td><div class="expand-chevron">›</div></td>
+            <td class="campaign-name-cell"><div class="name">WFW-SKAN-US-01-HIGH</div></td>
+            <td>
+              <div class="app-cell">
+                <div class="app-icon">WW</div>
+                <span class="app-name">Words for Winners</span>
+              </div>
+            </td>
+            <td><span class="status-live">Live</span></td>
+            <td class="goal-cell"><div class="goal-type">ROAS</div><div class="goal-sub">In-app purchase</div></td>
+            <td>$300.00</td>
+            <td class="spend-cell">
+              <div class="spend-amount">$50/$300</div>
+              <div class="spend-track"><div class="spend-fill" style="width:17%;background:#1A73E8;"></div></div>
+            </td>
+            <td>84,512</td>
+            <td class="actions-cell">···</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" style="cursor:pointer;"></td>
+            <td><div class="expand-chevron">›</div></td>
+            <td class="campaign-name-cell"><div class="name">DDP-SKAN-EEA-01-LOW</div></td>
+            <td>
+              <div class="app-cell">
+                <div class="app-icon">DD</div>
+                <span class="app-name">Dizzy Diamond P…</span>
+              </div>
+            </td>
+            <td><span class="status-live">Live</span></td>
+            <td class="goal-cell"><div class="goal-type">ROAS</div><div class="goal-sub">Hybrid ROAS</div></td>
+            <td>$300.00</td>
+            <td class="spend-cell">
+              <div class="spend-amount">$50/$300</div>
+              <div class="spend-track"><div class="spend-fill" style="width:17%;background:#1A73E8;"></div></div>
+            </td>
+            <td>84,512</td>
+            <td class="actions-cell">···</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" style="cursor:pointer;"></td>
+            <td><div class="expand-chevron">›</div></td>
+            <td class="campaign-name-cell"><div class="name">DDP-SKAN-EEA-02-LOW</div></td>
+            <td>
+              <div class="app-cell">
+                <div class="app-icon">DD</div>
+                <span class="app-name">Dizzy Diamond P…</span>
+              </div>
+            </td>
+            <td><span class="status-live">Live</span></td>
+            <td class="goal-cell"><div class="goal-type">Installs</div><div class="goal-sub">&nbsp;</div></td>
+            <td>$300.00</td>
+            <td class="spend-cell">
+              <div class="spend-amount">$50/$300</div>
+              <div class="spend-track"><div class="spend-fill" style="width:17%;background:#1A73E8;"></div></div>
+            </td>
+            <td>84,512</td>
+            <td class="actions-cell">···</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" style="cursor:pointer;"></td>
+            <td><div class="expand-chevron">›</div></td>
+            <td class="campaign-name-cell"><div class="name">PP-SKAN-EEA-01-LOW</div></td>
+            <td>
+              <div class="app-cell">
+                <div class="app-icon">PP</div>
+                <span class="app-name">Plant Puzzle</span>
+              </div>
+            </td>
+            <td><span class="status-live">Live</span></td>
+            <td class="goal-cell"><div class="goal-type">Installs</div><div class="goal-sub">&nbsp;</div></td>
+            <td>$300.00</td>
+            <td class="spend-cell">
+              <div class="spend-amount">$50/$300</div>
+              <div class="spend-track"><div class="spend-fill" style="width:17%;background:#1A73E8;"></div></div>
+            </td>
+            <td>84,512</td>
+            <td class="actions-cell">···</td>
+          </tr>
+          <tr>
+            <td><input type="checkbox" style="cursor:pointer;"></td>
+            <td><div class="expand-chevron">›</div></td>
+            <td class="campaign-name-cell"><div class="name">ZS-SKAN-EEA-01-LOW</div></td>
+            <td>
+              <div class="app-cell">
+                <div class="app-icon">ZS</div>
+                <span class="app-name">Zippy Scissors</span>
+              </div>
+            </td>
+            <td><span class="status-live">Live</span></td>
+            <td class="goal-cell"><div class="goal-type">ROAS</div><div class="goal-sub">In-app purchase</div></td>
+            <td>$300.00</td>
+            <td class="spend-cell">
+              <div class="spend-amount">$50/$300</div>
+              <div class="spend-track"><div class="spend-fill" style="width:17%;background:#1A73E8;"></div></div>
+            </td>
+            <td>84,512</td>
+            <td class="actions-cell">···</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="table-footer">Total campaigns: 205</div>
+  </div>
+</div>
+
+<!-- ── Modal: Region Targeting ── -->
+<div class="overlay" id="m-region" onclick="backdropClose(event,'m-region')">
+  <div class="modal2">
+    <div class="modal2-head">
+      <div class="modal2-head-left">
+        <div class="modal2-title">Add Countries &amp; Bids</div>
+        <div class="modal2-sub">Your ROAS campaign is eligible to go live in these countries.</div>
+      </div>
+      <div class="modal2-head-right">
+        <button class="modal2-search-icon" title="Search">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.5"/><path d="M11 11l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+        <button class="modal2-close" onclick="closeModal('m-region')">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="modal2-ai-banner">
+      <strong>JP, KR, BR pre-selected</strong> based on diagnosis — estimated +35% scale recovery
+    </div>
+    <div class="modal2-scroll">
+      <table class="modal2-table">
+        <thead>
+          <tr>
+            <th class="col-chk"></th>
+            <th>Country</th>
+            <th class="col-bid">Target CPE bid <span class="th-info">ⓘ</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="row-rec">
+            <td><input type="checkbox" checked></td>
+            <td class="td-country">Japan <span class="rec-tag">Recommended</span></td>
+            <td class="td-bid"><div class="bid-box filled"><span class="bid-dollar">$</span><input type="text" value="4.20"></div></td>
+          </tr>
+          <tr class="row-rec">
+            <td><input type="checkbox" checked></td>
+            <td class="td-country">South Korea <span class="rec-tag">Recommended</span></td>
+            <td class="td-bid"><div class="bid-box filled"><span class="bid-dollar">$</span><input type="text" value="3.80"></div></td>
+          </tr>
+          <tr class="row-rec">
+            <td><input type="checkbox" checked></td>
+            <td class="td-country">Brazil <span class="rec-tag">Recommended</span></td>
+            <td class="td-bid"><div class="bid-box filled"><span class="bid-dollar">$</span><input type="text" value="2.90"></div></td>
+          </tr>
+          <tr><td><input type="checkbox"></td><td class="td-country">Angola</td><td class="td-bid"><div class="bid-box"><span class="bid-dollar">$</span><input type="text" placeholder=""></div></td></tr>
+          <tr><td><input type="checkbox"></td><td class="td-country">Burkina Faso</td><td class="td-bid"><div class="bid-box"><span class="bid-dollar">$</span><input type="text" placeholder=""></div></td></tr>
+          <tr><td><input type="checkbox"></td><td class="td-country">Burundi</td><td class="td-bid"><div class="bid-box"><span class="bid-dollar">$</span><input type="text" placeholder=""></div></td></tr>
+          <tr><td><input type="checkbox"></td><td class="td-country">Benin</td><td class="td-bid"><div class="bid-box"><span class="bid-dollar">$</span><input type="text" placeholder=""></div></td></tr>
+          <tr><td><input type="checkbox"></td><td class="td-country">Botswana</td><td class="td-bid"><div class="bid-box"><span class="bid-dollar">$</span><input type="text" placeholder=""></div></td></tr>
+          <tr><td><input type="checkbox"></td><td class="td-country">Congo, The Democratic Republic of the Congo</td><td class="td-bid"><div class="bid-box"><span class="bid-dollar">$</span><input type="text" placeholder=""></div></td></tr>
+          <tr><td><input type="checkbox"></td><td class="td-country">Central African Republic</td><td class="td-bid"><div class="bid-box"><span class="bid-dollar">$</span><input type="text" placeholder=""></div></td></tr>
+          <tr><td><input type="checkbox"></td><td class="td-country">Congo</td><td class="td-bid"><div class="bid-box"><span class="bid-dollar">$</span><input type="text" placeholder=""></div></td></tr>
+          <tr><td><input type="checkbox"></td><td class="td-country">Côte d'Ivoire</td><td class="td-bid"><div class="bid-box"><span class="bid-dollar">$</span><input type="text" placeholder=""></div></td></tr>
+          <tr><td><input type="checkbox"></td><td class="td-country">Canada</td><td class="td-bid"><div class="bid-box"><span class="bid-dollar">$</span><input type="text" placeholder=""></div></td></tr>
+          <tr><td><input type="checkbox"></td><td class="td-country">Australia</td><td class="td-bid"><div class="bid-box"><span class="bid-dollar">$</span><input type="text" placeholder=""></div></td></tr>
+          <tr><td><input type="checkbox"></td><td class="td-country">France</td><td class="td-bid"><div class="bid-box"><span class="bid-dollar">$</span><input type="text" placeholder=""></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="modal2-foot">
+      <button class="modal2-cancel" onclick="closeModal('m-region')">Cancel</button>
+      <span class="modal2-status">3 bids added</span>
+    </div>
+  </div>
+</div>
+
+<!-- ── Modal: Bid Settings ── -->
+<div class="overlay" id="m-bid" onclick="backdropClose(event,'m-bid')">
+  <div class="modal2">
+    <div class="modal2-head">
+      <div class="modal2-head-left">
+        <div class="modal2-title">Add Countries &amp; Bids</div>
+        <div class="modal2-sub">Update target CPI bid for your campaign to improve auction competitiveness.</div>
+      </div>
+      <div class="modal2-head-right">
+        <button class="modal2-search-icon" title="Search">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="7" cy="7" r="5" stroke="currentColor" stroke-width="1.5"/><path d="M11 11l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+        <button class="modal2-close" onclick="closeModal('m-bid')">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2l10 10M12 2L2 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+    </div>
+    <div class="modal2-ai-banner">
+      Current bid $2.40 is <strong>50% below avg winning bid ($4.80)</strong> — recommended range: <strong>$4.20–$5.10</strong>
+    </div>
+    <div class="modal2-scroll">
+      <table class="modal2-table">
+        <thead>
+          <tr>
+            <th class="col-chk"></th>
+            <th>Country</th>
+            <th class="col-bid">Target CPE bid <span class="th-info">ⓘ</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="row-rec">
+            <td><input type="checkbox" checked></td>
+            <td class="td-country">United States <span class="rec-tag" style="background:#FCE8E6;color:#C5221F;border-color:#FDA29B;">Current: $2.40</span></td>
+            <td class="td-bid"><div class="bid-box filled"><span class="bid-dollar">$</span><input type="text" value="4.50"></div></td>
+          </tr>
+          <tr class="row-rec">
+            <td><input type="checkbox" checked></td>
+            <td class="td-country">United Kingdom <span class="rec-tag" style="background:#FCE8E6;color:#C5221F;border-color:#FDA29B;">Current: $2.40</span></td>
+            <td class="td-bid"><div class="bid-box filled"><span class="bid-dollar">$</span><input type="text" value="4.20"></div></td>
+          </tr>
+          <tr class="row-rec">
+            <td><input type="checkbox" checked></td>
+            <td class="td-country">Germany <span class="rec-tag" style="background:#FCE8E6;color:#C5221F;border-color:#FDA29B;">Current: $2.40</span></td>
+            <td class="td-bid"><div class="bid-box filled"><span class="bid-dollar">$</span><input type="text" value="4.00"></div></td>
+          </tr>
+          <tr><td><input type="checkbox"></td><td class="td-country">Angola</td><td class="td-bid"><div class="bid-box"><span class="bid-dollar">$</span><input type="text" placeholder=""></div></td></tr>
+          <tr><td><input type="checkbox"></td><td class="td-country">Burkina Faso</td><td class="td-bid"><div class="bid-box"><span class="bid-dollar">$</span><input type="text" placeholder=""></div></td></tr>
+          <tr><td><input type="checkbox"></td><td class="td-country">Burundi</td><td class="td-bid"><div class="bid-box"><span class="bid-dollar">$</span><input type="text" placeholder=""></div></td></tr>
+          <tr><td><input type="checkbox"></td><td class="td-country">Benin</td><td class="td-bid"><div class="bid-box"><span class="bid-dollar">$</span><input type="text" placeholder=""></div></td></tr>
+          <tr><td><input type="checkbox"></td><td class="td-country">Botswana</td><td class="td-bid"><div class="bid-box"><span class="bid-dollar">$</span><input type="text" placeholder=""></div></td></tr>
+          <tr><td><input type="checkbox"></td><td class="td-country">Congo, The Democratic Republic of the Congo</td><td class="td-bid"><div class="bid-box"><span class="bid-dollar">$</span><input type="text" placeholder=""></div></td></tr>
+          <tr><td><input type="checkbox"></td><td class="td-country">Central African Republic</td><td class="td-bid"><div class="bid-box"><span class="bid-dollar">$</span><input type="text" placeholder=""></div></td></tr>
+          <tr><td><input type="checkbox"></td><td class="td-country">Congo</td><td class="td-bid"><div class="bid-box"><span class="bid-dollar">$</span><input type="text" placeholder=""></div></td></tr>
+          <tr><td><input type="checkbox"></td><td class="td-country">Côte d'Ivoire</td><td class="td-bid"><div class="bid-box"><span class="bid-dollar">$</span><input type="text" placeholder=""></div></td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="modal2-foot">
+      <button class="modal2-cancel" onclick="closeModal('m-bid')">Cancel</button>
+      <span class="modal2-status">3 bids added</span>
+    </div>
+  </div>
+</div>
+
+<script>
+function toggleCard(id) {
+  document.getElementById(id).classList.toggle('open');
+}
+function openModal(id) {
+  document.getElementById(id).classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+  document.body.style.overflow = '';
+}
+function backdropClose(e, id) {
+  if (e.target === document.getElementById(id)) closeModal(id);
+}
+function scrollAndOpen(id) {
+  const el = document.getElementById(id);
+  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  setTimeout(() => el.classList.add('open'), 350);
+}
+// Auto-open first card on load
+setTimeout(() => document.getElementById('dc1').classList.add('open'), 400);
+</script>
+</body>
+</html>
