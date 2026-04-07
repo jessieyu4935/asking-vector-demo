@@ -1,698 +1,711 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CIBI AI Investigation Agent — Demo</title>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Unity Ads — CIBI AI Investigation Agent</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
-         background: #0f1117; color: #e2e8f0; min-height: 100vh; display: flex; flex-direction: column; }
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:13px;color:#1a1a1a;background:#f5f5f5;overflow:hidden;height:100vh}
 
-  /* ── Top nav ── */
-  .topbar { background: #1a1d27; border-bottom: 1px solid #2d3148;
-            display: flex; align-items: center; padding: 0 20px; height: 52px; gap: 12px; flex-shrink: 0; }
-  .topbar-logo { width: 28px; height: 28px; }
-  .topbar-title { font-size: 15px; font-weight: 600; color: #fff; }
-  .topbar-badge { font-size: 11px; background: #2563eb; color: #fff; padding: 2px 8px;
-                  border-radius: 10px; font-weight: 500; margin-left: 4px; }
-  .topbar-spacer { flex: 1; }
-  .topbar-tag { font-size: 11px; color: #64748b; background: #1e2235; border: 1px solid #2d3148;
-                padding: 3px 10px; border-radius: 6px; }
+/* ─── Top nav ─────────────────────── */
+.topnav{height:48px;background:#0c0c14;display:flex;align-items:center;padding:0 16px;gap:10px;flex-shrink:0;position:relative;z-index:100}
+.topnav-logo{display:flex;align-items:center;gap:8px;color:#fff;font-size:13px;font-weight:600;text-decoration:none}
+.tnav-div{width:1px;height:20px;background:rgba(255,255,255,.15)}
+.topnav-title{color:#c9cdd4;font-size:12.5px;font-weight:400;white-space:nowrap}
+.tnav-badge{font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px;background:rgba(37,99,235,.35);color:#93c5fd;border:1px solid rgba(147,197,253,.25);margin-left:4px}
+.tnav-right{margin-left:auto;display:flex;align-items:center;gap:3px}
+.tnav-icon{width:32px;height:32px;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;border-radius:6px;color:rgba(255,255,255,.55);transition:all .15s}
+.tnav-icon:hover{background:rgba(255,255,255,.1);color:#fff}
+.av-btn{height:30px;padding:0 12px;border:1px solid rgba(147,197,253,.35);background:rgba(37,99,235,.2);color:#93c5fd;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all .15s;white-space:nowrap}
+.av-btn:hover{background:rgba(37,99,235,.4);color:#bfdbfe;border-color:rgba(147,197,253,.6)}
+.av-btn svg{width:14px;height:14px}
+.tnav-avatar{width:28px;height:28px;border-radius:50%;background:#2563eb;display:flex;align-items:center;justify-content:center;color:#fff;font-size:10px;font-weight:700;cursor:pointer;flex-shrink:0}
 
-  /* ── Layout ── */
-  .layout { display: flex; flex: 1; overflow: hidden; height: calc(100vh - 52px); }
+/* ─── Layout ─────────────────────── */
+.layout{display:flex;height:calc(100vh - 48px)}
 
-  /* ── Sidebar ── */
-  .sidebar { width: 220px; background: #13151f; border-right: 1px solid #1e2235;
-             display: flex; flex-direction: column; overflow-y: auto; flex-shrink: 0; }
-  .sidebar-section { padding: 16px 12px 6px; font-size: 10px; font-weight: 600;
-                     color: #475569; letter-spacing: .08em; text-transform: uppercase; }
-  .sidebar-item { display: flex; align-items: center; gap: 10px; padding: 8px 14px;
-                  font-size: 13px; color: #94a3b8; cursor: pointer; border-radius: 6px;
-                  margin: 1px 6px; transition: background .15s; }
-  .sidebar-item:hover { background: #1e2235; color: #e2e8f0; }
-  .sidebar-item.active { background: #1e3a5f; color: #60a5fa; }
-  .sidebar-item svg { opacity: .6; flex-shrink: 0; }
-  .sidebar-item.active svg { opacity: 1; }
+/* ─── Sidebar ────────────────────── */
+.sidebar{width:224px;min-width:224px;background:#1a1c23;display:flex;flex-direction:column;overflow-y:auto;flex-shrink:0}
+.sidebar::-webkit-scrollbar{width:4px}
+.sidebar::-webkit-scrollbar-thumb{background:rgba(255,255,255,.1);border-radius:2px}
+.sb-hd{padding:14px 14px 5px;font-size:10px;font-weight:700;letter-spacing:.08em;color:rgba(255,255,255,.28);text-transform:uppercase}
+.sb-app{padding:9px 14px;display:flex;align-items:center;gap:8px;cursor:pointer;color:rgba(255,255,255,.8);font-size:12.5px;font-weight:600}
+.sb-app-ic{width:24px;height:24px;border-radius:6px;background:#2563eb;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:11px;font-weight:800;color:#fff}
+.sb-item{padding:7px 14px 7px 28px;color:rgba(255,255,255,.5);font-size:12px;cursor:pointer;transition:all .12s;border-left:2px solid transparent;display:flex;align-items:center;gap:5px}
+.sb-item:hover{color:rgba(255,255,255,.85);background:rgba(255,255,255,.05)}
+.sb-item.active{color:#fff;background:rgba(255,255,255,.07);border-left-color:#2563eb}
+.sb-div{height:1px;background:rgba(255,255,255,.06);margin:5px 0}
+.sb-sub{padding:9px 14px 3px;font-size:10px;font-weight:700;color:rgba(255,255,255,.22);text-transform:uppercase;letter-spacing:.07em}
 
-  /* ── Main content ── */
-  .main { flex: 1; overflow: hidden; display: flex; flex-direction: column; }
+/* ─── Main ───────────────────────── */
+.main{flex:1;overflow-y:auto;background:#f5f5f5;min-width:0;display:flex;flex-direction:column}
+.dev-bar{background:#1a1c23;padding:8px 24px;display:flex;align-items:center;gap:8px;font-size:12px;color:#93c5fd;border-bottom:1px solid rgba(255,255,255,.06);flex-shrink:0}
+.breadcrumb{padding:9px 24px;font-size:12px;color:#6b7280;display:flex;align-items:center;gap:4px;background:#fff;border-bottom:1px solid #e5e7eb;flex-shrink:0}
+.page-hd{padding:14px 24px 12px;background:#fff;border-bottom:1px solid #e5e7eb;flex-shrink:0}
+.page-title{font-size:22px;font-weight:700;color:#111}
 
-  /* ── Campaign header ── */
-  .camp-header { background: #13151f; border-bottom: 1px solid #1e2235;
-                 padding: 14px 24px; display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
-  .camp-icon { width: 36px; height: 36px; background: linear-gradient(135deg,#3b82f6,#8b5cf6);
-               border-radius: 8px; display: flex; align-items: center; justify-content: center;
-               font-size: 18px; flex-shrink: 0; }
-  .camp-name { font-size: 16px; font-weight: 600; color: #f1f5f9; }
-  .camp-id { font-size: 12px; color: #64748b; margin-top: 1px; }
-  .camp-status { margin-left: auto; font-size: 12px; color: #34d399; background: #064e3b22;
-                 border: 1px solid #065f4622; padding: 3px 10px; border-radius: 6px; }
+/* Scenario tabs in main */
+.scenario-row{padding:10px 24px;background:#fff;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;gap:8px;flex-shrink:0}
+.sc-tab{height:28px;padding:0 12px;border:1px solid #e5e7eb;border-radius:5px;font-size:12px;color:#6b7280;cursor:pointer;background:#fff;transition:all .12s;display:flex;align-items:center;gap:5px}
+.sc-tab:hover{border-color:#9ca3af}
+.sc-tab.active{background:#eff6ff;border-color:#bfdbfe;color:#2563eb;font-weight:600}
+.sc-label{font-size:12px;color:#9ca3af;margin-right:4px}
 
-  /* ── Campaign table area ── */
-  .camp-area { flex: 1; overflow-y: auto; padding: 20px 24px; }
-  .section-label { font-size: 11px; color: #64748b; font-weight: 600; letter-spacing: .06em;
-                   text-transform: uppercase; margin-bottom: 10px; }
-  .camp-table { width: 100%; border-collapse: collapse; font-size: 13px; }
-  .camp-table th { text-align: left; padding: 9px 12px; color: #64748b; font-size: 11px;
-                   font-weight: 600; letter-spacing: .05em; text-transform: uppercase;
-                   border-bottom: 1px solid #1e2235; }
-  .camp-table td { padding: 10px 12px; border-bottom: 1px solid #1a1d27; color: #cbd5e1; }
-  .camp-table tr:hover td { background: #13151f; }
-  .status-live { color: #34d399; font-weight: 500; }
-  .status-paused { color: #64748b; }
-  .metric-good { color: #34d399; }
-  .metric-warn { color: #f59e0b; }
-  .metric-bad { color: #f87171; }
+.alert{margin:12px 24px 0;padding:11px 14px;border-radius:6px;display:flex;align-items:flex-start;gap:10px;font-size:12.5px;line-height:1.55;flex-shrink:0}
+.alert.err{background:#fef2f2;border:1px solid #fecaca;color:#991b1b}
+.alert.info{background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af}
+.alert svg{flex-shrink:0;margin-top:2px}
+.alert-body strong{display:block;font-weight:700;margin-bottom:2px}
+.alert-learn{margin-left:auto;flex-shrink:0;font-size:12px;font-weight:600;padding:5px 10px;border:1px solid currentColor;border-radius:5px;cursor:pointer;white-space:nowrap}
 
-  /* ── Ask Vector Panel ── */
-  .av-panel { width: 420px; background: #13151f; border-left: 1px solid #1e2235;
-              display: flex; flex-direction: column; flex-shrink: 0; }
-  .av-header { padding: 14px 16px; border-bottom: 1px solid #1e2235;
-               display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
-  .av-dot { width: 8px; height: 8px; background: #3b82f6; border-radius: 50%; }
-  .av-title { font-size: 14px; font-weight: 600; color: #f1f5f9; }
-  .av-subtitle { font-size: 11px; color: #64748b; margin-top: 1px; }
-  .av-close { margin-left: auto; color: #475569; cursor: pointer; font-size: 16px; }
+.camp-area{padding:16px 24px;flex:1}
+.toolbar{display:flex;align-items:center;gap:7px;margin-bottom:12px;flex-wrap:wrap}
+.t-btn{height:30px;padding:0 10px;border:1px solid #d1d5db;background:#fff;border-radius:5px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:5px;color:#374151;transition:all .12s}
+.t-btn:hover{border-color:#9ca3af;background:#f9fafb}
+.t-btn.primary{background:#2563eb;color:#fff;border-color:#2563eb;font-weight:600}
+.t-btn.primary:hover{background:#1d4ed8}
+.t-sel{height:30px;padding:0 8px;border:1px solid #d1d5db;background:#fff;border-radius:5px;font-size:12px;color:#374151;cursor:pointer}
+.t-right{margin-left:auto;display:flex;align-items:center;gap:7px}
 
-  .av-context { padding: 8px 16px; background: #0f1117; border-bottom: 1px solid #1e2235;
-                font-size: 11px; color: #64748b; flex-shrink: 0; }
-  .av-context span { color: #94a3b8; font-weight: 500; }
+/* Campaign table */
+.ctable{width:100%;border-collapse:collapse;background:#fff;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;font-size:12px}
+.ctable th{background:#f9fafb;padding:9px 12px;text-align:left;font-weight:600;color:#374151;border-bottom:1px solid #e5e7eb;white-space:nowrap;font-size:11.5px}
+.ctable td{padding:10px 12px;border-bottom:1px solid #f3f4f6;color:#374151;vertical-align:middle}
+.ctable tr:last-child td{border-bottom:none}
+.ctable tr:hover td{background:#fafafa}
+.s-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
+.s-paused{background:#f1f5f9;color:#64748b}
+.s-live{background:#f0fdf4;color:#16a34a}
+.s-badge .dot{width:5px;height:5px;border-radius:50%;background:currentColor}
+.c-name{font-weight:500;color:#111;font-size:12.5px}
+.muted{color:#9ca3af}
+.val-red{color:#dc2626;font-weight:600}
+.val-grn{color:#16a34a;font-weight:600}
+.val-neu{color:#374151}
+input[type=checkbox]{accent-color:#2563eb;width:13px;height:13px;cursor:pointer}
 
-  .av-messages { flex: 1; overflow-y: auto; padding: 12px 16px; display: flex;
-                 flex-direction: column; gap: 12px; }
+/* ─── Ask Vector panel (slides from right) ─── */
+.av-overlay{position:fixed;inset:0;background:rgba(0,0,0,0);pointer-events:none;z-index:199;transition:background .25s}
+.av-overlay.open{background:rgba(0,0,0,.3);pointer-events:all}
+.av-panel{position:fixed;top:0;right:-460px;width:460px;height:100vh;background:#fff;box-shadow:-4px 0 28px rgba(0,0,0,.18);z-index:200;display:flex;flex-direction:column;transition:right .28s cubic-bezier(.4,0,.2,1);overflow:hidden}
+.av-panel.open{right:0}
+.av-panel-hd{padding:13px 16px;background:#0c0c14;display:flex;align-items:center;gap:9px;flex-shrink:0}
+.av-panel-title{color:#fff;font-size:15px;font-weight:700;flex:1}
+.av-panel-badge{font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;background:rgba(37,99,235,.35);color:#93c5fd;border:1px solid rgba(147,197,253,.25)}
+.av-ctx{padding:7px 16px;background:#0f0f1c;font-size:11px;color:rgba(255,255,255,.4);display:flex;align-items:center;gap:5px;border-bottom:1px solid rgba(255,255,255,.06);flex-shrink:0}
+.av-ctx strong{color:rgba(255,255,255,.65)}
+.av-close{width:28px;height:28px;border:none;background:rgba(255,255,255,.1);border-radius:6px;cursor:pointer;color:rgba(255,255,255,.65);font-size:16px;display:flex;align-items:center;justify-content:center;transition:all .12s;line-height:1}
+.av-close:hover{background:rgba(255,255,255,.2);color:#fff}
 
-  /* Message bubbles */
-  .msg { display: flex; gap: 8px; }
-  .msg-user { flex-direction: row-reverse; }
-  .msg-avatar { width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0; font-size: 11px;
-                display: flex; align-items: center; justify-content: center; font-weight: 600;
-                margin-top: 2px; }
-  .msg-avatar.agent { background: linear-gradient(135deg,#2563eb,#7c3aed); color: #fff; }
-  .msg-avatar.user { background: #1e3a5f; color: #60a5fa; }
-  .msg-bubble { max-width: 300px; padding: 10px 13px; border-radius: 12px; font-size: 13px;
-                line-height: 1.5; }
-  .msg-user .msg-bubble { background: #1e3a5f; color: #e2e8f0; border-bottom-right-radius: 3px; }
-  .msg-agent .msg-bubble { background: #1a1d27; color: #cbd5e1; border-bottom-left-radius: 3px;
-                            border: 1px solid #2d3148; }
+/* Scenario selector inside panel */
+.av-sc-row{padding:8px 14px;background:#f8f9fb;border-bottom:1px solid #e5e7eb;display:flex;gap:6px;flex-shrink:0}
+.av-sc-tab{font-size:11px;padding:3px 10px;border-radius:5px;border:1px solid #e5e7eb;color:#6b7280;cursor:pointer;background:#fff;transition:all .12s}
+.av-sc-tab:hover{border-color:#9ca3af}
+.av-sc-tab.active{background:#eff6ff;border-color:#bfdbfe;color:#2563eb;font-weight:600}
 
-  /* Investigation running indicator */
-  .investigation-card { background: #0f1117; border: 1px solid #1e2235; border-radius: 10px;
-                        padding: 14px; margin-top: 2px; font-size: 12px; width: 330px; }
-  .inv-title { font-size: 12px; font-weight: 600; color: #94a3b8; margin-bottom: 10px;
-               display: flex; align-items: center; gap: 6px; }
-  .inv-title .spinner { width: 12px; height: 12px; border: 2px solid #2d3148;
-                        border-top-color: #3b82f6; border-radius: 50%; animation: spin .8s linear infinite; }
-  .pillar-row { display: flex; align-items: center; gap: 8px; padding: 5px 0;
-                color: #64748b; font-size: 12px; transition: color .3s; }
-  .pillar-row.done { color: #94a3b8; }
-  .pillar-row.active { color: #60a5fa; }
-  .pillar-row.finding { color: #f59e0b; }
-  .pillar-icon { width: 16px; height: 16px; border-radius: 50%; border: 2px solid #2d3148;
-                 display: flex; align-items: center; justify-content: center; font-size: 9px;
-                 flex-shrink: 0; transition: all .3s; }
-  .pillar-icon.done { background: #065f46; border-color: #10b981; color: #10b981; }
-  .pillar-icon.active { border-color: #3b82f6; background: #1e3a5f; }
-  .pillar-icon.finding { background: #451a03; border-color: #f59e0b; color: #f59e0b; }
-  .pillar-icon.pending { border-color: #2d3148; color: #475569; }
-  .pillar-detail { font-size: 11px; color: #475569; margin-left: 24px; margin-top: -2px;
-                   padding-bottom: 3px; }
-  .pillar-detail.visible { color: #64748b; }
+.av-msgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;background:#f8f9fb}
+.av-msgs::-webkit-scrollbar{width:4px}
+.av-msgs::-webkit-scrollbar-thumb{background:#dde1e7;border-radius:2px}
 
-  /* Result card */
-  .result-card { background: #0f1117; border: 1px solid #1e2235; border-radius: 10px;
-                 padding: 14px; width: 340px; }
-  .result-header { font-size: 11px; font-weight: 600; color: #64748b; letter-spacing: .06em;
-                   text-transform: uppercase; margin-bottom: 10px; }
-  .result-kpi { display: flex; align-items: baseline; gap: 6px; margin-bottom: 10px; }
-  .result-kpi-label { font-size: 12px; color: #64748b; }
-  .result-kpi-value { font-size: 20px; font-weight: 700; color: #f87171; }
-  .result-kpi-sub { font-size: 11px; color: #64748b; }
+/* Welcome state */
+.av-welcome{text-align:center;padding:24px 14px;margin:auto}
+.av-welcome h2{font-size:17px;font-weight:700;color:#111;margin-bottom:5px}
+.av-welcome p{font-size:12px;color:#6b7280;margin-bottom:16px;line-height:1.55}
+.av-chips{display:flex;flex-direction:column;gap:6px;text-align:left}
+.av-chip{padding:9px 11px;background:#fff;border:1px solid #e5e7eb;border-radius:7px;cursor:pointer;font-size:12px;color:#374151;transition:all .12s;display:flex;align-items:center;justify-content:space-between}
+.av-chip:hover{border-color:#2563eb;color:#2563eb;background:#eff6ff}
+.av-chip-arr{color:#9ca3af;font-size:13px}
 
-  .cause-block { margin-bottom: 10px; }
-  .cause-label { font-size: 10px; font-weight: 600; color: #64748b; text-transform: uppercase;
-                 letter-spacing: .06em; margin-bottom: 5px; }
-  .cause-item { display: flex; gap: 7px; align-items: flex-start; margin-bottom: 5px; }
-  .cause-badge { font-size: 10px; padding: 1px 7px; border-radius: 4px; font-weight: 600;
-                 white-space: nowrap; margin-top: 1px; flex-shrink: 0; }
-  .badge-primary { background: #7f1d1d; color: #fca5a5; }
-  .badge-secondary { background: #431407; color: #fdba74; }
-  .badge-clean { background: #052e16; color: #6ee7b7; }
-  .cause-text { font-size: 12px; color: #94a3b8; line-height: 1.4; }
+/* Message bubbles */
+.av-msgs .msg{display:flex;gap:8px;align-items:flex-start}
+.av-msgs .msg.user{flex-direction:row-reverse}
+.av-msgs .bubble{max-width:90%;padding:9px 12px;border-radius:10px;font-size:12.5px;line-height:1.55}
+.av-msgs .msg.user .bubble{background:#2563eb;color:#fff;border-radius:10px 10px 2px 10px;max-width:80%}
+.av-msgs .msg.assistant .bubble{background:#fff;border:1px solid #e5e7eb;border-radius:10px 10px 10px 2px;width:100%}
+.av-msgs .av-avatar{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;margin-top:2px}
+.av-msgs .av-avatar.agent{background:#0c0c14;color:#93c5fd}
+.av-msgs .av-avatar.user{background:#2563eb;color:#fff}
 
-  .rec-block { border-top: 1px solid #1e2235; padding-top: 10px; margin-top: 6px; }
-  .rec-label { font-size: 10px; font-weight: 600; color: #64748b; text-transform: uppercase;
-               letter-spacing: .06em; margin-bottom: 7px; }
-  .rec-item { display: flex; gap: 8px; align-items: flex-start; margin-bottom: 6px; font-size: 12px; color: #94a3b8; }
-  .rec-num { width: 18px; height: 18px; background: #1e3a5f; border-radius: 50%; color: #60a5fa;
-             font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center;
-             flex-shrink: 0; margin-top: 1px; }
+/* Investigation running card */
+.inv-card{background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:12px;font-size:12px}
+.inv-hd{display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:600;color:#374151;margin-bottom:10px}
+.l-spin{width:13px;height:13px;border:2px solid #e5e7eb;border-top-color:#2563eb;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+.l-done-ic{width:13px;height:13px;border-radius:50%;background:#16a34a;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:8px;font-weight:700}
+.pillar-row{display:flex;align-items:flex-start;gap:8px;padding:5px 0;transition:all .2s}
+.pillar-icon{width:18px;height:18px;border-radius:50%;border:2px solid #e5e7eb;display:flex;align-items:center;justify-content:center;font-size:9px;flex-shrink:0;margin-top:1px;transition:all .2s}
+.pillar-icon.pending{border-color:#e5e7eb;color:#d1d5db}
+.pillar-icon.running{border-color:#2563eb;background:#eff6ff;animation:pulse 1s infinite}
+.pillar-icon.done{background:#f0fdf4;border-color:#86efac;color:#16a34a}
+.pillar-icon.finding{background:#fffbeb;border-color:#fde68a;color:#d97706}
+.pillar-icon.critical{background:#fef2f2;border-color:#fecaca;color:#dc2626}
+.pillar-text{flex:1}
+.pillar-name{font-size:12px;font-weight:600;color:#374151;line-height:1.3}
+.pillar-name.pending{color:#9ca3af;font-weight:400}
+.pillar-detail{font-size:11px;color:#6b7280;margin-top:2px;line-height:1.4}
 
-  .cta-row { display: flex; gap: 7px; margin-top: 10px; flex-wrap: wrap; }
-  .cta-btn { font-size: 11px; padding: 5px 12px; border-radius: 6px; border: 1px solid #2563eb;
-             color: #60a5fa; background: #1e3a5f22; cursor: pointer; font-weight: 500;
-             transition: background .15s; }
-  .cta-btn:hover { background: #1e3a5f; }
+/* Result card */
+.res-card{background:#fff;border:1px solid #e5e7eb;border-radius:8px;overflow:hidden;font-size:12px}
+.res-hd{padding:10px 14px;background:#f9fafb;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;gap:8px}
+.res-hd-title{font-size:12.5px;font-weight:700;color:#111;flex:1}
+.res-drop-badge{font-size:13px;font-weight:800;color:#dc2626}
+.res-body{padding:12px 14px}
 
-  /* Input bar */
-  .av-input-area { border-top: 1px solid #1e2235; padding: 12px 14px; flex-shrink: 0; }
-  .av-presets { display: flex; flex-direction: column; gap: 5px; margin-bottom: 8px; }
-  .av-preset { font-size: 11px; color: #60a5fa; background: #0f1117; border: 1px solid #1e3a5f;
-               padding: 6px 11px; border-radius: 7px; cursor: pointer; transition: background .15s;
-               white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .av-preset:hover { background: #1e3a5f44; }
-  .av-preset.used { color: #475569; border-color: #1e2235; cursor: default; }
-  .av-input-row { display: flex; gap: 8px; }
-  .av-input { flex: 1; background: #0f1117; border: 1px solid #2d3148; border-radius: 8px;
-              color: #e2e8f0; font-size: 13px; padding: 9px 12px; outline: none;
-              font-family: inherit; resize: none; }
-  .av-input:focus { border-color: #3b82f6; }
-  .av-send { width: 36px; height: 36px; background: #2563eb; border: none; border-radius: 8px;
-             color: #fff; cursor: pointer; display: flex; align-items: center; justify-content: center;
-             flex-shrink: 0; transition: background .15s; }
-  .av-send:hover { background: #1d4ed8; }
-  .av-hint { font-size: 10px; color: #475569; margin-top: 6px; text-align: center; }
+.finding-block{margin-bottom:10px}
+.finding-label{font-size:10px;font-weight:700;letter-spacing:.07em;color:#9ca3af;text-transform:uppercase;margin-bottom:6px}
+.finding-item{display:flex;gap:8px;align-items:flex-start;padding:7px 9px;border-radius:6px;margin-bottom:5px;font-size:12px;line-height:1.5}
+.finding-item.crit{background:#fef2f2;border:1px solid #fecaca}
+.finding-item.warn{background:#fffbeb;border:1px solid #fde68a}
+.finding-item.ok{background:#f0fdf4;border:1px solid #bbf7d0}
+.finding-badge{font-size:10px;font-weight:700;padding:1px 7px;border-radius:4px;white-space:nowrap;flex-shrink:0;margin-top:1px}
+.badge-primary{background:#fee2e2;color:#dc2626}
+.badge-secondary{background:#fef3c7;color:#d97706}
+.badge-clean{background:#dcfce7;color:#16a34a}
 
-  /* Confidence score */
-  .conf-row { display: flex; align-items: center; gap: 8px; margin-top: 8px; padding-top: 8px;
-              border-top: 1px solid #1e2235; }
-  .conf-label { font-size: 11px; color: #64748b; }
-  .conf-bar { flex: 1; height: 4px; background: #1e2235; border-radius: 2px; }
-  .conf-fill { height: 100%; border-radius: 2px; background: linear-gradient(90deg, #10b981, #3b82f6); }
-  .conf-pct { font-size: 11px; color: #10b981; font-weight: 600; }
+.rec-block{border-top:1px solid #f3f4f6;padding-top:10px;margin-top:6px}
+.rec-label{font-size:10px;font-weight:700;letter-spacing:.07em;color:#9ca3af;text-transform:uppercase;margin-bottom:7px}
+.rec-item{display:flex;gap:8px;align-items:flex-start;margin-bottom:6px;font-size:12px;color:#374151;line-height:1.4}
+.rec-num{width:18px;height:18px;background:#eff6ff;border-radius:50%;color:#2563eb;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.cta-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.cta-btn{font-size:11.5px;padding:5px 11px;border-radius:5px;border:1px solid #d1d5db;color:#374151;background:#fff;cursor:pointer;font-weight:500;transition:all .12s}
+.cta-btn:hover{border-color:#2563eb;color:#2563eb;background:#eff6ff}
+.cta-btn.primary-btn{background:#2563eb;color:#fff;border-color:#2563eb;font-weight:600}
+.cta-btn.primary-btn:hover{background:#1d4ed8}
 
-  @keyframes spin { to { transform: rotate(360deg); } }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-  .fade-in { animation: fadeIn .3s ease forwards; }
+.conf-row{display:flex;align-items:center;gap:8px;margin-top:10px;padding-top:8px;border-top:1px solid #f3f4f6}
+.conf-label{font-size:11px;color:#9ca3af}
+.conf-bar{flex:1;height:5px;background:#e5e7eb;border-radius:3px;overflow:hidden}
+.conf-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#2563eb,#10b981)}
+.conf-pct{font-size:11px;font-weight:700;color:#16a34a}
 
-  /* Hidden until needed */
-  .hidden { display: none !important; }
+/* Parse card */
+.parse-card{background:#f0f4ff;border:1px solid #c7d7fc;border-radius:7px;overflow:hidden;font-size:11.5px;margin-bottom:4px}
+.parse-hd{background:#dbeafe;padding:6px 10px;font-weight:700;font-size:11px;color:#1e40af}
+.parse-body{display:grid;grid-template-columns:auto 1fr;gap:4px 10px;padding:8px 10px}
+.parse-key{color:#6b7280;font-size:11px;white-space:nowrap}
+.parse-val{color:#111;font-size:11.5px;font-weight:500}
 
-  /* Demo replay banner */
-  .replay-bar { background: #1e2235; border-top: 1px solid #2d3148; padding: 8px 16px;
-                display: flex; align-items: center; gap: 10px; font-size: 12px; color: #64748b;
-                flex-shrink: 0; cursor: pointer; }
-  .replay-bar:hover { background: #252a3d; }
-  .replay-icon { width: 24px; height: 24px; background: #2563eb; border-radius: 50%;
-                 display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+/* Input area */
+.av-input-area{padding:10px 12px;background:#fff;border-top:1px solid #e5e7eb;flex-shrink:0}
+.av-input-row{display:flex;align-items:flex-end;gap:7px;background:#f8f9fb;border:1px solid #e5e7eb;border-radius:8px;padding:7px 10px}
+.av-input-row textarea{flex:1;border:none;background:transparent;resize:none;font-size:12.5px;font-family:inherit;color:#111;outline:none;max-height:80px;line-height:1.5}
+.av-send{width:28px;height:28px;border:none;background:#2563eb;border-radius:6px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .12s}
+.av-send:hover{background:#1d4ed8}
+.av-hint{font-size:10.5px;color:#9ca3af;margin-top:5px;text-align:center}
 
-  /* scenario tabs */
-  .scenario-tabs { display: flex; gap: 6px; padding: 10px 16px; border-bottom: 1px solid #1e2235;
-                   flex-shrink: 0; }
-  .s-tab { font-size: 11px; padding: 4px 11px; border-radius: 6px; cursor: pointer;
-           border: 1px solid #2d3148; color: #64748b; transition: all .15s; }
-  .s-tab:hover { border-color: #3b82f6; color: #60a5fa; }
-  .s-tab.active { background: #1e3a5f; border-color: #2563eb; color: #60a5fa; font-weight: 500; }
+/* Replay bar */
+.replay-bar{padding:8px 14px;background:#f8f9fb;border-top:1px solid #e5e7eb;display:flex;align-items:center;gap:8px;cursor:pointer;font-size:12px;color:#6b7280;transition:background .12s;flex-shrink:0}
+.replay-bar:hover{background:#f1f5f9}
+.replay-ic{width:24px;height:24px;background:#2563eb;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.fade-up{animation:fadeUp .25s ease forwards}
 </style>
 </head>
 <body>
 
-<!-- Top nav -->
-<div class="topbar">
-  <svg class="topbar-logo" viewBox="0 0 28 28" fill="none">
-    <rect width="28" height="28" rx="6" fill="#1a1d27"/>
-    <path d="M7 9l7-4 7 4v10l-7 4-7-4V9z" fill="#3b82f6" opacity=".8"/>
-    <path d="M14 5l7 4v10l-7 4" fill="#2563eb"/>
-  </svg>
-  <span class="topbar-title">Unity Ads</span>
-  <span class="topbar-badge">CIBI AI Agent</span>
-  <span class="topbar-spacer"></span>
-  <span class="topbar-tag">Internal Demo · Phase 1</span>
-</div>
+<!-- Top Nav -->
+<nav class="topnav">
+  <a class="topnav-logo" href="#">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+    Unity
+  </a>
+  <div class="tnav-div"></div>
+  <span class="topnav-title">User Acquisition</span>
+  <span class="tnav-badge">CIBI AI Agent · Phase 1 Internal</span>
+  <div class="tnav-right">
+    <button class="av-btn" onclick="togglePanel()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Ask Vector
+    </button>
+    <div class="tnav-div" style="margin:0 4px"></div>
+    <button class="tnav-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button>
+    <button class="tnav-icon"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg></button>
+    <div class="tnav-avatar">JY</div>
+  </div>
+</nav>
 
 <div class="layout">
-
   <!-- Sidebar -->
-  <div class="sidebar">
-    <div class="sidebar-section">Workspace</div>
-    <div class="sidebar-item">
-      <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><rect x="1" y="1" width="6" height="6" rx="1"/><rect x="9" y="1" width="6" height="6" rx="1"/><rect x="1" y="9" width="6" height="6" rx="1"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg>
-      Apps
+  <aside class="sidebar">
+    <div class="sb-hd">GROW</div>
+    <div class="sb-app">
+      <div class="sb-app-ic">U</div>
+      Unity Ads User Acquisition
     </div>
-    <div class="sidebar-item active">
-      <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M2 3h12v2H2zm0 4h12v2H2zm0 4h8v2H2z"/></svg>
-      Campaigns
+    <div style="padding:4px 0 0 14px">
+      <div style="padding:6px 14px 6px 6px;display:flex;align-items:center;gap:7px;cursor:pointer;color:rgba(255,255,255,.8);font-size:12px;font-weight:600">
+        <div id="sbAppIcon" style="width:18px;height:18px;border-radius:4px;background:#10b981;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#fff;flex-shrink:0">R</div>
+        <span id="sbAppName">Royal Kingdom</span>
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-left:auto;color:rgba(255,255,255,.35)"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+      <div class="sb-item active">Campaigns</div>
+      <div class="sb-item">Creative Packs</div>
+      <div class="sb-item">Creatives</div>
+      <div class="sb-item">Reporting</div>
     </div>
-    <div class="sidebar-item">
-      <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M8 5v3l2 2"/></svg>
-      Reporting
-    </div>
-    <div class="sidebar-section">Tools</div>
-    <div class="sidebar-item">
-      <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 2a6 6 0 100 12A6 6 0 008 2zm0 10.5A4.5 4.5 0 118 3.5a4.5 4.5 0 010 9z"/></svg>
-      Creatives
-    </div>
-    <div class="sidebar-item">
-      <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M3 3h10v10H3z" stroke="currentColor" stroke-width="1.5" fill="none"/><path d="M3 7h10M7 3v10"/></svg>
-      Finance
-    </div>
-  </div>
+    <div class="sb-div"></div>
+    <div class="sb-sub">Tools</div>
+    <div class="sb-item" style="padding-left:14px">Share of Voice</div>
+    <div class="sb-item" style="padding-left:14px">Finance</div>
+    <div class="sb-item" style="padding-left:14px">API Management</div>
+    <div class="sb-item" style="padding-left:14px">Settings</div>
+  </aside>
 
   <!-- Main content -->
   <div class="main">
-    <div class="camp-header">
-      <div class="camp-icon">🎮</div>
-      <div>
-        <div class="camp-name" id="campName">Royal Kingdom</div>
-        <div class="camp-id">Developer: Dream Games · Game ID: <span id="gameId">500178022</span> · iOS</div>
-      </div>
-      <div class="camp-status" id="campStatus">● 2 Live Campaigns</div>
+    <div class="dev-bar">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+      <span id="devBarText">Dream Games · Royal Kingdom · iOS · Game ID: 500178022</span>
+    </div>
+    <div class="breadcrumb">Apps › <span id="breadApp" style="color:#111;font-weight:500">Royal Kingdom</span> | Game ID: <span id="breadId">500178022</span></div>
+    <div class="page-hd">
+      <div class="page-title">Campaigns</div>
     </div>
 
-    <!-- scenario tabs -->
-    <div class="scenario-tabs">
-      <div class="s-tab active" onclick="loadScenario(0)">📉 Spend Drop (Dream Games)</div>
-      <div class="s-tab" onclick="loadScenario(1)">📊 Scale Ceiling (Scopely GSN)</div>
+    <!-- Scenario switcher -->
+    <div class="scenario-row">
+      <span class="sc-label">Demo scenario:</span>
+      <button class="sc-tab active" id="scTab0" onclick="loadScenario(0)">📉 Spend Drop — Dream Games Royal Kingdom</button>
+      <button class="sc-tab" id="scTab1" onclick="loadScenario(1)">📊 Scale Ceiling — Scopely GSN Casino</button>
+    </div>
+
+    <!-- Alert banner -->
+    <div class="alert err" id="alertBanner">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <div class="alert-body">
+        <strong id="alertTitle">Spend decline detected</strong>
+        <span id="alertText">Royal Kingdom iOS spend dropped -43% WoW. Click "Ask Vector" to run automated investigation.</span>
+      </div>
+      <div class="alert-learn" onclick="togglePanel()">Investigate →</div>
     </div>
 
     <div class="camp-area">
-      <div class="section-label">Campaigns · Past 30 Days</div>
-      <table class="camp-table">
+      <div class="toolbar">
+        <button class="t-btn"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6"/></svg> Delete</button>
+        <button class="t-btn"><svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg> Pause</button>
+        <button class="t-btn">+ Add filters</button>
+        <select class="t-sel"><option>History &amp; Performance ↓</option></select>
+        <select class="t-sel"><option>Import</option></select>
+        <select class="t-sel"><option>Export</option></select>
+        <div class="t-right">
+          <select class="t-sel"><option>Past 30 days</option><option>Past 7 days</option></select>
+          <button class="t-btn primary">+ Create</button>
+        </div>
+      </div>
+      <table class="ctable">
         <thead>
           <tr>
-            <th>Campaign Name</th><th>Status</th><th>Goal</th>
-            <th>Daily Spend</th><th>WoW Spend</th><th>Installs</th>
+            <th style="width:32px"><input type="checkbox"/></th>
+            <th>Campaign name ↑</th>
+            <th>Status</th>
+            <th>Goal</th>
+            <th>Optimization</th>
+            <th>Daily Spend</th>
+            <th>WoW Spend</th>
+            <th>Installs</th>
+            <th>tROAS</th>
           </tr>
         </thead>
         <tbody id="campTableBody"></tbody>
       </table>
     </div>
   </div>
+</div>
 
-  <!-- Ask Vector Panel -->
-  <div class="av-panel">
-    <div class="av-header">
-      <div class="av-dot"></div>
-      <div>
-        <div class="av-title">Ask Vector</div>
-        <div class="av-subtitle">AI-powered investigation · CIBI Agent</div>
-      </div>
-      <div class="av-close">✕</div>
+<!-- Ask Vector overlay + panel -->
+<div class="av-overlay" id="avOverlay" onclick="togglePanel()"></div>
+<div class="av-panel" id="avPanel">
+  <div class="av-panel-hd">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#93c5fd" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    <span class="av-panel-title">Ask Vector</span>
+    <span class="av-panel-badge">CIBI Agent</span>
+    <button class="av-close" onclick="togglePanel()">✕</button>
+  </div>
+  <div class="av-ctx">
+    Context: <strong id="ctxGame">Royal Kingdom</strong> · Game ID: <strong id="ctxId">500178022</strong> · iOS
+  </div>
+  <div class="av-sc-row">
+    <button class="av-sc-tab active" id="avsc0" onclick="loadScenario(0)">📉 Drop scenario</button>
+    <button class="av-sc-tab" id="avsc1" onclick="loadScenario(1)">📊 Ceiling scenario</button>
+  </div>
+  <div class="av-msgs" id="avMsgs">
+    <div class="av-welcome" id="avWelcome">
+      <h2>AI Investigation Agent</h2>
+      <p>Ask about spend drops, scale ceilings, or impression changes.<br/>Entity context is pre-loaded from your session.</p>
+      <div class="av-chips" id="chipContainer"></div>
     </div>
-    <div class="av-context">
-      Context: <span id="ctxGame">Royal Kingdom</span> · Game ID: <span id="ctxId">500178022</span>
+  </div>
+  <div class="av-input-area">
+    <div class="av-input-row">
+      <textarea id="avInput" rows="2" placeholder="Describe the performance issue you're investigating…" onkeydown="handleKey(event)"></textarea>
+      <button class="av-send" onclick="sendQuery()">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M2 8l12-6-4 12-3-5-5-1z" fill="white"/></svg>
+      </button>
     </div>
-    <div class="scenario-tabs" style="border-top:none; padding:8px 10px;">
-      <div class="s-tab active" onclick="loadScenario(0)" id="stab0">Drop</div>
-      <div class="s-tab" onclick="loadScenario(1)" id="stab1">Ceiling</div>
+    <div class="av-hint">Enter to send · Shift+Enter for new line</div>
+  </div>
+  <div class="replay-bar" onclick="replayDemo()">
+    <div class="replay-ic">
+      <svg width="8" height="10" viewBox="0 0 8 10" fill="white"><path d="M0 0l8 5-8 5z"/></svg>
     </div>
-
-    <div class="av-messages" id="avMessages"></div>
-
-    <div class="av-input-area">
-      <div class="av-presets" id="presetContainer"></div>
-      <div class="av-input-row">
-        <textarea class="av-input" id="avInput" placeholder="Ask about spend, scale, or impressions…" rows="2"></textarea>
-        <button class="av-send" onclick="sendQuery()">
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-            <path d="M2 8l12-6-4 12-3-5-5-1z" fill="white"/>
-          </svg>
-        </button>
-      </div>
-      <div class="av-hint">Enter to send · Shift+Enter for new line</div>
-    </div>
-
-    <div class="replay-bar" onclick="replayDemo()">
-      <div class="replay-icon">
-        <svg width="10" height="12" viewBox="0 0 10 12" fill="white"><path d="M0 0l10 6-10 6z"/></svg>
-      </div>
-      <span>▶ Replay investigation demo</span>
-    </div>
+    <span>▶ Replay investigation demo</span>
   </div>
 </div>
 
 <script>
-// ────── Scenario data ──────
 const SCENARIOS = [
   {
-    game: "Royal Kingdom",
-    gameId: "500178022",
-    dev: "Dream Games",
-    platform: "iOS",
-    campaigns: [
-      { name: "RK-UN-US-iOS-ROAS", status: "live", goal: "D7 ROAS",
-        spend: "$1,240", wow: "-43%", wowClass: "metric-bad", installs: "820" },
-      { name: "RK-UN-GLOBAL-iOS-ROAS", status: "live", goal: "D7 ROAS",
-        spend: "$890", wow: "-38%", wowClass: "metric-bad", installs: "610" },
-      { name: "RK-UN-US-iOS-CPI", status: "paused", goal: "CPI",
-        spend: "—", wow: "—", wowClass: "", installs: "—" },
+    game:"Royal Kingdom", gameId:"500178022", dev:"Dream Games", platform:"iOS",
+    sbColor:"#10b981", sbLetter:"R",
+    alertTitle:"Spend decline detected",
+    alertText:'Royal Kingdom iOS spend dropped -43% WoW. Click "Ask Vector" to run automated investigation.',
+    alertType:"err",
+    campaigns:[
+      {name:"RK-UN-US-iOS-ROAS",     status:"live",   goal:"ROAS optimization", opt:"In-app purchase ROAS", spend:"$1,240", wow:"-43%", wowClass:"val-red", installs:"820",  troas:"3.6%"},
+      {name:"RK-UN-GLOBAL-iOS-ROAS", status:"live",   goal:"ROAS optimization", opt:"In-app purchase ROAS", spend:"$890",   wow:"-38%", wowClass:"val-red", installs:"610",  troas:"3.8%"},
+      {name:"RK-UN-US-iOS-CPI",      status:"paused", goal:"Install",            opt:"CPI",                  spend:"—",      wow:"—",     wowClass:"muted",   installs:"—",    troas:"—"},
     ],
-    presets: [
+    chips:[
       "Why did Royal Kingdom iOS spend drop WoW?",
-      "Scale has been declining since Vector launched 2 months ago, we've been reducing tROAS but no improvement",
+      "Scale declining since Vector launched — tROAS reductions not helping",
     ],
-    query: "iOS scale has been declining for Royal Kingdom since Vector launched ~2 months ago. We've been reducing tROAS (May 2: 4%→3.8%, May 16: 3.8%→3.6%) but scale is not increasing. Noticeable on RK-UN-US-iOS-ROAS.",
-    investigation: {
-      summary: "Spend drop confirmed: -43% WoW (7-day avg: $1,240 vs. $2,180 prior week)",
-      pillars: [
-        {
-          label: "Pillar 1 — Advertiser Controls",
-          status: "finding",
-          detail: "2 settings changes in 60 days · tROAS: 4.0%→3.8%→3.6% (gradual, within guidelines)",
-          findings: [
-            { badge: "badge-clean", text: "No aggressive settings changes — tROAS reductions were gradual and within recommended cadence. Not a root cause." },
-            { badge: "badge-clean", text: "BBB: Campaign was NOT consistently hitting daily budget cap. Budget is not constraining." },
-            { badge: "badge-secondary", text: "Quality Trends (Imply): CVR declined 18% over 60 days — from 0.71% to 0.58%. Correlated with spend decline but not the primary driver." },
-          ]
-        },
-        {
-          label: "Pillar 2 — Supply Source Changes",
-          status: "finding",
-          detail: "No publisher blocks detected · Top 5 supply sources still active",
-          findings: [
-            { badge: "badge-clean", text: "No blocklist changes. Top supply source CVR distribution uniform. Supply side is not the cause." },
-          ]
-        },
-        {
-          label: "Pillar 3 — Unity Controls",
-          status: "finding",
-          detail: "#announcement-demand-grow-ads checked · Vector ecosystem launch confirmed",
-          findings: [
-            { badge: "badge-primary", text: "Vector ecosystem launched ~60 days ago, introducing more advertisers into the auction and intensifying competition for iOS puzzle/strategy inventory." },
-          ]
-        },
-        {
-          label: "Pillar 4 — External Factors",
-          status: "finding",
-          detail: "Decline confirmed across all networks · Not platform-specific",
-          findings: [
-            { badge: "badge-primary", text: "Install decline confirmed across ALL networks (not Unity-specific). Market-level phenomenon driven by ecosystem competition increase. PIE health nominal. Attribution healthy." },
-          ]
-        },
+    query:"iOS scale has been declining for Royal Kingdom since Vector launched ~2 months ago. We've been reducing tROAS (May 2: 4%→3.8%, May 16: 3.8%→3.6%) but scale is not increasing. Most noticeable on RK-UN-US-iOS-ROAS.",
+    inv:{
+      dropPct:"-43%",
+      summary:"Spend drop confirmed: -43% WoW (7d avg $1,240 vs $2,180 prior week). Drop start date: ~60 days ago, coinciding with Vector ecosystem launch.",
+      parse:{entity:"Royal Kingdom (ID: 500178022)",platform:"iOS",campaign:"RK-UN-US-iOS-ROAS",metric:"Spend / Scale",range:"Last ~60 days",type:"Type A: Spend/Scale Drop"},
+      pillars:[
+        {label:"Pillar 1 — Advertiser Controls",
+         detail:"Settings changes: 2 in 60 days — gradual tROAS reductions within recommended cadence",
+         status:"finding",
+         findings:[
+           {cls:"ok",   badge:"badge-clean",     label:"Clean",       text:"No aggressive settings changes. tROAS reductions were gradual (4.0%→3.8%→3.6%) and within the recommended once-per-10-days cadence."},
+           {cls:"ok",   badge:"badge-clean",     label:"Clean",       text:"BBB: Campaign was NOT consistently hitting daily budget cap before the decline — budget is not constraining."},
+           {cls:"warn", badge:"badge-secondary", label:"Contributing", text:"Quality trends (Imply): CVR declined 18% over 60 days (0.71%→0.58%), reducing eCPM competitiveness. Correlated with spend decline but not the primary driver."},
+         ]},
+        {label:"Pillar 2 — Supply Source Changes",
+         detail:"No blocklist changes · Top 5 supply sources CVR uniform",
+         status:"done",
+         findings:[
+           {cls:"ok", badge:"badge-clean", label:"Clean", text:"No blocklist changes in the period. Top supply source CVR distribution is uniform across sources. Supply side is not a contributing factor."},
+         ]},
+        {label:"Pillar 3 — Unity Controls",
+         detail:"#announcement-demand-grow-ads reviewed · Vector ecosystem launch confirmed",
+         status:"critical",
+         findings:[
+           {cls:"crit", badge:"badge-primary", label:"Primary",  text:"Vector ecosystem launched ~60 days ago, introducing additional advertisers into the iOS strategy/puzzle auction and intensifying competition for this inventory category."},
+         ]},
+        {label:"Pillar 4 — External Factors",
+         detail:"Decline confirmed across ALL networks — not Unity-specific",
+         status:"critical",
+         findings:[
+           {cls:"crit", badge:"badge-primary", label:"Primary",  text:"Install decline confirmed across ALL ad networks (not Unity-specific). This is a market-level phenomenon driven by ecosystem competition increase, not a Unity platform or campaign settings issue. PIE health nominal. Attribution healthy."},
+         ]},
       ],
-      primaryCause: "Ecosystem-level competition increase (Vector launch) affecting iOS strategy/puzzle category across all networks. Unity install volume declined proportionally with the market.",
-      secondaryCause: "CVR -18% over 60 days, reducing eCPM competitiveness. Model undervaluation may be contributing (SDK event data completeness to verify).",
-      recs: [
+      recs:[
         "Do not continue lowering tROAS — this decline is market-driven, not a bidding efficiency issue.",
-        "Focus on CVR improvement: refresh creative pack, test new concepts aligned with current top performers.",
-        "Verify SDK integration completeness — missing in-app events may be limiting model valuation."
+        "Focus on CVR improvement: refresh creative pack, test new ad formats aligned with current top performers.",
+        "Verify SDK integration completeness — missing in-app events may limit model valuation accuracy.",
       ],
-      confidence: 82
+      confidence:82,
     }
   },
   {
-    game: "GSN Casino",
-    gameId: "68470e16",
-    dev: "Scopely",
-    platform: "iOS",
-    campaigns: [
-      { name: "GSNC013179_TP_Unity_iOS_US_ROAS", status: "live", goal: "D7 ROAS",
-        spend: "$1,620", wow: "-41%", wowClass: "metric-bad", installs: "470" },
-      { name: "GSNC_iOS_US_ROAS_v2", status: "paused", goal: "D7 ROAS",
-        spend: "—", wow: "—", wowClass: "", installs: "—" },
+    game:"GSN Casino", gameId:"68470e16", dev:"Scopely", platform:"iOS",
+    sbColor:"#8b5cf6", sbLetter:"G",
+    alertTitle:"Scale ceiling detected",
+    alertText:"GSNC013179 spend collapsed -41% after July 17. Aggressive tROAS change detected. Click to investigate.",
+    alertType:"err",
+    campaigns:[
+      {name:"GSNC013179_TP_Unity_iOS_US_ROAS", status:"live",   goal:"ROAS optimization", opt:"In-app purchase ROAS", spend:"$1,620", wow:"-41%", wowClass:"val-red", installs:"470", troas:"6.0%"},
+      {name:"GSNC_iOS_US_ROAS_v2",             status:"paused", goal:"ROAS optimization", opt:"In-app purchase ROAS", spend:"—",      wow:"—",     wowClass:"muted",   installs:"—",   troas:"—"},
     ],
-    presets: [
+    chips:[
       "Why did GSNC013179 spend collapse after July 17?",
       "Campaign won't scale past $2k/day despite available budget",
     ],
-    query: "GSNC013179 spend dropped ~41% after July 17. We've been making multiple settings changes to try to fix it. The tROAS was changed on July 17 — could that be the cause?",
-    investigation: {
-      summary: "Spend drop confirmed: -41% WoW starting July 18 (day after tROAS change on July 17)",
-      pillars: [
-        {
-          label: "Pillar 1 — Advertiser Controls",
-          status: "finding",
-          detail: "11 settings changes since launch · tROAS change on July 17: +122%",
-          findings: [
-            { badge: "badge-primary", text: "tROAS increased from 2.7% → 6.0% on July 17 (+122%). This far exceeds the 25% single-change threshold. Expected impact: valuation wins ↓28%, conversions ↓21% (What-If dashboard confirmed)." },
-            { badge: "badge-primary", text: "11 total settings changes in 38 days — well above the max of 3-4 changes per 30 days for D7 ROAS. Model could not converge on any target." },
-            { badge: "badge-secondary", text: "BBB check: Campaign was spending ≥95% of $2,000 daily budget in the 7 days BEFORE July 17. Budget increase opportunity exists once tROAS is reverted." },
-            { badge: "badge-secondary", text: "Max Bid: 17% of impressions at max bid ceiling even after increase to $120. Mild constraint." },
-          ]
-        },
-        {
-          label: "Pillar 2 — Supply Source Changes",
-          status: "done",
-          detail: "No changes detected",
-          findings: [
-            { badge: "badge-clean", text: "No blocklist changes. CVR uniform across top supply sources. Supply is not a factor." },
-          ]
-        },
-        {
-          label: "Pillar 3 — Unity Controls",
-          status: "done",
-          detail: "No model changes on July 17",
-          findings: [
-            { badge: "badge-clean", text: "No Unity-side model changes announced on or around July 17. Drop is advertiser-settings-driven." },
-          ]
-        },
-        {
-          label: "Pillar 4 — External Factors",
-          status: "done",
-          detail: "No incidents · PIE healthy",
-          findings: [
-            { badge: "badge-clean", text: "No platform incidents. PIE health nominal — 1,247 purchase events received. Attribution healthy. MMP postback window 10 days (compliant)." },
-          ]
-        },
+    query:"GSNC013179 spend dropped ~41% after July 17. We changed tROAS from 2.7% to 6.0% that day. Could that be causing it? We've made many settings changes trying to fix it.",
+    inv:{
+      dropPct:"-41%",
+      summary:"Spend drop confirmed: -41% WoW. Drop start date: July 18, the day after a tROAS increase on July 17.",
+      parse:{entity:"GSNC013179 (ID: 68470e16)",platform:"iOS",campaign:"GSNC013179_TP_Unity_iOS_US_ROAS",metric:"Spend / Scale",range:"July 17 onwards",type:"Type A: Spend/Scale Drop"},
+      pillars:[
+        {label:"Pillar 1 — Advertiser Controls",
+         detail:"11 settings changes in 38 days · tROAS increased +122% on July 17",
+         status:"critical",
+         findings:[
+           {cls:"crit", badge:"badge-primary",   label:"Primary",     text:"tROAS increased from 2.7% → 6.0% on July 17 (+122%). Threshold exceeded: single-change limit is 25%. Expected impact per What-If dashboard: valuation wins ↓28%, conversions ↓21%."},
+           {cls:"crit", badge:"badge-primary",   label:"Primary",     text:"11 settings changes in 38 days (max recommended: 3–4 changes per 30 days for D7 ROAS). Model could not converge on any target across the period."},
+           {cls:"warn", badge:"badge-secondary", label:"Contributing", text:"BBB check: Campaign was hitting ≥95% of $2,000 daily budget in 7 days before July 17. Budget increase opportunity exists once tROAS is reverted."},
+           {cls:"warn", badge:"badge-secondary", label:"Contributing", text:"Max Bid: 17% of impressions at max bid ceiling ($120) — mild constraint on premium inventory access."},
+         ]},
+        {label:"Pillar 2 — Supply Source Changes",
+         detail:"No changes detected",
+         status:"done",
+         findings:[
+           {cls:"ok", badge:"badge-clean", label:"Clean", text:"No blocklist changes. CVR uniform across top supply sources. Supply side is not a contributing factor."},
+         ]},
+        {label:"Pillar 3 — Unity Controls",
+         detail:"No model changes on July 17",
+         status:"done",
+         findings:[
+           {cls:"ok", badge:"badge-clean", label:"Clean", text:"No Unity-side model or bid-boosting changes announced on or around July 17. The drop is entirely advertiser-settings-driven."},
+         ]},
+        {label:"Pillar 4 — External Factors",
+         detail:"No incidents · PIE healthy · Attribution compliant",
+         status:"done",
+         findings:[
+           {cls:"ok", badge:"badge-clean", label:"Clean", text:"No platform incidents. PIE health nominal — 1,247 purchase events received, was_conversion_attributed = 1 for 99.2% of events. MMP postback window: 10 days (compliant for D7)."},
+         ]},
       ],
-      primaryCause: "Aggressive tROAS increase on July 17 (+122%, from 2.7% → 6.0%) combined with 11 settings changes in 38 days — model disrupted, could not converge.",
-      secondaryCause: "Budget increase opportunity: campaign was consistently hitting daily cap before the change. If tROAS is reverted, budget should be increased.",
-      recs: [
-        "Revert tROAS to ~3% (near previous observed oROAS of 3.44%). Hold for 10 days minimum.",
-        "After 10-day stabilization, increase daily budget from $2,000 to $2,500–3,000 to capture available inventory.",
-        "Max 1 settings change per 10 days going forward. Never change tROAS and Max Bid on the same day."
+      recs:[
+        "Revert tROAS to ~3% (near observed oROAS of 3.44%). Hold stable for 10 days minimum — no further changes.",
+        "After 10-day stabilization period, increase daily budget from $2,000 to $2,500–3,000 to capture available inventory.",
+        "Enforce max 1 settings change per 10 days going forward. Never change tROAS and Max Bid on the same day.",
       ],
-      confidence: 91
+      confidence:91,
     }
   }
 ];
 
 let currentScenario = 0;
-let demoRunning = false;
-let demoTimeout = null;
+let panelOpen = false;
 
 function loadScenario(idx) {
   currentScenario = idx;
   const s = SCENARIOS[idx];
-  // Update header
-  document.getElementById('campName').textContent = s.game;
-  document.getElementById('gameId').textContent = s.gameId;
-  document.getElementById('ctxGame').textContent = s.game;
-  document.getElementById('ctxId').textContent = s.gameId;
-  // Update table
-  const tbody = document.getElementById('campTableBody');
-  tbody.innerHTML = s.campaigns.map(c => `
+  // Sidebar
+  document.getElementById('sbAppIcon').style.background = s.sbColor;
+  document.getElementById('sbAppIcon').textContent = s.sbLetter;
+  document.getElementById('sbAppName').textContent = s.game;
+  // Breadcrumb
+  document.getElementById('breadApp').textContent = s.game;
+  document.getElementById('breadId').textContent = s.gameId;
+  document.getElementById('devBarText').textContent = `${s.dev} · ${s.game} · ${s.platform} · Game ID: ${s.gameId}`;
+  // Alert
+  const a = document.getElementById('alertBanner');
+  document.getElementById('alertTitle').textContent = s.alertTitle;
+  document.getElementById('alertText').textContent = s.alertText;
+  a.className = `alert ${s.alertType}`;
+  // Table
+  document.getElementById('campTableBody').innerHTML = s.campaigns.map(c=>`
     <tr>
-      <td>${c.name}</td>
-      <td class="${c.status === 'live' ? 'status-live' : 'status-paused'}">${c.status === 'live' ? '● Live' : '○ Paused'}</td>
-      <td>${c.goal}</td>
-      <td>${c.spend}</td>
+      <td><input type="checkbox"/></td>
+      <td class="c-name">› ${c.name}</td>
+      <td><span class="s-badge ${c.status==='live'?'s-live':'s-paused'}"><span class="dot"></span>${c.status==='live'?'Live':'Paused'}</span></td>
+      <td>${c.goal}</td><td class="muted">${c.opt}</td>
+      <td class="${c.spend!=='—'?'':'muted'}">${c.spend}</td>
       <td class="${c.wowClass}">${c.wow}</td>
       <td>${c.installs}</td>
+      <td>${c.troas}</td>
     </tr>`).join('');
-  // Update context
-  // Update presets
-  const pc = document.getElementById('presetContainer');
-  pc.innerHTML = s.presets.map((p, i) =>
-    `<div class="av-preset" id="preset${i}" onclick="usePreset(${i})">${p}</div>`
-  ).join('');
-  // Clear messages
-  document.getElementById('avMessages').innerHTML = '';
-  document.getElementById('avInput').value = '';
-  // Update tabs
-  document.querySelectorAll('.s-tab').forEach((t, i) => {
-    t.classList.toggle('active', i === idx || (i === idx + document.querySelectorAll('.scenario-tabs').length/2));
+  // Context
+  document.getElementById('ctxGame').textContent = s.game;
+  document.getElementById('ctxId').textContent = s.gameId;
+  // Chips
+  const cc = document.getElementById('chipContainer');
+  cc.innerHTML = s.chips.map(ch=>`
+    <div class="av-chip" onclick="useChip('${ch.replace(/'/g,"\\'")}')">
+      <span>${ch}</span><span class="av-chip-arr">›</span>
+    </div>`).join('');
+  // Tabs
+  [0,1].forEach(i=>{
+    document.getElementById(`scTab${i}`).className='sc-tab'+(i===idx?' active':'');
+    document.getElementById(`avsc${i}`).className='av-sc-tab'+(i===idx?' active':'');
   });
-  if (demoTimeout) clearTimeout(demoTimeout);
-  demoRunning = false;
+  // Clear messages
+  document.getElementById('avMsgs').innerHTML = `<div class="av-welcome" id="avWelcome">
+    <h2>AI Investigation Agent</h2>
+    <p>Ask about spend drops, scale ceilings, or impression changes.<br/>Entity context is pre-loaded from your session.</p>
+    <div class="av-chips" id="chipContainer">
+      ${s.chips.map(ch=>`<div class="av-chip" onclick="useChip('${ch.replace(/'/g,"\\'")}')"><span>${ch}</span><span class="av-chip-arr">›</span></div>`).join('')}
+    </div></div>`;
+  document.getElementById('avInput').value = '';
 }
 
-function usePreset(idx) {
-  const s = SCENARIOS[currentScenario];
-  document.getElementById('avInput').value = s.query;
-  document.getElementById(`preset${idx}`).classList.add('used');
+function useChip(text) {
+  document.getElementById('avInput').value = text;
+  document.getElementById('avInput').focus();
+}
+
+function togglePanel() {
+  panelOpen = !panelOpen;
+  document.getElementById('avPanel').classList.toggle('open', panelOpen);
+  document.getElementById('avOverlay').classList.toggle('open', panelOpen);
+}
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendQuery(); }
 }
 
 function sendQuery() {
-  const input = document.getElementById('avInput');
-  const q = input.value.trim();
+  const inp = document.getElementById('avInput');
+  const q = inp.value.trim();
   if (!q) return;
-  input.value = '';
+  inp.value = '';
+  const msgs = document.getElementById('avMsgs');
+  msgs.innerHTML = '';
   runInvestigation(q);
 }
 
-function addMessage(html, type = 'agent', delay = 0) {
+function addMsg(html, type='assistant') {
   return new Promise(resolve => {
     setTimeout(() => {
-      const msgs = document.getElementById('avMessages');
-      const div = document.createElement('div');
-      div.className = `msg msg-${type} fade-in`;
-      const avatarLabel = type === 'user' ? 'CP' : 'AI';
-      const avatarClass = type === 'user' ? 'user' : 'agent';
-      div.innerHTML = `
-        <div class="msg-avatar ${avatarClass}">${avatarLabel}</div>
-        <div class="msg-bubble">${html}</div>`;
-      msgs.appendChild(div);
+      const msgs = document.getElementById('avMsgs');
+      const d = document.createElement('div');
+      d.className = `msg ${type} fade-up`;
+      const label = type==='user' ? 'CP' : 'AI';
+      d.innerHTML = `<div class="av-avatar ${type==='user'?'user':'agent'}">${label}</div><div class="bubble">${html}</div>`;
+      msgs.appendChild(d);
       msgs.scrollTop = msgs.scrollHeight;
       resolve();
-    }, delay);
+    }, 0);
   });
 }
 
 async function runInvestigation(query) {
   const s = SCENARIOS[currentScenario];
-  const inv = s.investigation;
+  const inv = s.inv;
 
-  // User message
-  await addMessage(query, 'user');
+  await addMsg(query, 'user');
+  await sleep(700);
 
-  // Agent: parsing
-  await addMessage(`
-    <div style="font-size:12px;color:#94a3b8;margin-bottom:6px;">Parsing investigation intent…</div>
-    <div style="font-size:12px;line-height:1.6;">
-      <div>🎯 <b>Entity:</b> ${s.game} (ID: ${s.gameId})</div>
-      <div>📱 <b>Platform:</b> ${s.platform}</div>
-      <div>📉 <b>Issue type:</b> Spend/Scale Drop — running Type A investigation</div>
-      <div>📅 <b>Time range:</b> Past 60 days + current WoW</div>
-    </div>`, 'agent', 800);
-
-  // Agent: investigation card running
-  await new Promise(r => setTimeout(r, 1200));
-  const msgs = document.getElementById('avMessages');
-  const invDiv = document.createElement('div');
-  invDiv.className = 'msg msg-agent fade-in';
-  invDiv.innerHTML = `
-    <div class="msg-avatar agent">AI</div>
-    <div class="investigation-card" id="invCard">
-      <div class="inv-title">
-        <div class="spinner"></div>
-        Running 4-Pillar CIBI Investigation…
+  // Parse card
+  const parseHtml = `
+    <div class="parse-card">
+      <div class="parse-hd">Investigation intent parsed</div>
+      <div class="parse-body">
+        <span class="parse-key">Entity</span><span class="parse-val">${inv.parse.entity}</span>
+        <span class="parse-key">Platform</span><span class="parse-val">${inv.parse.platform}</span>
+        <span class="parse-key">Campaign</span><span class="parse-val">${inv.parse.campaign}</span>
+        <span class="parse-key">KPI</span><span class="parse-val">${inv.parse.metric}</span>
+        <span class="parse-key">Time range</span><span class="parse-val">${inv.parse.range}</span>
+        <span class="parse-key">Type</span><span class="parse-val" style="color:#2563eb;font-weight:600">${inv.parse.type}</span>
       </div>
-      <div id="pillarsContainer">
-        ${inv.pillars.map((p, i) => `
-        <div class="pillar-row" id="pillar${i}" style="opacity:.4">
-          <div class="pillar-icon pending" id="picon${i}">○</div>
-          <span>${p.label}</span>
+    </div>
+    <div style="font-size:12px;color:#6b7280;margin-top:4px">Running 4-pillar CIBI investigation…</div>`;
+  await addMsg(parseHtml);
+  await sleep(500);
+
+  // Investigation card
+  const msgs = document.getElementById('avMsgs');
+  const invDiv = document.createElement('div');
+  invDiv.className = 'msg assistant fade-up';
+  invDiv.innerHTML = `
+    <div class="av-avatar agent">AI</div>
+    <div class="bubble">
+      <div class="inv-card" id="invCard">
+        <div class="inv-hd" id="invHd">
+          <div class="l-spin"></div>
+          Checking all 4 pillars simultaneously…
         </div>
-        <div class="pillar-detail" id="pdetail${i}"></div>
-        `).join('')}
+        <div id="pillarsEl">
+          ${inv.pillars.map((p,i)=>`
+          <div class="pillar-row" id="pr${i}">
+            <div class="pillar-icon pending" id="pi${i}">○</div>
+            <div class="pillar-text">
+              <div class="pillar-name pending" id="pn${i}">${p.label}</div>
+              <div class="pillar-detail" id="pd${i}" style="display:none"></div>
+            </div>
+          </div>`).join('')}
+        </div>
       </div>
     </div>`;
   msgs.appendChild(invDiv);
   msgs.scrollTop = msgs.scrollHeight;
 
-  // Animate each pillar
+  // Animate pillars
   for (let i = 0; i < inv.pillars.length; i++) {
-    await new Promise(r => setTimeout(r, 1000));
-    const row = document.getElementById(`pillar${i}`);
-    const icon = document.getElementById(`picon${i}`);
-    const det = document.getElementById(`pdetail${i}`);
-    row.style.opacity = '1';
-    row.className = 'pillar-row active';
-    icon.className = 'pillar-icon active';
-    icon.textContent = '·';
-
-    await new Promise(r => setTimeout(r, 900));
+    await sleep(800);
     const p = inv.pillars[i];
-    if (p.status === 'finding') {
-      row.className = 'pillar-row finding';
-      icon.className = 'pillar-icon finding';
-      icon.textContent = '!';
-    } else {
-      row.className = 'pillar-row done';
-      icon.className = 'pillar-icon done';
-      icon.textContent = '✓';
-    }
-    det.className = 'pillar-detail visible';
-    det.textContent = p.detail;
+    document.getElementById(`pi${i}`).className = 'pillar-icon running';
+    document.getElementById(`pn${i}`).className = 'pillar-name';
+    await sleep(900);
+    const iconClass = p.status==='critical' ? 'critical' : p.status==='finding' ? 'finding' : 'done';
+    const iconChar  = p.status==='critical' ? '!' : p.status==='finding' ? '!' : '✓';
+    document.getElementById(`pi${i}`).className = `pillar-icon ${iconClass}`;
+    document.getElementById(`pi${i}`).textContent = iconChar;
+    document.getElementById(`pd${i}`).textContent = p.detail;
+    document.getElementById(`pd${i}`).style.display = '';
     msgs.scrollTop = msgs.scrollHeight;
   }
 
-  // Update card header
-  await new Promise(r => setTimeout(r, 600));
-  document.getElementById('invCard').querySelector('.inv-title').innerHTML = `
-    <span style="color:#10b981">✓</span>
-    <span style="color:#94a3b8">Investigation complete — aggregating findings</span>`;
+  await sleep(600);
+  document.getElementById('invHd').innerHTML = `<div class="l-done-ic">✓</div> Investigation complete — aggregating all findings`;
+
+  await sleep(700);
 
   // Result card
-  await new Promise(r => setTimeout(r, 800));
-  const resDiv = document.createElement('div');
-  resDiv.className = 'msg msg-agent fade-in';
-
-  let findingsHtml = '';
+  let allFindings = '';
   inv.pillars.forEach(p => {
     p.findings.forEach(f => {
-      findingsHtml += `
-        <div class="cause-item">
-          <span class="cause-badge ${f.badge}">${f.badge.includes('primary') ? 'Primary' : f.badge.includes('secondary') ? 'Contributing' : 'Clear'}</span>
-          <span class="cause-text">${f.text}</span>
+      allFindings += `
+        <div class="finding-item ${f.cls}">
+          <span class="finding-badge ${f.badge}">${f.label}</span>
+          <span style="font-size:12px;color:#374151;line-height:1.45">${f.text}</span>
         </div>`;
     });
   });
 
-  resDiv.innerHTML = `
-    <div class="msg-avatar agent">AI</div>
-    <div class="result-card">
-      <div class="result-header">Investigation Result</div>
-      <div class="result-kpi">
-        <span class="result-kpi-label">Confirmed drop:</span>
-        <span class="result-kpi-value">${inv.summary.match(/-\d+%/)?.[0] || '-43%'}</span>
-        <span class="result-kpi-sub">WoW</span>
+  const resHtml = `
+    <div class="res-card">
+      <div class="res-hd">
+        <span class="res-hd-title">Root Cause Report</span>
+        <span class="res-drop-badge">${inv.dropPct} WoW</span>
       </div>
-
-      <div class="cause-block">
-        <div class="cause-label">All Findings (4 Pillars)</div>
-        ${findingsHtml}
-      </div>
-
-      <div class="rec-block">
-        <div class="rec-label">Recommendations</div>
-        ${inv.recs.map((r, i) => `
-          <div class="rec-item">
-            <div class="rec-num">${i+1}</div>
-            <span>${r}</span>
-          </div>`).join('')}
-        <div class="cta-row">
-          <div class="cta-btn">→ View tROAS Settings</div>
-          <div class="cta-btn">→ Adjust Budget</div>
-          <div class="cta-btn">→ Creative Library</div>
+      <div class="res-body">
+        <div style="font-size:12px;color:#6b7280;margin-bottom:10px;line-height:1.5">${inv.summary}</div>
+        <div class="finding-block">
+          <div class="finding-label">All Findings — 4 Pillars</div>
+          ${allFindings}
+        </div>
+        <div class="rec-block">
+          <div class="rec-label">Recommendations</div>
+          ${inv.recs.map((r,i)=>`
+            <div class="rec-item">
+              <div class="rec-num">${i+1}</div>
+              <span>${r}</span>
+            </div>`).join('')}
+          <div class="cta-row">
+            <button class="cta-btn primary-btn">→ Adjust tROAS Settings</button>
+            <button class="cta-btn">→ View BBB Dashboard</button>
+            <button class="cta-btn">→ Creative Library</button>
+          </div>
+        </div>
+        <div class="conf-row">
+          <span class="conf-label">Confidence</span>
+          <div class="conf-bar"><div class="conf-fill" style="width:${inv.confidence}%"></div></div>
+          <span class="conf-pct">${inv.confidence}%</span>
         </div>
       </div>
-
-      <div class="conf-row">
-        <span class="conf-label">Confidence</span>
-        <div class="conf-bar"><div class="conf-fill" style="width:${inv.confidence}%"></div></div>
-        <span class="conf-pct">${inv.confidence}%</span>
-      </div>
     </div>`;
+
+  const resDiv = document.createElement('div');
+  resDiv.className = 'msg assistant fade-up';
+  resDiv.innerHTML = `<div class="av-avatar agent">AI</div><div class="bubble">${resHtml}</div>`;
   msgs.appendChild(resDiv);
   msgs.scrollTop = msgs.scrollHeight;
 }
 
+function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
 function replayDemo() {
-  if (demoRunning) return;
-  demoRunning = true;
   const s = SCENARIOS[currentScenario];
-  document.getElementById('avMessages').innerHTML = '';
-  demoTimeout = setTimeout(() => {
-    runInvestigation(s.query);
-    demoRunning = false;
-  }, 400);
+  document.getElementById('avMsgs').innerHTML = '';
+  setTimeout(() => runInvestigation(s.query), 300);
 }
-
-function sendQuery() {
-  const input = document.getElementById('avInput');
-  const q = input.value.trim();
-  if (!q) return;
-  input.value = '';
-  document.getElementById('avMessages').innerHTML = '';
-  runInvestigation(q);
-}
-
-// Key handler
-document.addEventListener('keydown', e => {
-  if (e.key === 'Enter' && !e.shiftKey && document.activeElement.id === 'avInput') {
-    e.preventDefault();
-    sendQuery();
-  }
-});
 
 // Init
 loadScenario(0);
 
-// Auto-start demo after 1.5s
-setTimeout(() => replayDemo(), 1500);
+// Auto-open panel and run demo after short delay
+setTimeout(() => {
+  togglePanel();
+  setTimeout(() => replayDemo(), 600);
+}, 800);
 </script>
 </body>
 </html>
