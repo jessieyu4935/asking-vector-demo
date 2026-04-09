@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<script src="https://mcp.figma.com/mcp/html-to-design/capture.js"></script>
 <title>Unity Ads User Acquisition</title>
 <style>
 /* ─── Reset ─────────────────────────────────── */
@@ -485,9 +486,8 @@ input[type=checkbox]{accent-color:#2563eb;width:13px;height:13px;cursor:pointer}
       <p>AI-powered spend &amp; scale diagnostics<br>Block Blast! &#xb7; Game 500205758</p>
       <div class="av-chips">
         <div class="av-chip" onclick="panelFirePreset(0)">What're the top issues that require my attention? <span class="av-chip-arr">&#x203A;</span></div>
-        <div class="av-chip" onclick="panelFirePreset(1)">How are my campaigns performing overall? <span class="av-chip-arr">&#x203A;</span></div>
-        <div class="av-chip" onclick="panelFirePreset(2)">What are the week-over-week (WoW) performance changes? <span class="av-chip-arr">&#x203A;</span></div>
-        <div class="av-chip" onclick="panelFirePreset(3)">What're my top-performing/under-performing campaigns? <span class="av-chip-arr">&#x203A;</span></div>
+        <div class="av-chip" onclick="panelFirePreset(1)">What are the week-over-week (WoW) performance changes? <span class="av-chip-arr">&#x203A;</span></div>
+        <div class="av-chip" onclick="panelFirePreset(2)">What're my top-performing/under-performing campaigns? <span class="av-chip-arr">&#x203A;</span></div>
       </div>
     </div>
   </div>
@@ -517,7 +517,6 @@ function closeAskVector() {
 // Preset handler
 const PANEL_PRESETS = [
   "What're the top issues that require my attention?",
-  "How are my campaigns performing overall?",
   "What are the week-over-week (WoW) performance changes?",
   "What're my top-performing/under-performing campaigns?",
 ];
@@ -551,7 +550,7 @@ const MOCK = {
       title: "MMP validation",
       subtitle: "Required MMP integration fixes",
       campaigns_affected: 3,
-      description: "Integration-blocking issues detected for one or more campaigns. These issues can severely impact performance. Resolve issues to ensure accurate tracking and delivery. We recommend that you update your MMP settings as soon as possible. Starting April 9, unresolved required integration fixes can prevent newly created or paused campaigns from going live.",
+      description: "Integration-blocking issues detected for one or more apps. These issues can severely impact your campaign performance. We recommend that you update your MMP settings as soon as possible. Starting May 18, unresolved required integration fixes can prevent newly created or paused campaigns from going live.",
       cta: "Review MMP Settings",
     },
     {
@@ -821,16 +820,57 @@ const MOCK = {
   ],
   // ── Q3: game-level WoW KPI table ──
   wowMetrics: {
-    period:"Mar 25–31 vs Mar 18–24",
-    rows:[
-      {metric:"Total Spend",       icon:"", cur:"$196,986", ref:"$333,880", pct:-41.0, good_dir:"up",   note:"Significant spend drop driven by delivery issues"},
-      {metric:"CPI",               icon:"", cur:"$2.85",    ref:"$2.40",    pct:+18.8, good_dir:"down", note:"Higher CPI = less efficient delivery mix"},
-      {metric:"Cost Per Install",  icon:"", cur:"$2.85",    ref:"$2.40",    pct:+18.8, good_dir:"down", note:"Same as CPI — blended average across all campaigns"},
-      {metric:"CVR",               icon:"", cur:"2.1%",     ref:"3.8%",     pct:-44.7, good_dir:"up",   note:"Low CVR weakens bid competitiveness and reduces scale"},
-      {metric:"D7 Retention Rate", icon:"", cur:"28.3%",    ref:"31.0%",    pct:-8.7,  good_dir:"up",   note:"Slight decline; monitor for further movement"},
-      {metric:"D7 ROAS",           icon:"", cur:"1.2x",     ref:"1.8x",     pct:-33.3, good_dir:"up",   note:"Full D7 ROAS reporting coming soon"},
+    period:"Latest 7 Days (Apr 2–8) vs Previous 7 Days (Mar 26–Apr 1)",
+    financial:[
+      {metric:"Spend",            cur:"$798,621",  ref:"$975,679",  change:"-$177,058",  pct:-18.1, good_dir:"up"},
+      {metric:"Revenue",          cur:"$351,278",  ref:"$383,032",  change:"-$31,754",   pct:-8.3,  good_dir:"up"},
+      {metric:"Publisher Revenue",cur:"$447,344",  ref:"$592,647",  change:"-$145,303",  pct:-24.5, good_dir:"up"},
+      {metric:"ROAS",             cur:"43.99%",    ref:"39.26%",    change:"+4.73pp",    pct:+12.0, good_dir:"up"},
+      {metric:"Margin",           cur:"43.99%",    ref:"39.26%",    change:"+4.73pp",    pct:+12.0, good_dir:"up"},
     ],
-    summary:"Spend dropped −41% WoW. The primary drivers are CVR deterioration (−44.7%) and bid-floor mismatches reducing auction participation. Rising CPI (+18.8%) signals efficiency loss. D7 ROAS shows downstream quality impact.",
+    volume:[
+      {metric:"Installs",         cur:"54,840",    ref:"72,992",    change:"-18,152",    pct:-24.9, good_dir:"up"},
+      {metric:"Starts",           cur:"19.2M",     ref:"26.4M",     change:"-7.2M",      pct:-27.3, good_dir:"up"},
+      {metric:"Views",            cur:"9.8M",      ref:"13.9M",     change:"-4.1M",      pct:-29.5, good_dir:"up"},
+      {metric:"Clicks",           cur:"16.5M",     ref:"22.9M",     change:"-6.4M",      pct:-27.9, good_dir:"up"},
+    ],
+    efficiency:[
+      {metric:"CVR",              cur:"0.29%",     ref:"0.28%",     change:"+0.01pp",    pct:+3.6,  good_dir:"up"},
+      {metric:"CPI",              cur:"$14.56",    ref:"$13.37",    change:"+$1.19",     pct:+8.9,  good_dir:"down"},
+      {metric:"eCPM",             cur:"$45.58",    ref:"$42.56",    change:"+$3.02",     pct:+7.1,  good_dir:"up"},
+      {metric:"CTR",              cur:"168.43%",   ref:"164.55%",   change:"+3.88pp",    pct:+2.4,  good_dir:"up"},
+    ],
+    activity:[
+      {metric:"Campaign Count",   cur:"33",        ref:"27",        change:"+6 campaigns",pct:null, good_dir:"up"},
+      {metric:"Days Active",      cur:"7",         ref:"7",         change:"No change",   pct:null, good_dir:"up"},
+    ],
+    insights:{
+      positives:[
+        {title:"ROAS Improvement",   detail:"Significant 4.73pp increase (39.26% → 43.99%)"},
+        {title:"Margin Enhancement", detail:"Better cost efficiency with improved margins"},
+        {title:"Conversion Rate",    detail:"Slight CVR improvement (+0.01pp)"},
+        {title:"eCPM Growth",        detail:"Higher monetization per thousand impressions (+7.1%)"},
+        {title:"Campaign Expansion", detail:"+6 additional campaigns running"},
+      ],
+      concerns:[
+        {title:"Volume Decline",    detail:"Significant drops across all volume metrics (-25% to -30%)"},
+        {title:"Spend Reduction",   detail:"18.1% decrease in total advertising spend"},
+        {title:"CPI Increase",      detail:"Higher cost per install (+8.9%)"},
+        {title:"Revenue Impact",    detail:"Despite better ROAS, absolute revenue declined 8.3%"},
+      ],
+      strategic:{
+        pattern:"Royal Kingdom is experiencing a classic efficiency vs. scale trade-off:",
+        positives:["Better Quality: Improved ROAS, margins, and conversion rates"],
+        negatives:["Lower Scale: Reduced spending, installs, and absolute revenue"],
+        causes:["Budget optimization focusing on high-performing campaigns","Market competition increasing acquisition costs","Seasonal demand shifts","Campaign portfolio restructuring (33 vs 27 campaigns)"],
+        recs:[
+          {title:"Scale Top Performers",detail:"Identify and increase budgets for campaigns driving the ROAS improvement"},
+          {title:"Volume Recovery",     detail:"Explore new targeting or creative strategies to recover install volumes"},
+          {title:"Portfolio Analysis",  detail:"Review the 6 new campaigns' contribution to overall performance"},
+          {title:"Budget Reallocation", detail:"Consider reallocating spend from efficiency gains to volume recovery"},
+        ],
+      },
+    },
   },
   // ── Q4: campaign ranking by selectable metric ──
   rankingMetrics:[
@@ -910,6 +950,7 @@ function parseIntent(q) {
   } else if (/top.performing|under.perform|ranking|best|worst/i.test(ql)) {
     intent.analysis_type = "Campaign performance ranking";
     intent.metrics = ["spend","scale"];
+    intent.time_range = "Last 7 days";
   } else {
     intent.analysis_type = "General campaign inquiry";
     intent.metrics = ["spend","scale"];
@@ -987,12 +1028,13 @@ function intentHtml(intent) {
   const metricChips = intent.metrics.map(m=>`<code style="background:#eff6ff;color:#1e40af;padding:2px 7px;border-radius:4px;font-size:11px;border:1px solid #bfdbfe">${m}</code>`).join(" ");
   const comingSoon = `<span style="font-size:11px;color:var(--muted);margin-left:6px">· ROAS · CPI · CVR <span style="font-size:10px;background:#f8f0ff;color:#7c3aed;padding:1px 6px;border-radius:10px;border:1px solid #e9d5ff">coming soon</span></span>`;
 
+  const hideMetrics = intent.analysis_type === "Week-over-week performance changes" || intent.analysis_type === "Campaign performance ranking";
   return `<div class="intent-card">
     <div class="intent-header"> Query Understanding</div>
     <div class="intent-body">
       <div class="intent-label">Analysis Type</div><div class="intent-value">${esc(intent.analysis_type)}</div>
       ${entityRow}
-      <div class="intent-label">Metrics</div><div class="intent-value">${metricChips}${comingSoon}</div>
+      ${hideMetrics ? '' : `<div class="intent-label">Metrics</div><div class="intent-value">${metricChips}${comingSoon}</div>`}
       <div class="intent-label">Time Range</div><div class="intent-value"><strong>${esc(intent.time_range)}</strong></div>
     </div>
   </div>`;
@@ -1215,52 +1257,77 @@ function genOverallPerf(entity_type, entity_id) {
   </div>`;
 }
 
-function genWoW(entity_type, entity_id) {
-  const wm = MOCK.wowMetrics;
-  const rows = wm.rows.map(r => {
-    const isGood = r.good_dir === "up" ? r.pct >= 0 : r.pct <= 0;
-    const pctColor = isGood ? "var(--ok)" : (Math.abs(r.pct) > 20 ? "var(--critical)" : "var(--warn)");
-    const pctBg    = isGood ? "#f0fdf4" : (Math.abs(r.pct) > 20 ? "#fef2f2" : "#fffbeb");
-    const arrow    = r.pct > 0 ? "▲" : "▼";
-    const barW     = Math.min(Math.abs(r.pct), 100);
+function wowTableRows(rows) {
+  return rows.map(r => {
+    const isGood = r.pct === null ? true : (r.good_dir === "up" ? r.pct >= 0 : r.pct <= 0);
+    const pctColor = r.pct === null ? "var(--muted)" : (isGood ? "#16a34a" : (Math.abs(r.pct) > 20 ? "#dc2626" : "#d97706"));
+    const pctBg    = r.pct === null ? "#f1f5f9"      : (isGood ? "#f0fdf4"  : (Math.abs(r.pct) > 20 ? "#fef2f2" : "#fffbeb"));
+    const arrow    = r.pct === null ? "" : (r.pct > 0 ? "▲" : "▼");
+    const pctText  = r.pct === null ? "—" : `${arrow} ${r.pct > 0 ? '+' : ''}${r.pct}%`;
+    const cellStyle = "padding:6px 8px;border-bottom:1px solid #f3f4f6;vertical-align:middle";
     return `<tr>
-      <td>
-        <div style="font-weight:600;font-size:13px">${esc(r.metric)}</div>
-        ${r.note ? `<div style="font-size:11px;color:var(--muted);margin-top:2px">${esc(r.note)}</div>` : ''}
-      </td>
-      <td style="font-weight:700;font-size:13px">${esc(r.cur)}</td>
-      <td style="color:var(--muted)">${esc(r.ref)}</td>
-      <td>
-        <div style="display:flex;align-items:center;gap:6px">
-          <span style="background:${pctBg};color:${pctColor};font-weight:700;font-size:12px;padding:3px 9px;border-radius:20px;white-space:nowrap">${arrow} ${r.pct > 0 ? '+' : ''}${r.pct}%</span>
-        </div>
-        <div style="height:4px;background:#f3f4f6;border-radius:2px;margin-top:5px;overflow:hidden">
-          <div style="width:${barW}%;height:100%;background:${pctColor};border-radius:2px"></div>
-        </div>
-      </td>
-      <td style="font-size:11px;color:var(--muted);max-width:160px">${isGood ? 'On track' : (Math.abs(r.pct)>20?'Needs attention':'Monitor')}</td>
+      <td style="${cellStyle};font-weight:500;font-size:12px;color:#374151">${esc(r.metric)}</td>
+      <td style="${cellStyle};font-weight:700;font-size:12px;color:#111">${esc(r.cur)}</td>
+      <td style="${cellStyle};color:#6b7280;font-size:12px">${esc(r.ref)}</td>
+      <td style="${cellStyle};font-size:12px;color:#374151">${esc(r.change)}</td>
+      <td style="${cellStyle}"><span style="background:${pctBg};color:${pctColor};font-weight:700;font-size:11px;padding:2px 8px;border-radius:12px;white-space:nowrap">${pctText}</span></td>
     </tr>`;
   }).join("");
+}
 
-  return `<div class="res-header"><span>Week-over-week performance changes · Game ID: ${SESSION_GAME_ID} · ${wm.period}</span></div>
-  <div class="res-body">
-    <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:13px;line-height:1.65">
-      <strong>Summary:</strong> ${esc(wm.summary)}
-    </div>
-    <table class="perf-table">
+function wowSectionTable(title, rows) {
+  return `<div style="margin-bottom:16px">
+    <div style="font-size:13px;font-weight:700;color:#374151;margin-bottom:6px;padding-bottom:5px;border-bottom:2px solid #e5e7eb">${title}</div>
+    <table style="width:100%;border-collapse:collapse;font-size:12px">
       <thead>
-        <tr>
-          <th>Metric</th>
-          <th>This Week<br><span style="font-weight:400;color:var(--muted);font-size:10px">Mar 25–31</span></th>
-          <th>Last Week<br><span style="font-weight:400;color:var(--muted);font-size:10px">Mar 18–24</span></th>
-          <th>WoW Change</th>
-          <th>Status</th>
+        <tr style="background:#f9fafb">
+          <th style="text-align:left;padding:6px 8px;color:#6b7280;font-weight:600;border-bottom:1px solid #e5e7eb;white-space:nowrap">Metric</th>
+          <th style="text-align:left;padding:6px 8px;color:#6b7280;font-weight:600;border-bottom:1px solid #e5e7eb;white-space:nowrap">Latest Period</th>
+          <th style="text-align:left;padding:6px 8px;color:#6b7280;font-weight:600;border-bottom:1px solid #e5e7eb;white-space:nowrap">Previous Period</th>
+          <th style="text-align:left;padding:6px 8px;color:#6b7280;font-weight:600;border-bottom:1px solid #e5e7eb;white-space:nowrap">Change</th>
+          <th style="text-align:left;padding:6px 8px;color:#6b7280;font-weight:600;border-bottom:1px solid #e5e7eb;white-space:nowrap">% Change</th>
         </tr>
       </thead>
-      <tbody>${rows}</tbody>
+      <tbody>${wowTableRows(rows)}</tbody>
     </table>
-    <div style="font-size:12px;color:var(--muted);margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
-      <strong>Spend/scale metrics</strong> are fully supported. ROAS · CPI · CVR diagnosis support <span style="background:#f8f0ff;color:#7c3aed;padding:1px 6px;border-radius:10px;border:1px solid #e9d5ff;font-size:10px">coming soon</span>
+  </div>`;
+}
+
+function genWoW(entity_type, entity_id) {
+  const wm = MOCK.wowMetrics;
+  const ins = wm.insights;
+  const pos = ins.positives.map(p => `<div style="margin-bottom:5px;font-size:12px"><strong style="color:#374151">${esc(p.title)}:</strong> <span style="color:#6b7280">${esc(p.detail)}</span></div>`).join("");
+  const con = ins.concerns.map(c => `<div style="margin-bottom:5px;font-size:12px"><strong style="color:#374151">${esc(c.title)}:</strong> <span style="color:#6b7280">${esc(c.detail)}</span></div>`).join("");
+  const causes = ins.strategic.causes.map(c => `<div style="font-size:12px;color:#6b7280;padding:2px 0">• ${esc(c)}</div>`).join("");
+  const recs = ins.strategic.recs.map(r => `<div style="margin-bottom:6px;font-size:12px"><strong style="color:#374151">${esc(r.title)}:</strong> <span style="color:#6b7280">${esc(r.detail)}</span></div>`).join("");
+
+  return `<div class="res-header"><span>Week-over-Week Performance Changes · Game ID: ${SESSION_GAME_ID}</span></div>
+  <div class="res-body">
+    <div style="font-size:12px;color:#6b7280;font-style:italic;margin-bottom:14px">${esc(wm.period)}</div>
+    ${wowSectionTable("📊 Financial Performance", wm.financial)}
+    ${wowSectionTable("📈 Volume &amp; Engagement Metrics", wm.volume)}
+    ${wowSectionTable("🎯 Efficiency Metrics", wm.efficiency)}
+    ${wowSectionTable("📋 Campaign Activity", wm.activity)}
+    <div style="font-size:13px;font-weight:700;color:#374151;margin-bottom:10px;padding-bottom:5px;border-bottom:2px solid #e5e7eb">🔍 Key Insights &amp; Analysis</div>
+    <div style="margin-bottom:12px">
+      <div style="font-size:12px;font-weight:700;color:#166534;margin-bottom:6px">✅ Positive Changes:</div>
+      ${pos}
+    </div>
+    <div style="margin-bottom:12px">
+      <div style="font-size:12px;font-weight:700;color:#92400e;margin-bottom:6px">⚠️ Areas of Concern:</div>
+      ${con}
+    </div>
+    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px 14px">
+      <div style="font-size:12px;font-weight:700;color:#374151;margin-bottom:8px">🎯 Strategic Assessment:</div>
+      <div style="font-size:12px;color:#374151;margin-bottom:8px">Trade-off Pattern: ${esc(ins.strategic.pattern)}</div>
+      <div style="margin-bottom:8px">
+        <div style="font-size:12px;color:#166534;margin-bottom:3px">✅ Better Quality: ${esc(ins.strategic.positives[0])}</div>
+        <div style="font-size:12px;color:#92400e">⚠ Lower Scale: ${esc(ins.strategic.negatives[0])}</div>
+      </div>
+      <div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:4px">Possible Causes:</div>
+      ${causes}
+      <div style="font-size:12px;font-weight:600;color:#374151;margin-top:10px;margin-bottom:6px">Recommendations:</div>
+      ${recs}
     </div>
   </div>`;
 }
@@ -1299,41 +1366,76 @@ function selectMetric(metricKey) {
 }
 
 function genRankingByMetric(m) {
+  const topCampaign = MOCK.portfolio.campaigns.find(c => c.id === m.top.id);
+  const underCampaign = MOCK.portfolio.campaigns.find(c => c.id === m.under.id);
+
+  const topSpendRows = (m.key === "Spend Growth" && topCampaign) ? `
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:10px">
+      <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:7px 10px">
+        <div style="font-size:10px;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px">This Week</div>
+        <div style="font-size:14px;font-weight:700;color:#374151">$${(topCampaign.spend_cur/1000).toFixed(1)}K</div>
+      </div>
+      <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:7px 10px">
+        <div style="font-size:10px;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px">Last Week</div>
+        <div style="font-size:14px;font-weight:700;color:#374151">$${(topCampaign.spend_ref/1000).toFixed(1)}K</div>
+      </div>
+      <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:6px;padding:7px 10px">
+        <div style="font-size:10px;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px">Installs</div>
+        <div style="font-size:14px;font-weight:700;color:#374151">${topCampaign.installs ? topCampaign.installs.toLocaleString() : '—'}</div>
+      </div>
+    </div>` : '';
+
+  const underSpendRows = (m.key === "Spend Growth" && underCampaign) ? `
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-top:10px">
+      <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:6px;padding:7px 10px">
+        <div style="font-size:10px;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px">This Week</div>
+        <div style="font-size:14px;font-weight:700;color:#dc2626">$${(underCampaign.spend_cur/1000).toFixed(1)}K</div>
+      </div>
+      <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:6px;padding:7px 10px">
+        <div style="font-size:10px;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px">Last Week</div>
+        <div style="font-size:14px;font-weight:700;color:#374151">$${(underCampaign.spend_ref/1000).toFixed(1)}K</div>
+      </div>
+      <div style="background:#fef2f2;border:1px solid #fecaca;border-radius:6px;padding:7px 10px">
+        <div style="font-size:10px;color:#6b7280;text-transform:uppercase;letter-spacing:.05em;margin-bottom:2px">Installs</div>
+        <div style="font-size:14px;font-weight:700;color:#374151">${underCampaign.installs ? underCampaign.installs.toLocaleString() : '—'}</div>
+      </div>
+    </div>` : '';
+
   const topCard = `<div style="border:1px solid #bbf7d0;border-radius:8px;overflow:hidden;background:#fff">
     <div style="background:#f0fdf4;border-bottom:1px solid #bbf7d0;padding:9px 14px;display:flex;align-items:center;gap:8px">
-      
       <span style="font-weight:700;color:#166534">Top Performing</span>
       <span style="font-size:11px;color:var(--muted)">by ${m.key}</span>
     </div>
     <div style="padding:14px">
       <div style="display:flex;align-items:start;justify-content:space-between;margin-bottom:8px">
         <div>
-          <div style="font-weight:700;font-size:14px">${esc(m.top.name)}</div>
-          <div style="font-family:monospace;font-size:11px;color:var(--muted);margin-top:2px">${m.top.id.substring(0,14)}…</div>
+          <div style="font-weight:700;font-size:13.5px">${esc(m.top.name)}</div>
+          <div style="font-family:monospace;font-size:11px;color:var(--muted);margin-top:2px">ID: ${m.top.id.substring(0,14)}…</div>
         </div>
-        <div style="background:#f0fdf4;color:#166534;font-weight:800;font-size:18px;padding:6px 14px;border-radius:8px;border:1px solid #bbf7d0">${esc(m.top.val)}</div>
+        <div style="background:#f0fdf4;color:#166534;font-weight:800;font-size:17px;padding:5px 12px;border-radius:8px;border:1px solid #bbf7d0;white-space:nowrap">${esc(m.top.val)}</div>
       </div>
       <div style="font-size:12px;color:var(--muted);line-height:1.6">${esc(m.top.detail)}</div>
       ${m.top.abs ? `<div style="margin-top:6px;font-size:12px;color:#166534;font-weight:600">${esc(m.top.abs)} this period</div>` : ''}
+      ${topSpendRows}
     </div>
   </div>`;
 
   const underCard = `<div style="border:1px solid #fecaca;border-radius:8px;overflow:hidden;background:#fff">
     <div style="background:#fef2f2;border-bottom:1px solid #fecaca;padding:9px 14px;display:flex;align-items:center;gap:8px">
-      
       <span style="font-weight:700;color:#991b1b">Underperforming</span>
       <span style="font-size:11px;color:var(--muted)">by ${m.key}</span>
     </div>
     <div style="padding:14px">
       <div style="display:flex;align-items:start;justify-content:space-between;margin-bottom:8px">
         <div>
-          <div style="font-weight:700;font-size:14px">${esc(m.under.name)}</div>
-          <div style="font-family:monospace;font-size:11px;color:var(--muted);margin-top:2px">${m.under.id.substring(0,14)}…</div>
+          <div style="font-weight:700;font-size:13.5px">${esc(m.under.name)}</div>
+          <div style="font-family:monospace;font-size:11px;color:var(--muted);margin-top:2px">ID: ${m.under.id.substring(0,14)}…</div>
         </div>
-        <div style="background:#fef2f2;color:#dc2626;font-weight:800;font-size:18px;padding:6px 14px;border-radius:8px;border:1px solid #fecaca">${esc(m.under.val)}</div>
+        <div style="background:#fef2f2;color:#dc2626;font-weight:800;font-size:17px;padding:5px 12px;border-radius:8px;border:1px solid #fecaca;white-space:nowrap">${esc(m.under.val)}</div>
       </div>
       <div style="font-size:12px;color:var(--muted);line-height:1.6">${esc(m.under.detail)}</div>
       ${m.under.abs ? `<div style="margin-top:6px;font-size:12px;color:#dc2626;font-weight:600">${esc(m.under.abs)} this period</div>` : ''}
+      ${underSpendRows}
     </div>
     <div style="border-top:1px solid #fecaca;padding:10px 14px;background:#fef9f9">
       <div style="font-size:12px;color:var(--muted);margin-bottom:8px">
@@ -1345,7 +1447,7 @@ function genRankingByMetric(m) {
     </div>
   </div>`;
 
-  return `<div class="res-header"><span>Campaign ranking by ${esc(m.key)} · Mar 25–31</span></div>
+  return `<div class="res-header"><span>Campaign ranking by ${esc(m.key)} · Last 7 days</span></div>
   <div class="res-body">
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
       ${topCard}
@@ -1780,7 +1882,6 @@ function dispatch(question) {
 // ═══════════════════════════════════════════
 const PRESETS = [
   "What're the top issues that require my attention?",
-  "How are my campaigns performing overall?",
   "What are the week-over-week (WoW) performance changes?",
   "What're my top-performing/under-performing campaigns?",
 ];
