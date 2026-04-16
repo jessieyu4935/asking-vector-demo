@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Ask Vector · Intent Handling Demo</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  background:#eef0f4;
+  min-height:100vh;
+  padding:44px 24px 80px;
+  color:#1a1a1a;
+}
+
+/* ── Document ────────────────────────────────── */
+.doc{max-width:1000px;margin:0 auto;background:#fff;border-radius:14px;box-shadow:0 4px 40px rgba(0,0,0,.11);overflow:hidden}
+.doc-header{padding:40px 52px 30px;border-bottom:1px solid #e5e7eb}
+.doc-eyebrow{display:inline-flex;align-items:center;gap:6px;font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6b7280;margin-bottom:12px;background:#f3f4f6;border:1px solid #e5e7eb;padding:3px 10px;border-radius:20px}
+.doc-title{font-size:24px;font-weight:800;color:#111;margin-bottom:8px;line-height:1.25}
+.doc-desc{font-size:13.5px;color:#4b5563;line-height:1.7;max-width:680px}
+.doc-body{padding:36px 52px 52px}
+.section-label{font-size:10.5px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#9ca3af;margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.section-label::after{content:'';flex:1;height:1px;background:#f3f4f6}
+
+/* ── Recording frame ─────────────────────────── */
+.rec-wrap{border-radius:10px;overflow:hidden;box-shadow:0 0 0 1px rgba(0,0,0,.12),0 8px 40px rgba(0,0,0,.2);position:relative;user-select:none}
+.rec-chrome{background:#1e1e2e;padding:9px 14px;display:flex;align-items:center;gap:7px;border-bottom:1px solid rgba(255,255,255,.06)}
+.rc-dots{display:flex;gap:5px}
+.rc-dot{width:11px;height:11px;border-radius:50%}
+.rd-r{background:#ff5f57}.rd-y{background:#febc2e}.rd-g{background:#28c840}
+.rc-url{flex:1;margin:0 10px;background:rgba(255,255,255,.08);border-radius:5px;padding:3px 10px;font-size:10.5px;color:rgba(255,255,255,.38);text-align:center;font-family:'SF Mono',monospace}
+.rc-rec{display:flex;align-items:center;gap:5px;font-size:10px;font-weight:700;color:#ef4444;letter-spacing:.06em}
+.rc-blink{width:7px;height:7px;border-radius:50%;background:#ef4444;animation:blink 1.2s ease-in-out infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.rec-vp{width:100%;height:560px;overflow:hidden;position:relative;background:#f5f5f5}
+
+/* ── Mini UDA ─────────────────────────────────── */
+.uda{width:100%;height:100%;display:flex;flex-direction:column;background:#f5f5f5;font-size:12px}
+.u-nav{height:42px;background:#0c0c14;display:flex;align-items:center;padding:0 16px;gap:8px;flex-shrink:0}
+.u-logo{color:#fff;font-size:12px;font-weight:700;display:flex;align-items:center;gap:6px}
+.u-div{width:1px;height:17px;background:rgba(255,255,255,.15)}
+.u-nav-title{color:#9ca3af;font-size:11px}
+.u-nav-right{margin-left:auto;display:flex;align-items:center;gap:5px}
+.u-av-btn{height:27px;padding:0 10px;border:1px solid rgba(147,197,253,.35);background:rgba(37,99,235,.2);color:#93c5fd;border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:5px;transition:all .15s;white-space:nowrap}
+.u-av-btn.clicked{background:rgba(37,99,235,.55);transform:scale(.95)}
+.u-avatar{width:26px;height:26px;border-radius:50%;background:#2563eb;display:flex;align-items:center;justify-content:center;color:#fff;font-size:9px;font-weight:700}
+.u-layout{display:flex;flex:1;overflow:hidden}
+.u-sidebar{width:185px;background:#1a1c23;flex-shrink:0;overflow:hidden}
+.u-sb-hd{padding:12px 13px 4px;font-size:9px;font-weight:700;letter-spacing:.08em;color:rgba(255,255,255,.28);text-transform:uppercase}
+.u-sb-app{padding:7px 13px;display:flex;align-items:center;gap:7px;color:rgba(255,255,255,.8);font-size:11px;font-weight:600}
+.u-sb-app-ic{width:20px;height:20px;border-radius:5px;background:#10b981;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#fff;flex-shrink:0}
+.u-sb-item{padding:6px 13px 6px 25px;color:rgba(255,255,255,.45);font-size:11px;cursor:pointer;border-left:2px solid transparent}
+.u-sb-item.active{color:#fff;background:rgba(255,255,255,.07);border-left-color:#2563eb}
+.u-main{flex:1;overflow:hidden;display:flex;flex-direction:column;min-width:0}
+.u-devbar{background:#1a1c23;padding:5px 14px;font-size:10px;color:#93c5fd;display:flex;align-items:center;gap:6px;flex-shrink:0}
+.u-breadcrumb{padding:5px 14px;font-size:10px;color:#6b7280;background:#fff;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;gap:3px}
+.u-page-hd{padding:9px 14px;background:#fff;border-bottom:1px solid #e5e7eb;font-size:16px;font-weight:700;flex-shrink:0}
+.u-alert{margin:8px 14px 0;padding:6px 10px;border-radius:5px;font-size:10.5px;background:#fef2f2;border:1px solid #fecaca;color:#991b1b;line-height:1.4}
+.u-camp-area{padding:10px 14px;overflow:hidden}
+.u-toolbar{display:flex;align-items:center;gap:5px;margin-bottom:8px;flex-wrap:wrap}
+.u-tbtn{height:24px;padding:0 8px;border:1px solid #d1d5db;background:#fff;border-radius:4px;font-size:10.5px;color:#374151;cursor:pointer}
+.u-tbtn.pri{background:#2563eb;color:#fff;border-color:#2563eb;font-weight:600}
+.u-tsearch{height:24px;padding:0 8px;border:1px solid #d1d5db;border-radius:4px;font-size:10.5px;background:#fff;min-width:150px}
+.u-table{width:100%;border-collapse:collapse;background:#fff;border:1px solid #e5e7eb;border-radius:6px;overflow:hidden;font-size:11px}
+.u-table th{background:#f9fafb;padding:5px 8px;text-align:left;font-weight:600;color:#374151;border-bottom:1px solid #e5e7eb;font-size:10.5px;white-space:nowrap}
+.u-table td{padding:6px 8px;border-bottom:1px solid #f3f4f6;color:#374151;vertical-align:middle}
+.u-table tr:last-child td{border-bottom:none}
+.u-sbadge{display:inline-flex;align-items:center;gap:3px;padding:1px 7px;border-radius:20px;font-size:10px;font-weight:600}
+.u-live{background:#f0fdf4;color:#16a34a}
+.u-dot{width:4px;height:4px;border-radius:50%;background:currentColor}
+.u-cname{font-weight:500;color:#111}
+
+/* ── Ask Vector Panel ──────────────────────────── */
+.avp{position:absolute;top:0;right:-395px;width:395px;height:100%;background:#fff;box-shadow:-4px 0 30px rgba(0,0,0,.22);display:flex;flex-direction:column;transition:right .32s cubic-bezier(.4,0,.2,1);z-index:10}
+.avp.open{right:0}
+.avp-hd{padding:12px 15px;background:#0c0c14;display:flex;align-items:center;gap:8px;flex-shrink:0}
+.avp-title{color:#fff;font-size:13.5px;font-weight:700;flex:1}
+.avp-badge{font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:8px;background:rgba(37,99,235,.3);color:#93c5fd;border:1px solid rgba(147,197,253,.25)}
+.avp-close{width:25px;height:25px;border:none;background:rgba(255,255,255,.1);border-radius:5px;cursor:pointer;color:rgba(255,255,255,.65);font-size:14px;display:flex;align-items:center;justify-content:center}
+.avp-ctx{padding:5px 15px;background:#0f0f1c;font-size:10px;color:rgba(255,255,255,.4);border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:4px;flex-shrink:0}
+.avp-ctx strong{color:rgba(255,255,255,.65)}
+.avp-msgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:10px;background:#f8f9fb;scroll-behavior:smooth}
+.avp-msgs::-webkit-scrollbar{width:3px}
+.avp-msgs::-webkit-scrollbar-thumb{background:#dde1e7;border-radius:2px}
+.avp-welcome{text-align:center;padding:18px 10px;margin:auto}
+.avp-welcome h3{font-size:15px;font-weight:700;color:#111;margin-bottom:4px}
+.avp-welcome p{font-size:11px;color:#6b7280;line-height:1.55;margin-bottom:13px}
+.avp-chip{padding:7px 10px;background:#fff;border:1px solid #e5e7eb;border-radius:6px;font-size:11px;color:#374151;cursor:pointer;margin-bottom:4px;display:flex;align-items:center;justify-content:space-between;transition:all .12s}
+.avp-chip:hover{border-color:#2563eb;color:#2563eb;background:#eff6ff}
+.avp-chip-arr{color:#9ca3af}
+.avp-input-area{padding:8px 10px;background:#fff;border-top:1px solid #e5e7eb;flex-shrink:0}
+.avp-input-row{display:flex;align-items:flex-end;gap:6px;background:#f8f9fb;border:1px solid #e5e7eb;border-radius:7px;padding:6px 8px}
+.avp-input-row textarea{flex:1;border:none;background:transparent;resize:none;font-size:11.5px;font-family:inherit;color:#111;outline:none;max-height:60px;line-height:1.5}
+.avp-send{width:25px;height:25px;border:none;background:#2563eb;border-radius:5px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .12s}
+.avp-hint{font-size:9.5px;color:#9ca3af;margin-top:4px;text-align:center}
+
+/* ── Chat bubbles ──────────────────────────────── */
+.msg{display:flex;gap:7px;align-items:flex-start}
+.msg.user{flex-direction:row-reverse}
+.bubble{padding:8px 11px;border-radius:10px;font-size:11.5px;line-height:1.55}
+.msg.user .bubble{background:#2563eb;color:#fff;border-radius:10px 10px 2px 10px;max-width:85%}
+.msg.assistant .bubble{background:#fff;border:1px solid #e5e7eb;border-radius:10px 10px 10px 2px;width:100%}
+.loading-bub{background:#fff;border:1px solid #e5e7eb;padding:9px 11px;border-radius:10px;font-size:11px;color:#6b7280}
+.ls{display:flex;align-items:center;gap:6px;padding:2px 0;font-size:11px;color:#6b7280;transition:opacity .2s}
+.l-spin{width:10px;height:10px;border:2px solid #e5e7eb;border-top-color:#2563eb;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+.l-done{width:10px;height:10px;border-radius:50%;background:#16a34a;flex-shrink:0}
+.l-pend{width:10px;height:10px;border-radius:50%;background:#e5e7eb;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── Response content ──────────────────────────── */
+.scope-card{background:#fffbeb;border:1px solid #fde68a;border-radius:7px;overflow:hidden;margin-bottom:9px;font-size:11.5px}
+.scope-card-body{color:#78350f;line-height:1.6}
+.res-label{font-size:11.5px;color:#374151;margin-bottom:7px;line-height:1.6}
+.spend-tbl{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:8px;border:1px solid #e5e7eb;border-radius:6px;overflow:hidden}
+.spend-tbl th{background:#f9fafb;padding:5px 7px;text-align:left;font-weight:600;color:#374151;border-bottom:1px solid #e5e7eb;font-size:10.5px}
+.spend-tbl td{padding:5px 7px;border-bottom:1px solid #f3f4f6;color:#374151;vertical-align:middle}
+.spend-tbl tr:last-child td{border-bottom:none}
+.tbl-rank{font-weight:700;color:#9ca3af;font-size:10px;text-align:center}
+.tbl-cname{font-weight:600;color:#111}
+.pct-r{color:#dc2626;font-weight:700}
+.pct-o{color:#d97706;font-weight:700}
+.followup-label{font-size:11.5px;color:#374151;line-height:1.6;margin-bottom:6px}
+.camp-btn{display:flex;align-items:center;gap:7px;padding:6px 9px;background:#f8f9fb;border:1px solid #e5e7eb;border-radius:6px;font-size:11px;color:#374151;cursor:pointer;margin-bottom:4px;transition:all .12s;width:100%;text-align:left}
+.camp-btn:hover{border-color:#2563eb;color:#2563eb;background:#eff6ff}
+.camp-btn-icon{font-size:11px}
+.camp-btn-pct{margin-left:auto;font-weight:700}
+
+/* ── Animations ─────────────────────────────────── */
+.fade-in{animation:fadeIn .35s ease both}
+@keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:none}}
+.fade-in-slow{animation:fadeIn .5s ease .1s both}
+
+/* ── Replay / legend ────────────────────────────── */
+.replay-row{margin-top:14px;display:flex;align-items:center;gap:10px}
+.replay-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:7px;font-size:12px;font-weight:600;color:#374151;cursor:pointer;transition:all .12s}
+.replay-btn:hover{background:#e5e7eb}
+.legend{margin-top:30px;padding-top:26px;border-top:1px solid #e5e7eb}
+.legend-title{font-size:13px;font-weight:700;color:#111;margin-bottom:14px}
+.legend-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.legend-item{display:flex;gap:10px;font-size:12.5px;color:#4b5563;line-height:1.55}
+.legend-n{width:24px;height:24px;border-radius:50%;background:#f3f4f6;border:1px solid #e5e7eb;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#6b7280;flex-shrink:0;margin-top:1px}
+</style>
+</head>
+<body>
+
+<div class="doc">
+
+  <!-- ── Document header ──────────────────────── -->
+  <div class="doc-header">
+    <div class="doc-eyebrow">
+      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Ask Vector · Demo
+    </div>
+    <div class="doc-title">Intent Handling: Spend / Scale Scope Clarification</div>
+    <div class="doc-desc">
+      Demonstrates how Ask Vector handles a vague "performance" question — redirects to the
+      supported scope, surfaces the <strong>top 3 WoW spend-declining campaigns</strong>,
+      and invites the user to select one for a full spend-decline diagnosis.
+    </div>
+  </div>
+
+  <div class="doc-body">
+    <div class="section-label">Screen Recording</div>
+
+    <!-- ── Recording frame ────────────────────── -->
+    <div class="rec-wrap">
+      <!-- Browser chrome -->
+      <div class="rec-chrome">
+        <div class="rc-dots">
+          <div class="rc-dot rd-r"></div>
+          <div class="rc-dot rd-y"></div>
+          <div class="rc-dot rd-g"></div>
+        </div>
+        <div class="rc-url">unity-ads.com / apps / 500205758 / campaigns</div>
+        <div class="rc-rec"><div class="rc-blink"></div>REC</div>
+      </div>
+
+      <!-- Viewport -->
+      <div class="rec-vp" id="rec-vp">
+
+        <!-- ── Mini UDA Interface ──────────────── -->
+        <div class="uda">
+          <div class="u-nav">
+            <div class="u-logo">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+              Unity
+            </div>
+            <div class="u-div"></div>
+            <span class="u-nav-title">APP Campaign Management</span>
+            <div class="u-nav-right">
+              <button class="u-av-btn" id="u-av-btn">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                Ask Vector
+              </button>
+              <div class="u-div" style="margin:0 3px"></div>
+              <div class="u-avatar">JY</div>
+            </div>
+          </div>
+
+          <div class="u-layout">
+            <!-- Sidebar -->
+            <div class="u-sidebar">
+              <div class="u-sb-hd">GROW</div>
+              <div class="u-sb-app">
+                <div class="u-sb-app-ic">B</div>
+                Block Blast!
+              </div>
+              <div class="u-sb-item active">Campaigns</div>
+              <div class="u-sb-item">Creative Packs</div>
+              <div class="u-sb-item">Creatives</div>
+              <div class="u-sb-item">Reporting</div>
+              <div class="u-sb-item">Settings</div>
+            </div>
+
+            <!-- Main -->
+            <div class="u-main">
+              <div class="u-devbar">
+                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4m0 4h.01"/></svg>
+                Unlock advanced optimization with Developer Data Framework sharing
+              </div>
+              <div class="u-breadcrumb">Apps › Block Blast! &nbsp;|&nbsp; Game ID: 500205758</div>
+              <div class="u-page-hd">Campaigns</div>
+              <div class="u-alert"><strong>Required MMP integration fixes</strong> — Integration-blocking issues detected. Resolve before April 9.</div>
+              <div class="u-camp-area">
+                <div class="u-toolbar">
+                  <button class="u-tbtn">Delete</button>
+                  <button class="u-tbtn">Pause</button>
+                  <input class="u-tsearch" placeholder="Search campaigns…" readonly/>
+                  <button class="u-tbtn" style="margin-left:auto">+ Add filters</button>
+                  <button class="u-tbtn pri">Create</button>
+                </div>
+                <table class="u-table">
+                  <thead>
+                    <tr>
+                      <th>Campaign name</th>
+                      <th>Status</th>
+                      <th>Goal</th>
+                      <th>Bid</th>
+                      <th>Starts</th>
+                      <th>Spend (7d)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr><td><span class="u-cname">mglb JP ROAS-H5 c04</span></td><td><span class="u-sbadge u-live"><span class="u-dot"></span> Live</span></td><td>ROAS</td><td>Auto</td><td>2025-09-12</td><td style="color:#dc2626;font-weight:600">$4,810</td></tr>
+                    <tr><td><span class="u-cname">mglb KR Android ROAS</span></td><td><span class="u-sbadge u-live"><span class="u-dot"></span> Live</span></td><td>ROAS</td><td>Auto</td><td>2025-10-01</td><td style="color:#dc2626;font-weight:600">$33,946</td></tr>
+                    <tr><td><span class="u-cname">TK iOS US ROAS-H5</span></td><td><span class="u-sbadge u-live"><span class="u-dot"></span> Live</span></td><td>ROAS</td><td>Manual</td><td>2025-11-20</td><td style="color:#d97706;font-weight:600">$18,240</td></tr>
+                    <tr><td><span class="u-cname">mxcj iOS US D7 ROAS</span></td><td><span class="u-sbadge u-live"><span class="u-dot"></span> Live</span></td><td>ROAS</td><td>Auto</td><td>2026-01-15</td><td>$193,079</td></tr>
+                    <tr><td><span class="u-cname">TK iOS Global CPI</span></td><td><span class="u-sbadge u-live"><span class="u-dot"></span> Live</span></td><td>Event</td><td>Auto</td><td>2026-02-01</td><td>$44,210</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Ask Vector Panel ─────────────────── -->
+        <div class="avp" id="avp">
+          <div class="avp-hd">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#93c5fd" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <span class="avp-title">Ask Vector</span>
+            <span class="avp-badge">Preview</span>
+            <button class="avp-close">✕</button>
+          </div>
+          <div class="avp-ctx">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            Context:&nbsp;<strong>Block Blast!</strong>&nbsp;·&nbsp;Game ID:&nbsp;<strong>500205758</strong>
+          </div>
+
+          <div class="avp-msgs" id="avp-msgs">
+            <div id="avp-welcome" class="avp-welcome">
+              <div style="width:38px;height:38px;background:#0c0c14;border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#93c5fd" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              </div>
+              <h3>Ask Vector</h3>
+              <p>AI-powered spend &amp; scale diagnostics<br>Block Blast! · Game 500205758</p>
+              <div class="avp-chip">What're the top issues that require my attention? <span class="avp-chip-arr">›</span></div>
+              <div class="avp-chip">What are the week-over-week (WoW) performance changes? <span class="avp-chip-arr">›</span></div>
+              <div class="avp-chip">What're my top-performing/under-performing campaigns? <span class="avp-chip-arr">›</span></div>
+            </div>
+          </div>
+
+          <div class="avp-input-area">
+            <div class="avp-input-row">
+              <textarea id="avp-input" rows="1" placeholder="Ask about your campaigns, spend, or scale issues…" readonly></textarea>
+              <button class="avp-send">
+                <svg width="10" height="10" viewBox="0 0 16 16" fill="none"><path d="M14 8L2 2L5 8L2 14L14 8Z" fill="white"/></svg>
+              </button>
+            </div>
+            <div class="avp-hint">Enter to send · Shift+Enter for new line</div>
+          </div>
+        </div>
+
+      </div><!-- /.rec-vp -->
+    </div><!-- /.rec-wrap -->
+
+    <!-- Replay -->
+    <div class="replay-row">
+      <button class="replay-btn" onclick="startDemo(true)">
+        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="5,3 19,12 5,21"/></svg>
+        Replay
+      </button>
+      <span style="font-size:12px;color:#9ca3af">Auto-plays on load · click to replay</span>
+    </div>
+
+    <!-- Legend -->
+    <div class="legend">
+      <div class="legend-title">What's happening in this demo</div>
+      <div class="legend-grid">
+        <div class="legend-item">
+          <div class="legend-n">1</div>
+          <div>User opens Ask Vector and types a vague question about <strong>game performance</strong></div>
+        </div>
+        <div class="legend-item">
+          <div class="legend-n">2</div>
+          <div>Ask Vector detects the question is <strong>out of scope</strong> — not a spend / scale inquiry</div>
+        </div>
+        <div class="legend-item">
+          <div class="legend-n">3</div>
+          <div>Vector clarifies it only supports <strong>spend fluctuation diagnostics</strong> and redirects</div>
+        </div>
+        <div class="legend-item">
+          <div class="legend-n">4</div>
+          <div>Vector surfaces <strong>top 3 WoW spend-declining campaigns</strong> and asks which to diagnose</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const USER_MSG = "Why is my game performance not very good lately?";
+let timers = [];
+
+function q(ms, fn){ const t = setTimeout(fn, ms); timers.push(t); }
+function clearAll(){ timers.forEach(clearTimeout); timers = []; }
+
+function resetUI(){
+  document.getElementById('avp').classList.remove('open');
+  document.getElementById('u-av-btn').classList.remove('clicked');
+  const inp = document.getElementById('avp-input');
+  inp.value = '';
+  inp.placeholder = 'Ask about your campaigns, spend, or scale issues…';
+
+  document.getElementById('avp-msgs').innerHTML = `
+    <div id="avp-welcome" class="avp-welcome">
+      <div style="width:38px;height:38px;background:#0c0c14;border-radius:10px;display:flex;align-items:center;justify-content:center;margin:0 auto 10px">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#93c5fd" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      </div>
+      <h3>Ask Vector</h3>
+      <p>AI-powered spend &amp; scale diagnostics<br>Block Blast! · Game 500205758</p>
+      <div class="avp-chip">What're the top issues that require my attention? <span class="avp-chip-arr">›</span></div>
+      <div class="avp-chip">What are the week-over-week (WoW) performance changes? <span class="avp-chip-arr">›</span></div>
+      <div class="avp-chip">What're my top-performing/under-performing campaigns? <span class="avp-chip-arr">›</span></div>
+    </div>
+  `;
+}
+
+function startDemo(isReplay){
+  clearAll();
+  if(isReplay) resetUI();
+
+  // 1. Click Ask Vector
+  q(1100, ()=>{ document.getElementById('u-av-btn').classList.add('clicked'); });
+  q(1450, ()=>{
+    document.getElementById('u-av-btn').classList.remove('clicked');
+    document.getElementById('avp').classList.add('open');
+  });
+
+  // 2. Typing starts ~1s after panel opens
+  q(2600, startTyping);
+}
+
+function startTyping(){
+  const inp = document.getElementById('avp-input');
+  inp.placeholder = '';
+  let i = 0;
+  function tick(){
+    if(i <= USER_MSG.length){
+      inp.value = USER_MSG.slice(0, i++);
+      q(38, tick);
+    } else {
+      q(480, sendMsg);
+    }
+  }
+  tick();
+}
+
+function sendMsg(){
+  const inp = document.getElementById('avp-input');
+  inp.value = '';
+  inp.placeholder = 'Ask about your campaigns, spend, or scale issues…';
+
+  const wlc = document.getElementById('avp-welcome');
+  if(wlc) wlc.style.display = 'none';
+
+  const msgs = document.getElementById('avp-msgs');
+
+  // User bubble
+  const uDiv = document.createElement('div');
+  uDiv.className = 'msg user fade-in';
+  uDiv.innerHTML = `<div class="bubble">${USER_MSG}</div>`;
+  msgs.appendChild(uDiv);
+
+  // Loading bubble
+  q(350, ()=>{
+    const lb = document.createElement('div');
+    lb.id = 'loading-bub';
+    lb.className = 'loading-bub fade-in';
+    lb.innerHTML = `
+      <div class="ls" id="ls0"><span class="l-spin"></span><span>Analyzing question intent…</span></div>
+      <div class="ls" id="ls1" style="opacity:.35"><span class="l-pend"></span><span>Checking entity identifiers (game, campaigns)…</span></div>
+      <div class="ls" id="ls2" style="opacity:.35"><span class="l-pend"></span><span>Pulling WoW spend data for top campaigns…</span></div>
+    `;
+    msgs.appendChild(lb);
+    msgs.scrollTop = msgs.scrollHeight;
+  });
+
+  // Step completions
+  q(1400, ()=>{
+    const s0 = document.getElementById('ls0');
+    if(s0) s0.innerHTML = '<span class="l-done"></span><span>Analyzing question intent…</span>';
+    const s1 = document.getElementById('ls1');
+    if(s1){ s1.style.opacity='1'; s1.innerHTML='<span class="l-spin"></span><span>Checking entity identifiers (game, campaigns)…</span>'; }
+  });
+  q(2350, ()=>{
+    const s1 = document.getElementById('ls1');
+    if(s1) s1.innerHTML = '<span class="l-done"></span><span>Checking entity identifiers (game, campaigns)…</span>';
+    const s2 = document.getElementById('ls2');
+    if(s2){ s2.style.opacity='1'; s2.innerHTML='<span class="l-spin"></span><span>Pulling WoW spend data for top campaigns…</span>'; }
+  });
+  q(3300, ()=>{
+    const s2 = document.getElementById('ls2');
+    if(s2) s2.innerHTML = '<span class="l-done"></span><span>Pulling WoW spend data for top campaigns…</span>';
+  });
+
+  // Show response
+  q(3850, ()=>{
+    const lb = document.getElementById('loading-bub');
+    if(lb) lb.remove();
+    showResponse(msgs);
+  });
+}
+
+function showResponse(msgs){
+  const div = document.createElement('div');
+  div.className = 'msg assistant fade-in-slow';
+  div.innerHTML = `
+    <div class="bubble">
+
+      <div class="scope-card">
+        <div class="scope-card-body" style="padding:7px 10px">
+          I only support <strong>spend fluctuation diagnostics</strong> for now. Let me check your spend instead.
+        </div>
+      </div>
+
+      <div class="res-label">
+        Top 3 campaigns with the largest <strong>WoW spend decline</strong> (Apr 7–13 vs Mar 31–Apr 6):
+      </div>
+
+      <table class="spend-tbl">
+        <thead>
+          <tr>
+            <th>Campaign</th>
+            <th>WoW Δ</th>
+            <th>This week</th>
+            <th>Last week</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="tbl-cname">mglb JP ROAS-H5 c04</td>
+            <td class="pct-r">▼ 83.6%</td>
+            <td>$4,810</td>
+            <td>$29,289</td>
+          </tr>
+          <tr>
+            <td class="tbl-cname">mglb KR Android ROAS</td>
+            <td class="pct-r">▼ 52.1%</td>
+            <td>$33,946</td>
+            <td>$70,811</td>
+          </tr>
+          <tr>
+            <td class="tbl-cname">TK iOS US ROAS-H5</td>
+            <td class="pct-o">▼ 35.2%</td>
+            <td>$18,240</td>
+            <td>$28,150</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="followup-label">
+        Which campaign would you like to diagnose?
+      </div>
+      <button class="camp-btn">
+        <span class="camp-btn-icon">🔍</span>
+        mglb JP ROAS-H5 c04
+        <span class="camp-btn-pct pct-r">−83.6%</span>
+      </button>
+      <button class="camp-btn">
+        <span class="camp-btn-icon">🔍</span>
+        mglb KR Android ROAS
+        <span class="camp-btn-pct pct-r">−52.1%</span>
+      </button>
+      <button class="camp-btn">
+        <span class="camp-btn-icon">🔍</span>
+        TK iOS US ROAS-H5
+        <span class="camp-btn-pct pct-o">−35.2%</span>
+      </button>
+
+    </div>
+  `;
+  msgs.appendChild(div);
+  // Smooth scroll to reveal response
+  setTimeout(()=>{ msgs.scrollTop = msgs.scrollHeight; }, 50);
+}
+
+// Auto-start on load
+window.addEventListener('load', ()=>{ q(600, ()=> startDemo(false)); });
+</script>
+
+</body>
+</html>
