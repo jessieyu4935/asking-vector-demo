@@ -1339,33 +1339,67 @@ function genWoW(entity_type, entity_id) {
   const causes = ins.strategic.causes.map(c => `<div style="font-size:12px;color:#6b7280;padding:2px 0">• ${esc(c)}</div>`).join("");
   const recs = ins.strategic.recs.map(r => `<div style="margin-bottom:6px;font-size:12px"><strong style="color:#374151">${esc(r.title)}:</strong> <span style="color:#6b7280">${esc(r.detail)}</span></div>`).join("");
 
+  // ── Headline stat tiles ──
+  const headlineStats = [
+    {label:"Spend",    val:"-18.1%", sub:"$799K vs $976K", color:"#dc2626", bg:"#fef2f2"},
+    {label:"ROAS",     val:"+12.0%", sub:"44.0% vs 39.3%", color:"#16a34a", bg:"#f0fdf4"},
+    {label:"Installs", val:"-24.9%", sub:"54.8K vs 73.0K", color:"#dc2626", bg:"#fef2f2"},
+    {label:"CPI",      val:"+8.9%",  sub:"$14.56 vs $13.37",color:"#d97706", bg:"#fffbeb"},
+  ];
+  const tiles = headlineStats.map(s => `
+    <div style="flex:1;min-width:0;background:${s.bg};border-radius:8px;padding:9px 10px;text-align:center">
+      <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:#6b7280;margin-bottom:3px">${s.label}</div>
+      <div style="font-size:17px;font-weight:800;color:${s.color};line-height:1.2">${s.val}</div>
+      <div style="font-size:10px;color:#9ca3af;margin-top:2px">${s.sub}</div>
+    </div>`).join("");
+
   return `<div class="res-header"><span>Week-over-Week Performance Changes · Game ID: ${SESSION_GAME_ID}</span></div>
   <div class="res-body">
-    <div style="font-size:12px;color:#6b7280;font-style:italic;margin-bottom:14px">${esc(wm.period)}</div>
-    ${wowSectionTable("📊 Financial Performance", wm.financial)}
-    ${wowSectionTable("📈 Volume &amp; Engagement Metrics", wm.volume)}
-    ${wowSectionTable("🎯 Efficiency Metrics", wm.efficiency)}
-    ${wowSectionTable("📋 Campaign Activity", wm.activity)}
-    <div style="font-size:13px;font-weight:700;color:#374151;margin-bottom:10px;padding-bottom:5px;border-bottom:2px solid #e5e7eb">🔍 Key Insights &amp; Analysis</div>
-    <div style="margin-bottom:12px">
-      <div style="font-size:12px;font-weight:700;color:#166534;margin-bottom:6px">✅ Positive Changes:</div>
-      ${pos}
-    </div>
-    <div style="margin-bottom:12px">
-      <div style="font-size:12px;font-weight:700;color:#92400e;margin-bottom:6px">⚠️ Areas of Concern:</div>
-      ${con}
-    </div>
-    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px 14px">
-      <div style="font-size:12px;font-weight:700;color:#374151;margin-bottom:8px">🎯 Strategic Assessment:</div>
-      <div style="font-size:12px;color:#374151;margin-bottom:8px">Trade-off Pattern: ${esc(ins.strategic.pattern)}</div>
-      <div style="margin-bottom:8px">
-        <div style="font-size:12px;color:#166534;margin-bottom:3px">✅ Better Quality: ${esc(ins.strategic.positives[0])}</div>
-        <div style="font-size:12px;color:#92400e">⚠ Lower Scale: ${esc(ins.strategic.negatives[0])}</div>
+    <div style="font-size:12px;color:#6b7280;font-style:italic;margin-bottom:10px">${esc(wm.period)}</div>
+
+    <!-- Headline stats (always visible) -->
+    <div style="display:flex;gap:6px;margin-bottom:12px">${tiles}</div>
+
+    <!-- Strategic summary (always visible) -->
+    <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:11px 14px;margin-bottom:10px">
+      <div style="font-size:12.5px;font-weight:600;color:#374151;margin-bottom:6px">📊 Summary</div>
+      <div style="font-size:12px;color:#374151;line-height:1.65;margin-bottom:6px">${esc(ins.strategic.pattern)}</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <span style="font-size:11.5px;background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;border-radius:4px;padding:2px 8px">✅ ${esc(ins.strategic.positives[0])}</span>
+        <span style="font-size:11.5px;background:#fffbeb;color:#92400e;border:1px solid #fde68a;border-radius:4px;padding:2px 8px">⚠ ${esc(ins.strategic.negatives[0])}</span>
       </div>
-      <div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:4px">Possible Causes:</div>
-      ${causes}
-      <div style="font-size:12px;font-weight:600;color:#374151;margin-top:10px;margin-bottom:6px">Recommendations:</div>
-      ${recs}
+    </div>
+
+    <!-- Expand toggle -->
+    <div class="issue-summary-row" onclick="toggleIssueDetail('wow_detail')"
+         style="background:#f1f5f9;border:1px solid #e2e8f0;border-radius:8px;padding:9px 14px;margin-bottom:0">
+      <span style="font-size:12.5px;font-weight:600;color:#374151;flex:1">View full metric breakdown &amp; insights</span>
+      <div class="issue-chevron" id="issue-chevron-wow_detail">
+        <svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M5 8l5 5 5-5"/></svg>
+      </div>
+    </div>
+
+    <!-- Collapsible detail tables -->
+    <div class="issue-detail" id="issue-detail-wow_detail" style="margin-top:4px">
+      ${wowSectionTable("📊 Financial Performance", wm.financial)}
+      ${wowSectionTable("📈 Volume &amp; Engagement Metrics", wm.volume)}
+      ${wowSectionTable("🎯 Efficiency Metrics", wm.efficiency)}
+      ${wowSectionTable("📋 Campaign Activity", wm.activity)}
+      <div style="font-size:13px;font-weight:700;color:#374151;margin-bottom:10px;padding-bottom:5px;border-bottom:2px solid #e5e7eb">🔍 Key Insights &amp; Analysis</div>
+      <div style="margin-bottom:12px">
+        <div style="font-size:12px;font-weight:700;color:#166534;margin-bottom:6px">✅ Positive Changes:</div>
+        ${pos}
+      </div>
+      <div style="margin-bottom:12px">
+        <div style="font-size:12px;font-weight:700;color:#92400e;margin-bottom:6px">⚠️ Areas of Concern:</div>
+        ${con}
+      </div>
+      <div style="background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px 14px">
+        <div style="font-size:12px;font-weight:600;color:#374151;margin-bottom:4px">Possible Causes:</div>
+        ${causes}
+        <div style="font-size:12px;font-weight:600;color:#374151;margin-top:10px;margin-bottom:6px">Recommendations:</div>
+        ${recs}
+      </div>
     </div>
   </div>`;
 }
